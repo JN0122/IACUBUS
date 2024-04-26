@@ -1,0 +1,9 @@
+{
+    "ilias_installation_ids": [1],
+    "projectConfig": {
+        "id": "com.jakubniewelt.iacubus",
+
+        "name": "IACUBUS",
+        "description": "Download, sync and store ILIAS-files on your device"
+    }
+}

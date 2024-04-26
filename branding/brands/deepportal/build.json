@@ -1,0 +1,24 @@
+{
+    "ios": {
+        "debug": {
+            "codeSignIdentity": "Apple Development",
+            "automaticProvisioning": "true",
+            "developmentTeam": "R7692X8RYX",
+            "packageType": "development"
+        },
+        "release": {
+            "codeSignIdentity": "Apple Development",
+            "automaticProvisioning": "true",
+            "developmentTeam": "R7692X8RYX",
+            "packageType": "app-store"
+        }
+    },
+    "android": {
+        "debug": {
+            "packageType": "apk"
+        },
+        "release": {
+            "packageType": "bundle"
+        }
+    }
+}
