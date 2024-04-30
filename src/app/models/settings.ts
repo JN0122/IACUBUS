@@ -7,7 +7,6 @@ import { FileData } from "./file-data";
 import { ILIASObject } from "./ilias-object";
 
 export class Settings extends ActiveRecord<Settings> {
-
     static NETWORK: Network;
 
     /**
@@ -18,12 +17,12 @@ export class Settings extends ActiveRecord<Settings> {
     /**
      * Language for app
      */
-    language: string = "fr";
+    language: string = "en";
 
     /**
      * Max. allowed size for automatic downloads (mega bytes)
      */
-    downloadSize: number = 10;
+    downloadSize: number = 30;
 
     /**
      * Max. allowed quota for all files the app is storing (mega bytes)
@@ -56,17 +55,20 @@ export class Settings extends ActiveRecord<Settings> {
     themeTimestamp: number = 0;
 
     constructor(id: number = 0) {
-        super(id, new SQLiteConnector("settings", [
-            "userId",
-            "language",
-            "downloadSize",
-            "quotaSize",
-            "downloadOnStart",
-            "downloadWlan",
-            "themeColorHex",
-            "themeContrastColor",
-            "themeTimestamp"
-        ]));
+        super(
+            id,
+            new SQLiteConnector("settings", [
+                "userId",
+                "language",
+                "downloadSize",
+                "quotaSize",
+                "downloadOnStart",
+                "downloadWlan",
+                "themeColorHex",
+                "themeContrastColor",
+                "themeTimestamp",
+            ])
+        );
 
         if (id == 0) {
             let userLang: string = navigator.language.split("-")[0]; // use navigator lang if available
@@ -82,8 +84,12 @@ export class Settings extends ActiveRecord<Settings> {
      * @returns {Promise<Settings>}
      */
     static async findByUserId(userId: number): Promise<Settings> {
-        const db: SQLiteDatabaseService = await SQLiteDatabaseService.instance();
-        const response: any = await db.query("SELECT * FROM settings WHERE userId = ?;", [userId]);
+        const db: SQLiteDatabaseService =
+            await SQLiteDatabaseService.instance();
+        const response: any = await db.query(
+            "SELECT * FROM settings WHERE userId = ?;",
+            [userId]
+        );
         const settings: Settings = new Settings();
         if (response.rows.length === 0) {
             settings.userId = userId;
@@ -99,13 +105,17 @@ export class Settings extends ActiveRecord<Settings> {
      * @returns {boolean}
      */
     shouldntDownloadBecauseOfWLAN(): boolean {
-        return window.hasOwnProperty("cordova") && this.downloadWlan && (Settings.NETWORK.type !== "wifi" && Settings.NETWORK.type !== "ethernet");
-
+        return (
+            window.hasOwnProperty("cordova") &&
+            this.downloadWlan &&
+            Settings.NETWORK.type !== "wifi" &&
+            Settings.NETWORK.type !== "ethernet"
+        );
     }
 
     fileTooBig(fileObject: ILIASObject): boolean {
         const fileSize: number = parseInt(fileObject.data.fileSize, 10);
-        return fileSize > this.downloadSize * 1000**2;
+        return fileSize > this.downloadSize * 1000 ** 2;
     }
 
     async quotaExceeds(fileObject: ILIASObject): Promise<boolean> {
@@ -116,6 +126,6 @@ export class Settings extends ActiveRecord<Settings> {
 
         const used: number = await FileData.getTotalDiskSpace();
         const fileSize: number = parseInt(fileObject.data.fileSize, 10);
-        return (this.quotaSize * 1000**2) < (used + fileSize);
+        return this.quotaSize * 1000 ** 2 < used + fileSize;
     }
 }
