@@ -173,7 +173,7 @@
     "actions": {
         "view_in_ilias": "Voir dans ILIAS",
         "mark_as_favorite": "Marquer comme favori",
-        "download": "T\u00e9l\u00e9charger \/ Transf\u00e9rer",
+        "download": "T\u00e9l\u00e9charger / Transf\u00e9rer",
         "mark_as_offline_available": "Marquer comme disponible hors ligne",
         "unmark_as_offline_available": "Marquer comme non disponible hors ligne",
         "synchronize": "Synchroniser",

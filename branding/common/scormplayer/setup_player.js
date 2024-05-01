@@ -1,10 +1,12 @@
 PlayerConfiguration.Debug = false;
 PlayerConfiguration.StorageSupport = true;
 
-PlayerConfiguration.TreeMinusIcon = "assets/scormplayer/scormpool/Img/minus.gif";
+PlayerConfiguration.TreeMinusIcon =
+    "assets/scormplayer/scormpool/Img/minus.gif";
 PlayerConfiguration.TreePlusIcon = "assets/scormplayer/scormpool/Img/plus.gif";
 PlayerConfiguration.TreeLeafIcon = "assets/scormplayer/scormpool/Img/leaf.gif";
-PlayerConfiguration.TreeActiveIcon = "assets/scormplayer/scormpool/Img/select.gif";
+PlayerConfiguration.TreeActiveIcon =
+    "assets/scormplayer/scormpool/Img/select.gif";
 
 PlayerConfiguration.BtnPreviousLabel = "Previous";
 PlayerConfiguration.BtnContinueLabel = "Continue";

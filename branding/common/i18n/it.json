@@ -1,5 +1,5 @@
 {
-    "test" : "test",
+    "test": "test",
     "back": "Indietro",
     "Synchronize": "Sincronizza",
     "synchronize": "sincronizza",
@@ -26,16 +26,16 @@
     "map": "Carta geografica",
     "content": "Soddisfare",
     "object-list": {
-        "title" : "I miei corsi e i miei gruppi",
-        "content" : "Contenuto",
-        "offline" : "Your device is offline. You can pull to refresh or go to your favorites.",
-        "downloading" : "Loading"
+        "title": "I miei corsi e i miei gruppi",
+        "content": "Contenuto",
+        "offline": "Your device is offline. You can pull to refresh or go to your favorites.",
+        "downloading": "Loading"
     },
     "page-layout": {
-        "group" : "Per questo gruppo sono disponibili informazioni ulteriori.",
-        "course" : "Per questo corso sono disponibili informazioni ulteriori.",
-        "folder" : "Per questo folder sono disponibili informazioni ulteriori.",
-        "default" : "Per questo oggetto sono disponibili informazioni ulteriori."
+        "group": "Per questo gruppo sono disponibili informazioni ulteriori.",
+        "course": "Per questo corso sono disponibili informazioni ulteriori.",
+        "folder": "Per questo folder sono disponibili informazioni ulteriori.",
+        "default": "Per questo oggetto sono disponibili informazioni ulteriori."
     },
     "timeline": {
         "course": "Per questo corso é disponibile una Timeline.",
@@ -80,7 +80,7 @@
         "logged_out": "Disconnesso"
     },
     "common": {
-        "synchronize" : "sincronizza"
+        "synchronize": "sincronizza"
     },
     "download": {
         "title": "Scaricare",
@@ -119,7 +119,7 @@
         "server_not_reachable": "Il server non č raggiungibile, per favore riprova pių tardi.",
         "server_response_validation_error": "Problema di comunicazione del server, assicurati di eseguire l'ultima app e riprova."
     },
-    "details" : {
+    "details": {
         "last_update": "Ultimo aggiornamento",
         "availability": "Disponibilitā",
         "size": "Dimensione",
@@ -152,9 +152,9 @@
     },
     "login": {
         "title": "Login",
-        "hello":"Benvenuto/a in {{app_name}}!",
-        "instructions":"Scegli la tua organizzazione",
-        "instructions2":"Scegli la tua organizzazione",
+        "hello": "Benvenuto/a in {{app_name}}!",
+        "instructions": "Scegli la tua organizzazione",
+        "instructions2": "Scegli la tua organizzazione",
         "login": "Login",
         "offline_title": "Nessuna connessione a Internet",
         "offline_content": "Per poter effettuare il login, il dispositivo deve essere collegato a Internet.",
@@ -162,46 +162,46 @@
         "dismiss": "Annulla"
     },
     "object_type": {
-        "crs" : "Corso",
-        "grp" : "Gruppo",
-        "frm" : "Forum",
+        "crs": "Corso",
+        "grp": "Gruppo",
+        "frm": "Forum",
         "fold": "Cartella",
         "sess": "Sessione",
         "catr": "Link a categoria",
-        "cat" : "Categoria",
+        "cat": "Categoria",
         "book": "Booking Pool",
-        "chatr":"Chat Room",
-        "file" : "File",
-        "webr" : "Weblink",
-        "feed" : "Webfeed",
-        "wiki" : "Wiki",
-        "blog" : "Blog",
-        "lm" : "Modulo",
-        "htlm" : "Modulo HTML",
-        "sahs" : "Learning Module",
-        "glo" : "Glossario",
-        "dcl" : "Data Collection",
-        "bibl" : "Bibliografia",
-        "mcst" : "Mediacast",
-        "mep" : "Mediapool",
-        "exc" : "Esercizio",
-        "tst" : "Test",
-        "qpl" : "Insieme di domande per i Test",
-        "mass" : "Assessment individuale",
-        "poll" : "Insieme di domande",
-        "svy" : "Sondaggio",
-        "spl" : "Insieme di domande per i Sondaggi",
-        "prtt" : "Template di Portfolio",
-        "xlel" : "Learn Location",
-        "xlvo" : "LiveVoting",
-        "xoct" : "OpenCast",
-        "xtst" : "Test Repository Object",
-        "xvid" : "Video Interattivo",
-        "xpdl" : "Etherpad",
-        "xavc" : "Adobe Connect Meeting",
-        "xflc" : "Flashcards",
-        "chtr" : "Chat",
-        "xxco" : "Contenuto esterno",
+        "chatr": "Chat Room",
+        "file": "File",
+        "webr": "Weblink",
+        "feed": "Webfeed",
+        "wiki": "Wiki",
+        "blog": "Blog",
+        "lm": "Modulo",
+        "htlm": "Modulo HTML",
+        "sahs": "Learning Module",
+        "glo": "Glossario",
+        "dcl": "Data Collection",
+        "bibl": "Bibliografia",
+        "mcst": "Mediacast",
+        "mep": "Mediapool",
+        "exc": "Esercizio",
+        "tst": "Test",
+        "qpl": "Insieme di domande per i Test",
+        "mass": "Assessment individuale",
+        "poll": "Insieme di domande",
+        "svy": "Sondaggio",
+        "spl": "Insieme di domande per i Sondaggi",
+        "prtt": "Template di Portfolio",
+        "xlel": "Learn Location",
+        "xlvo": "LiveVoting",
+        "xoct": "OpenCast",
+        "xtst": "Test Repository Object",
+        "xvid": "Video Interattivo",
+        "xpdl": "Etherpad",
+        "xavc": "Adobe Connect Meeting",
+        "xflc": "Flashcards",
+        "chtr": "Chat",
+        "xxco": "Contenuto esterno",
         "xsrl": "luogo di apprendimento"
     },
     "learnplace": {
@@ -250,18 +250,18 @@
     },
     "onboarding": {
         "title1": "Whith the help of {{app_name}} you can:",
-          "function1": "access your ILIAS courses on your smartphone.",
-          "function2": "make your courses & files available offline.",
-          "function3": "log in once and stay logged in.",
-          "title2": "A decentralized app",
-          "concept1": "The {{app_name}} app connects you to the ILIAS installation of your institution, university or school.",
-          "concept2": "If your institution did not join yet, contact us",
-          "title3":"Your data is safe!",
-          "datasecurity1": "Your data will only be stored on your device. The app does not collect any personal information. If you want to check this in detail, you will find here the",
-          "datasecurity2": "privacy policy",
-          "datasecurity3": "{{app_name}} is an open source project. If you want to see for yourself what the app does, then you can see the code here:",
-          "next":"next",
-          "start": "Let's go"
+        "function1": "access your ILIAS courses on your smartphone.",
+        "function2": "make your courses & files available offline.",
+        "function3": "log in once and stay logged in.",
+        "title2": "A decentralized app",
+        "concept1": "The {{app_name}} app connects you to the ILIAS installation of your institution, university or school.",
+        "concept2": "If your institution did not join yet, contact us",
+        "title3": "Your data is safe!",
+        "datasecurity1": "Your data will only be stored on your device. The app does not collect any personal information. If you want to check this in detail, you will find here the",
+        "datasecurity2": "privacy policy",
+        "datasecurity3": "{{app_name}} is an open source project. If you want to see for yourself what the app does, then you can see the code here:",
+        "next": "next",
+        "start": "Let's go"
     },
     "info": {
         "title": "Informazioni",
@@ -301,7 +301,7 @@
         },
         "sig-card": {
             "subtitle": "Comunità e coordinamento dell'ulteriore sviluppo",
-            "content":  "Il Special Interest Group (SIG) ILIAS Mobile è responsabile del coordinamento dell'ulteriore sviluppo dell'app e offre uno spazio di discussione intorno all'app."
+            "content": "Il Special Interest Group (SIG) ILIAS Mobile è responsabile del coordinamento dell'ulteriore sviluppo dell'app e offre uno spazio di discussione intorno all'app."
         },
         "sturai-card": {
             "subtitle": "Sviluppo e manutenzione delle applicazioni",

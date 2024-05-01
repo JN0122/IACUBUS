@@ -1,18 +1,18 @@
 {
-  "ios": {
-    "debug": {
-      "codeSignIdentity": "Apple Development",
-      "provisioningProfile": "0383fc88-644d-473d-8772-3166ac63c0b6",
-      "developmentTeam": "AZLZKY798U",
-      "packageType": "development"
+    "ios": {
+        "debug": {
+            "codeSignIdentity": "Apple Development",
+            "provisioningProfile": "0383fc88-644d-473d-8772-3166ac63c0b6",
+            "developmentTeam": "AZLZKY798U",
+            "packageType": "development"
+        },
+        "release": {
+            "codeSignIdentity": "Apple Distribution",
+            "provisioningProfile": "f31743a0-2183-47ce-9b57-21c44368107f",
+            "developmentTeam": "AZLZKY798U",
+            "packageType": "app-store"
+        }
     },
-    "release": {
-      "codeSignIdentity": "Apple Distribution",
-      "provisioningProfile": "f31743a0-2183-47ce-9b57-21c44368107f",
-      "developmentTeam": "AZLZKY798U",
-      "packageType": "app-store"
-    }
-  },
     "android": {
         "debug": {
             "packageType": "apk"

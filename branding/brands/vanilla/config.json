@@ -1,9 +1,11 @@
 {
-  "ilias_installation_ids": [1,2,3,4,5,6,12,22,32,33,34,35,39,40,41,44,45],
-  "projectConfig": {
-    "id": "ch.studerraimann.ilias.offline",
+    "ilias_installation_ids": [
+        1, 2, 3, 4, 5, 6, 12, 22, 32, 33, 34, 35, 39, 40, 41, 44, 45
+    ],
+    "projectConfig": {
+        "id": "ch.studerraimann.ilias.offline",
 
-    "name": "ILIAS Pegasus",
-    "description": "Download, sync and store ILIAS-files on your device"
-  }
+        "name": "ILIAS Pegasus",
+        "description": "Download, sync and store ILIAS-files on your device"
+    }
 }
