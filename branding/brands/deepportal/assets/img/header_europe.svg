@@ -7,9 +7,9 @@
 	.st1{fill:#014289;}
 	.st2{opacity:0.28;}
 	.st3{clip-path:url(#SVGID_6_);}
-	.st4{fill:#577FAA;}
+	.st4{fill:#678eb8;}
 	.st5{fill:#384F68;}
-	.st6{fill:#577FAA;stroke:#384F68;stroke-width:3;stroke-miterlimit:10;}
+	.st6{fill:#678eb8;stroke:#384F68;stroke-width:3;stroke-miterlimit:10;}
 </style>
 <g class="st0">
 	<polygon class="st1" points="1000,829 0,495 0,-5 1000,-5 	"/>
@@ -26,7 +26,7 @@
 			<defs>
 				<rect id="SVGID_3_" x="27.8" y="297" width="159.2" height="111.4"/>
 			</defs>
-			<use xlink:href="#SVGID_3_"  style="overflow:visible;fill:#577FAA;"/>
+			<use xlink:href="#SVGID_3_"  style="overflow:visible;fill:#678eb8;"/>
 			<clipPath id="SVGID_6_">
 				<use xlink:href="#SVGID_3_"  style="overflow:visible;"/>
 			</clipPath>
