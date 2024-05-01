@@ -1,7 +1,7 @@
-import {VisibilityAware} from "./visibility/visibility.context";
-import {SafeHtml} from "@angular/platform-browser";
-import {Observable} from "rxjs";
-import {VisibilityStrategyType} from "./visibility/visibility.strategy";
+import { VisibilityAware } from "./visibility/visibility.context";
+import { SafeHtml } from "@angular/platform-browser";
+import { Observable } from "rxjs";
+import { VisibilityStrategyType } from "./visibility/visibility.strategy";
 
 /**
  * Contains information to display a map.
@@ -10,32 +10,31 @@ import {VisibilityStrategyType} from "./visibility/visibility.strategy";
  * @since 2.0.0
  */
 export class MapPlaceModel implements VisibilityAware {
-
     constructor(
         readonly id: number,
         readonly latitude: number,
         readonly longitude: number,
         readonly zoom: number,
         private readonly visibility: VisibilityStrategyType,
-        public visible: boolean = false,
+        public visible: boolean = false
     ) {}
 
-  /**
-   * Determines the language variable by considering the
-   * {@code visibility} property.
-   *
-   * @return {string} the according language variable
-   */
-  getDescriptionLangVar(): string {
-    switch (this.visibility) {
-      case VisibilityStrategyType.NEVER:
-        return "learnplace.map.no_map";
-      case VisibilityStrategyType.ALWAYS:
-        return "";
-      default:
-        return "learnplace.map.too_far_away";
+    /**
+     * Determines the language variable by considering the
+     * {@code visibility} property.
+     *
+     * @return {string} the according language variable
+     */
+    getDescriptionLangVar(): string {
+        switch (this.visibility) {
+            case VisibilityStrategyType.NEVER:
+                return "learnplace.map.no_map";
+            case VisibilityStrategyType.ALWAYS:
+                return "";
+            default:
+                return "learnplace.map.too_far_away";
+        }
     }
-  }
 }
 
 /**
@@ -45,18 +44,18 @@ export class MapPlaceModel implements VisibilityAware {
  * @since 2.0.0
  */
 export enum BlockType {
-  FEEDBACK,
-  EXTERNAL_STREAM,
-  PICTURE_UPLOAD,
-  PICTURE,
-  RICHTEXT,
-  VIDEO,
-  MAP,
-  COMMENT,
-  HORIZONTAL_LINE,
-  AUDIO,
-  ILIAS_LINK,
-  ACCORDION
+    FEEDBACK,
+    EXTERNAL_STREAM,
+    PICTURE_UPLOAD,
+    PICTURE,
+    RICHTEXT,
+    VIDEO,
+    MAP,
+    COMMENT,
+    HORIZONTAL_LINE,
+    AUDIO,
+    ILIAS_LINK,
+    ACCORDION,
 }
 
 /**
@@ -66,22 +65,31 @@ export enum BlockType {
  * @since 2.0.0
  */
 export class BlockModel implements VisibilityAware {
+    constructor(
+        readonly sequence: number,
+        public visible: boolean = false,
+        private readonly type: BlockType
+    ) {}
 
- constructor(
-   readonly sequence: number,
-   public visible: boolean = false,
-   private readonly type: BlockType
- ) {}
+    isRichtext(): boolean {
+        return this.type === BlockType.RICHTEXT;
+    }
 
- isRichtext(): boolean {return this.type === BlockType.RICHTEXT}
+    isPicture(): boolean {
+        return this.type === BlockType.PICTURE;
+    }
 
- isPicture(): boolean {return this.type === BlockType.PICTURE}
+    isVideo(): boolean {
+        return this.type === BlockType.VIDEO;
+    }
 
- isVideo(): boolean {return this.type === BlockType.VIDEO}
+    isLink(): boolean {
+        return this.type == BlockType.ILIAS_LINK;
+    }
 
- isLink(): boolean {return this.type == BlockType.ILIAS_LINK}
-
- isAccordion(): boolean {return this.type == BlockType.ACCORDION}
+    isAccordion(): boolean {
+        return this.type == BlockType.ACCORDION;
+    }
 }
 
 /**
@@ -91,11 +99,9 @@ export class BlockModel implements VisibilityAware {
  * @since 2.0.0
  */
 export class TextBlockModel extends BlockModel {
-
-  constructor(
-    sequence: number,
-    readonly content: SafeHtml,
-  ) {super(sequence, false, BlockType.RICHTEXT)}
+    constructor(sequence: number, readonly content: SafeHtml) {
+        super(sequence, false, BlockType.RICHTEXT);
+    }
 }
 
 /**
@@ -105,14 +111,15 @@ export class TextBlockModel extends BlockModel {
  * @since 2.0.0
  */
 export class PictureBlockModel extends BlockModel {
-
-  constructor(
-    sequence: number,
-    readonly title: string,
-    readonly description: string,
-    readonly thumbnail: string,
-    readonly url: string
-  ) {super(sequence, false, BlockType.PICTURE)}
+    constructor(
+        sequence: number,
+        readonly title: string,
+        readonly description: string,
+        readonly thumbnail: string,
+        readonly url: string
+    ) {
+        super(sequence, false, BlockType.PICTURE);
+    }
 }
 
 /**
@@ -122,11 +129,9 @@ export class PictureBlockModel extends BlockModel {
  * @since 2.0.0
  */
 export class LinkBlockModel extends BlockModel {
-
-  constructor(
-    sequence: number,
-    readonly refId: number
-  ) {super(sequence, false, BlockType.ILIAS_LINK)}
+    constructor(sequence: number, readonly refId: number) {
+        super(sequence, false, BlockType.ILIAS_LINK);
+    }
 }
 
 /**
@@ -136,11 +141,9 @@ export class LinkBlockModel extends BlockModel {
  * @since 2.0.0
  */
 export class VideoBlockModel extends BlockModel {
-
-  constructor(
-    sequence: number,
-    readonly url: string
-  ) {super(sequence, false, BlockType.VIDEO)}
+    constructor(sequence: number, readonly url: string) {
+        super(sequence, false, BlockType.VIDEO);
+    }
 }
 
 /**
@@ -150,13 +153,12 @@ export class VideoBlockModel extends BlockModel {
  * @since 2.0.0
  */
 export class AccordionBlockModel extends BlockModel {
-
-  constructor(
-    sequence: number,
-    readonly title: string,
-    readonly expanded: boolean,
-    readonly blocks: Observable<Array<BlockModel>>,
-  ) {
-    super(sequence, false, BlockType.ACCORDION)
-  }
+    constructor(
+        sequence: number,
+        readonly title: string,
+        readonly expanded: boolean,
+        readonly blocks: Observable<Array<BlockModel>>
+    ) {
+        super(sequence, false, BlockType.ACCORDION);
+    }
 }

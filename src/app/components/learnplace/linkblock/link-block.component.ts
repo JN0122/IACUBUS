@@ -1,27 +1,36 @@
-import {ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit} from "@angular/core";
-import {LinkBlockModel} from "../../../services/learnplace/block.model";
-import {LINK_BUILDER, LinkBuilder} from "../../../services/link/link-builder.service";
+import {
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+} from "@angular/core";
+import { LinkBlockModel } from "../../../services/learnplace/block.model";
+import {
+    LINK_BUILDER,
+    LinkBuilder,
+} from "../../../services/link/link-builder.service";
 import {
     OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY,
-    OpenObjectInILIASAction
+    OpenObjectInILIASAction,
 } from "../../../actions/open-object-in-ilias-action";
-import {Builder} from "../../../services/builder.base";
-import {ILIASObjectAction} from "../../../actions/object-action";
-import {TranslateService} from "@ngx-translate/core";
-import {User} from "../../../models/user";
-import {ILIASObject} from "../../../models/ilias-object";
-import {Logger} from "../../../services/logging/logging.api";
-import {Logging} from "../../../services/logging/logging.service";
-import {Subscription} from "rxjs";
-import {isDefined} from "../../../util/util.function";
+import { Builder } from "../../../services/builder.base";
+import { ILIASObjectAction } from "../../../actions/object-action";
+import { TranslateService } from "@ngx-translate/core";
+import { User } from "../../../models/user";
+import { ILIASObject } from "../../../models/ilias-object";
+import { Logger } from "../../../services/logging/logging.api";
+import { Logging } from "../../../services/logging/logging.service";
+import { Subscription } from "rxjs";
+import { isDefined } from "../../../util/util.function";
 
 @Component({
     selector: "link-block",
     templateUrl: "link-block.html",
-    styleUrls: ["../block.scss"]
+    styleUrls: ["../block.scss"],
 })
 export class LinkBlock implements OnInit, OnDestroy {
-
     @Input("value")
     readonly link: LinkBlockModel;
 
@@ -36,29 +45,40 @@ export class LinkBlock implements OnInit, OnDestroy {
         @Inject(LINK_BUILDER) private readonly linkBuilder: LinkBuilder,
         private readonly translate: TranslateService,
         @Inject(OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY)
-        private readonly openInIliasActionFactory: (title: string, urlBuilder: Builder<Promise<string>>) => OpenObjectInILIASAction,
+        private readonly openInIliasActionFactory: (
+            title: string,
+            urlBuilder: Builder<Promise<string>>
+        ) => OpenObjectInILIASAction,
         private readonly detectorRef: ChangeDetectorRef
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
-
         // this.linkBlockSubscription = this.observableLinkBlock.subscribe(it => {
         //   this.link = it;
         //   this.detectorRef.detectChanges();
         // });
 
         // because the ref id is immutable, we only want to read the objects title once
-        User.findActiveUser().then(user => {
-            return ILIASObject.findByRefIdAndUserId(this.link.refId, user.id);
-        }).then(obj => {
-            this.linkLabel = obj.title;
-        }).catch(_ => {
-            this.disableLink = true;
-            this.log.warn(() => `Could not load label for link block with refId: refId=${this.link.refId}`);
-            this.linkLabel = this.translate.instant("learnplace.block.link.no_access");
-        });
-
+        User.findActiveUser()
+            .then((user) => {
+                return ILIASObject.findByRefIdAndUserId(
+                    this.link.refId,
+                    user.id
+                );
+            })
+            .then((obj) => {
+                this.linkLabel = obj.title;
+            })
+            .catch((_) => {
+                this.disableLink = true;
+                this.log.warn(
+                    () =>
+                        `Could not load label for link block with refId: refId=${this.link.refId}`
+                );
+                this.linkLabel = this.translate.instant(
+                    "learnplace.block.link.no_access"
+                );
+            });
 
         // this.observableLinkBlock.first().subscribe(it => {
         //
@@ -81,7 +101,6 @@ export class LinkBlock implements OnInit, OnDestroy {
     }
 
     async open(): Promise<void> {
-
         if (!this.disableLink) {
             const action: ILIASObjectAction = this.openInIliasActionFactory(
                 this.translate.instant("actions.view_in_ilias"),

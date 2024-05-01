@@ -3,23 +3,18 @@ import { ModalController } from "@ionic/angular";
 import { LeaveAppDialog, LeaveAppDialogNavParams } from "./leave-app.dialog";
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class LeaveAppDialogService {
-
-
-    constructor(
-        private readonly modalCtrl: ModalController,
-    ) {
-    }
+    constructor(private readonly modalCtrl: ModalController) {}
 
     async present(): Promise<void> {
         const modal: HTMLIonModalElement = await this.modalCtrl.create({
             component: LeaveAppDialog,
             componentProps: <LeaveAppDialogNavParams>{
-                leaveApp: (): Promise<boolean> => modal.dismiss()
+                leaveApp: (): Promise<boolean> => modal.dismiss(),
             },
-            cssClass: "modal-fullscreen"
+            cssClass: "modal-fullscreen",
         });
 
         await modal.present();

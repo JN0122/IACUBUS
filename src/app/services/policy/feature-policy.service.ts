@@ -9,7 +9,7 @@ interface FeaturePolicies {
 }
 
 export enum Features {
-    CUSTOM_THEME = "customTheme"
+    CUSTOM_THEME = "customTheme",
 }
 
 /**
@@ -21,10 +21,9 @@ export enum Features {
  * @author Nicolas Schäfli <ns@studer-raimann.ch>
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class FeaturePolicyService {
-
     private readonly log: Logger = Logging.getLogger("FeaturePolicyService");
     private readonly policy: FeaturePolicies;
     private readonly disabledFeatures: Set<string>;
@@ -34,9 +33,17 @@ export class FeaturePolicyService {
         this.policy = policyList;
 
         if (this.policy.disabled.length > 0) {
-            this.log.info(() => `Load app object policy, disabled: ${JSON.stringify(this.policy.disabled.join(" "))}`);
+            this.log.info(
+                () =>
+                    `Load app object policy, disabled: ${JSON.stringify(
+                        this.policy.disabled.join(" ")
+                    )}`
+            );
         } else {
-            this.log.info(() => "Load app object policy, no disabled ILIAS Object features");
+            this.log.info(
+                () =>
+                    "Load app object policy, no disabled ILIAS Object features"
+            );
         }
 
         this.disabledFeatures = new Set<string>(this.policy.disabled);
@@ -51,7 +58,12 @@ export class FeaturePolicyService {
     isObjectAvailable(type: string): boolean {
         const available: boolean = !this.disabledFeatures.has(type);
 
-        this.log.trace(() => `App feature policy lookup: object="${type}" ${available ? "enabled" : "disabled"}`)
+        this.log.trace(
+            () =>
+                `App feature policy lookup: object="${type}" ${
+                    available ? "enabled" : "disabled"
+                }`
+        );
         return available;
     }
 

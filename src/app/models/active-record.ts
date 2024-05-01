@@ -29,7 +29,9 @@ export interface DatabaseConnector {
      *
      * @param project
      */
-    transaction<T>(project: (entityManager: EntityManager) => Promise<T>): Promise<T>;
+    transaction<T>(
+        project: (entityManager: EntityManager) => Promise<T>
+    ): Promise<T>;
 
     /**
      * Read data from database with given ID and return fields and values
@@ -46,20 +48,17 @@ export interface DatabaseConnector {
      */
     save(id: number, values: Array<string | number>): Promise<number>;
 
-
     /**
      * Deletes the object with given primary ID from database
      * @param id
      */
     destroy(id: number): Promise<void>;
-
 }
 
 /**
  * Connects a model to the database by providing table name and fields
  */
 export class SQLiteConnector implements DatabaseConnector {
-
     private readonly log: Logger = Logging.getLogger("SQLiteConnector");
 
     table: string;
@@ -70,27 +69,38 @@ export class SQLiteConnector implements DatabaseConnector {
         this.dbFields = dbFields;
     }
 
-    async query(sql: string, params: Array<string | number> = []): Promise<object> {
-        const db: SQLiteDatabaseService = await SQLiteDatabaseService.instance();
+    async query(
+        sql: string,
+        params: Array<string | number> = []
+    ): Promise<object> {
+        const db: SQLiteDatabaseService =
+            await SQLiteDatabaseService.instance();
         return db.query(sql, params);
     }
 
-    async transaction<T>(project: (entityManager: EntityManager) => Promise<T>): Promise<T> {
-        const db: SQLiteDatabaseService = await SQLiteDatabaseService.instance();
+    async transaction<T>(
+        project: (entityManager: EntityManager) => Promise<T>
+    ): Promise<T> {
+        const db: SQLiteDatabaseService =
+            await SQLiteDatabaseService.instance();
         return db.transaction(project);
     }
 
     async read(id: number): Promise<object> {
-        return this.query(`SELECT * FROM ${this.table} WHERE id = ?`, [id]).then((response: any) => {
+        return this.query(`SELECT * FROM ${this.table} WHERE id = ?`, [
+            id,
+        ]).then((response: any) => {
             if (response.rows.length === 0) {
-                throw new Error(`ActiveRecord: Could not find database entry with primary key ${id} in table ${this.table}`);
+                throw new Error(
+                    `ActiveRecord: Could not find database entry with primary key ${id} in table ${this.table}`
+                );
             }
             return response.rows.item(0);
         });
     }
 
     async save(id: number, values: Array<string | number>): Promise<number> {
-        return  id > 0 ? this.update(values, id) : this.create(values);
+        return id > 0 ? this.update(values, id) : this.create(values);
     }
 
     /**
@@ -105,7 +115,7 @@ export class SQLiteConnector implements DatabaseConnector {
             placeholders.push(value);
         }
         return placeholders;
-    };
+    }
 
     /**
      * Crates an entry for the DB and returns the ID.
@@ -114,15 +124,25 @@ export class SQLiteConnector implements DatabaseConnector {
      */
     private async create(values: Array<string | number>): Promise<number> {
         this.setArrayValueToNow("createdAt", values);
-        return this.transaction(async(em: EntityManager) => {
-            await em.query(`INSERT INTO ${this.table}(${this.dbFields.join()}) VALUES (${this.nTimes(this.dbFields.length, "?").join()});`, values);
-            const latestDataEntry: Array<{ id: number }> = await em.query(`SELECT id FROM ${this.table} ORDER BY id DESC LIMIT 1;`);
+        return this.transaction(async (em: EntityManager) => {
+            await em.query(
+                `INSERT INTO ${
+                    this.table
+                }(${this.dbFields.join()}) VALUES (${this.nTimes(
+                    this.dbFields.length,
+                    "?"
+                ).join()});`,
+                values
+            );
+            const latestDataEntry: Array<{ id: number }> = await em.query(
+                `SELECT id FROM ${this.table} ORDER BY id DESC LIMIT 1;`
+            );
             return latestDataEntry[0].id;
         });
 
         // const result: any = await this.query(`INSERT INTO ${this.table}(${this.dbFields.join()}) VALUES (${this.nTimes(this.dbFields.length, "?").join()})`, values)
         // return result.insertId;
-    };
+    }
 
     /**
      * updates the entry into the db an returns the ID
@@ -130,27 +150,40 @@ export class SQLiteConnector implements DatabaseConnector {
      * @param id
      * @returns {Promise<number>}
      */
-    private async update(values: Array<number | string>, id: number): Promise<number> {
+    private async update(
+        values: Array<number | string>,
+        id: number
+    ): Promise<number> {
         this.setArrayValueToNow("updatedAt", values);
-        await this.query(`UPDATE ${this.table} SET ${this.dbFields.join("=?,")}=? WHERE id = ${id};`, values);
+        await this.query(
+            `UPDATE ${this.table} SET ${this.dbFields.join(
+                "=?,"
+            )}=? WHERE id = ${id};`,
+            values
+        );
         return id;
-    };
+    }
 
     /**
      *
      * @param field
      * @param values
      */
-    private setArrayValueToNow(field: string, values: Array<string | number>): void {
+    private setArrayValueToNow(
+        field: string,
+        values: Array<string | number>
+    ): void {
         const pos: number = this.dbFields.indexOf(field);
         if (pos > -1) {
             const date: string = new Date().toISOString();
             values[pos] = date;
         }
-    };
+    }
 
     async destroy(id: number): Promise<void> {
-        this.log.debug(() => `Deleting item with table "${this.table}" and id: ${id}`);
+        this.log.debug(
+            () => `Deleting item with table "${this.table}" and id: ${id}`
+        );
         await this.query(`DELETE FROM ${this.table} WHERE id = ?`, [id]);
     }
 }
@@ -159,7 +192,6 @@ export class SQLiteConnector implements DatabaseConnector {
  * Base class for models that need to persis data in the database
  */
 export abstract class ActiveRecord<T> {
-
     _id: number = 0;
     protected connector: DatabaseConnector;
 
@@ -179,7 +211,7 @@ export abstract class ActiveRecord<T> {
             }
         }
 
-        return (this as unknown) as T;
+        return this as unknown as T;
     }
 
     /**
@@ -196,7 +228,6 @@ export abstract class ActiveRecord<T> {
         }
     }
 
-
     /**
      * Returns the primary key
      * @returns {number}
@@ -205,14 +236,13 @@ export abstract class ActiveRecord<T> {
         return this._id;
     }
 
-
     /**
      * Persist object in database, new objects are created while existing are updated
      * Returns a Promise resolving the saved object
      */
     async save(): Promise<T> {
         this._id = await this.connector.save(this._id, this.getDbFieldValues());
-        return (this as unknown) as T;
+        return this as unknown as T;
     }
 
     /**
@@ -224,7 +254,6 @@ export abstract class ActiveRecord<T> {
         return this.connector.destroy(this._id);
     }
 
-
     /**
      * Return the current values of all dbFields
      * @returns {Array}
@@ -233,10 +262,10 @@ export abstract class ActiveRecord<T> {
         const values = [];
         for (const property of this.connector.dbFields) {
             // Convert undefined to null
-            let value = (this[property] === undefined) ? null : this[property];
+            let value = this[property] === undefined ? null : this[property];
             // Automatic conversions
             if (typeof value === "boolean") {
-                value = (value) ? 1 : 0;
+                value = value ? 1 : 0;
             } else if (typeof value === "object" && value !== null) {
                 value = JSON.stringify(value);
             }
@@ -244,5 +273,4 @@ export abstract class ActiveRecord<T> {
         }
         return values;
     }
-
 }

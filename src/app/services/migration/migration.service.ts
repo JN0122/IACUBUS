@@ -19,7 +19,14 @@ import { AddThemeTimestamp } from "../../migrations/V__9-add_theme_timestamp";
 import { Logger } from "../logging/logging.api";
 import { Logging } from "../logging/logging.service";
 /** migration */
-import { DBMigration, Migration, MIGRATION_SUPPLIER, MigrationError, MigrationSupplier, MigrationVersion } from "./migration.api";
+import {
+    DBMigration,
+    Migration,
+    MIGRATION_SUPPLIER,
+    MigrationError,
+    MigrationSupplier,
+    MigrationVersion,
+} from "./migration.api";
 
 /**
  * DB Migration with TypeORM.
@@ -28,14 +35,14 @@ import { DBMigration, Migration, MIGRATION_SUPPLIER, MigrationError, MigrationSu
  * @version 2.0.0
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class TypeOrmDbMigration implements DBMigration {
-
     private readonly log: Logger = Logging.getLogger(TypeOrmDbMigration.name);
 
     constructor(
-        @Inject(MIGRATION_SUPPLIER) private readonly migrationSupplier: MigrationSupplier
+        @Inject(MIGRATION_SUPPLIER)
+        private readonly migrationSupplier: MigrationSupplier
     ) {}
 
     /**
@@ -44,36 +51,51 @@ export class TypeOrmDbMigration implements DBMigration {
      * @throws {MigrationError} if the migration fails
      */
     async migrate(): Promise<void> {
-
         try {
-
-            const connection: Connection = getConnection(PEGASUS_CONNECTION_NAME);
+            const connection: Connection = getConnection(
+                PEGASUS_CONNECTION_NAME
+            );
 
             const queryRunner: QueryRunner = connection.createQueryRunner();
 
-            const migrationTable: CreateMigrationTable = new CreateMigrationTable();
+            const migrationTable: CreateMigrationTable =
+                new CreateMigrationTable();
             await migrationTable.up(queryRunner);
 
-            const migrations: Array<Migration> = await this.migrationSupplier.get();
-            migrations.sort((first, second) => first.version.getVersion() - second.version.getVersion());
+            const migrations: Array<Migration> =
+                await this.migrationSupplier.get();
+            migrations.sort(
+                (first, second) =>
+                    first.version.getVersion() - second.version.getVersion()
+            );
 
-            for(const it of migrations) {
-
-                const result: Array<{}> = await queryRunner.query("SELECT * FROM migrations WHERE id = ?", [it.version.getVersion()]);
-                this.log.debug(() => `Migrations Table result: ${JSON.stringify(result)}`);
+            for (const it of migrations) {
+                const result: Array<{}> = await queryRunner.query(
+                    "SELECT * FROM migrations WHERE id = ?",
+                    [it.version.getVersion()]
+                );
+                this.log.debug(
+                    () => `Migrations Table result: ${JSON.stringify(result)}`
+                );
                 if (result.length < 1) {
-
-                    this.log.info(() => `Run database migration: version=${it.version.getVersion()}`);
+                    this.log.info(
+                        () =>
+                            `Run database migration: version=${it.version.getVersion()}`
+                    );
                     await it.up(queryRunner);
 
-                    await queryRunner.query("INSERT INTO migrations (id) VALUES (?)", [it.version.getVersion()])
+                    await queryRunner.query(
+                        "INSERT INTO migrations (id) VALUES (?)",
+                        [it.version.getVersion()]
+                    );
                 }
             }
 
             this.log.info(() => "Successfully migrate database");
-
         } catch (error) {
-            this.log.debug(() => `Database Migration Error: ${JSON.stringify(error)}`);
+            this.log.debug(
+                () => `Database Migration Error: ${JSON.stringify(error)}`
+            );
             throw new MigrationError("Could not finish database migration");
         }
     }
@@ -86,27 +108,30 @@ export class TypeOrmDbMigration implements DBMigration {
      * @throws {MigrationError} if a revert step fails
      */
     async revert(steps: number): Promise<void> {
-
         let currentStep: number = 0;
 
         try {
-
-            const connection: Connection = getConnection(PEGASUS_CONNECTION_NAME);
+            const connection: Connection = getConnection(
+                PEGASUS_CONNECTION_NAME
+            );
 
             const queryRunner: QueryRunner = connection.createQueryRunner();
 
-            const migrations: Array<Migration> = await this.migrationSupplier.get();
+            const migrations: Array<Migration> =
+                await this.migrationSupplier.get();
 
-            for(;currentStep < steps; currentStep++) {
-
+            for (; currentStep < steps; currentStep++) {
                 const migration: Migration = migrations.pop();
 
                 await migration.down(queryRunner);
-                await queryRunner.query("DELETE FROM migrations WHERE id = ?", [migration.version.getVersion()])
+                await queryRunner.query("DELETE FROM migrations WHERE id = ?", [
+                    migration.version.getVersion(),
+                ]);
             }
 
-            this.log.info(() => `Successfully revert ${steps} database migrations`);
-
+            this.log.info(
+                () => `Successfully revert ${steps} database migrations`
+            );
         } catch (error) {
             throw new MigrationError(`Could not revert step ${currentStep}`);
         }
@@ -121,10 +146,9 @@ export class TypeOrmDbMigration implements DBMigration {
  * @version 1.0.0
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class SimpleMigrationSupplier implements MigrationSupplier {
-
     /**
      * Returns all migration that are being executed by the {@link DBMigration}.
      *
@@ -143,7 +167,7 @@ export class SimpleMigrationSupplier implements MigrationSupplier {
             new AddThemeTimestamp(),
             new CreateLearningModulesSchema(),
             new TotalUserStorage(),
-            new RemoveLegacyObjectsFields()
+            new RemoveLegacyObjectsFields(),
         ];
     }
 }
@@ -156,7 +180,6 @@ export class SimpleMigrationSupplier implements MigrationSupplier {
  * @version 1.0.0
  */
 class CreateMigrationTable implements Migration {
-
     readonly version: MigrationVersion = new MigrationVersion("V__0");
 
     /**
@@ -165,7 +188,9 @@ class CreateMigrationTable implements Migration {
      * @param {QueryRunner} queryRunner - to execute sql queries
      */
     async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query("CREATE TABLE IF NOT EXISTS migrations (id INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        await queryRunner.query(
+            "CREATE TABLE IF NOT EXISTS migrations (id INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)"
+        );
     }
 
     /**

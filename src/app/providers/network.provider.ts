@@ -4,23 +4,25 @@ import { Observable, ReplaySubject } from "rxjs";
 
 export enum NetworkStatus {
     Online,
-    Offline
+    Offline,
 }
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class NetworkProvider {
-
     private previousStatus: NetworkStatus = NetworkStatus.Online;
-    private _state: ReplaySubject<NetworkStatus> = new ReplaySubject<NetworkStatus>(1)
+    private _state: ReplaySubject<NetworkStatus> =
+        new ReplaySubject<NetworkStatus>(1);
 
     readonly state: Observable<NetworkStatus> = this._state.asObservable();
 
-    constructor(
-        private readonly network: Network,
-    ) {
-        this._state.next(network.type !== network.Connection.NONE ? NetworkStatus.Online : NetworkStatus.Offline);
+    constructor(private readonly network: Network) {
+        this._state.next(
+            network.type !== network.Connection.NONE
+                ? NetworkStatus.Online
+                : NetworkStatus.Offline
+        );
     }
 
     /**
@@ -40,6 +42,6 @@ export class NetworkProvider {
             }
 
             this.previousStatus = NetworkStatus.Online;
-        })
+        });
     }
 }

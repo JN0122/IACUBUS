@@ -1,16 +1,23 @@
 /** angular */
-import {Inject, Injectable, InjectionToken} from "@angular/core";
+import { Inject, Injectable, InjectionToken } from "@angular/core";
 /** providers */
-import {USER_REPOSITORY, UserRepository} from "../../providers/repository/repository.user";
-import {ILIASRestProvider} from "../../providers/ilias-rest.provider";
-import {AuthenticationProvider} from "../../providers/authentication.provider";
+import {
+    USER_REPOSITORY,
+    UserRepository,
+} from "../../providers/repository/repository.user";
+import { ILIASRestProvider } from "../../providers/ilias-rest.provider";
+import { AuthenticationProvider } from "../../providers/authentication.provider";
 /** errors and exceptions */
-import {NoSuchElementError} from "../../error/errors";
-import {RESTAPIException} from "../../exceptions/RESTAPIException";
+import { NoSuchElementError } from "../../error/errors";
+import { RESTAPIException } from "../../exceptions/RESTAPIException";
 /** misc */
-import {CONFIG_PROVIDER, ConfigProvider, ILIASInstallation} from "../../config/ilias-config";
-import {UserEntity} from "../../entity/user.entity";
-import {Optional} from "../../util/util.optional";
+import {
+    CONFIG_PROVIDER,
+    ConfigProvider,
+    ILIASInstallation,
+} from "../../config/ilias-config";
+import { UserEntity } from "../../entity/user.entity";
+import { Optional } from "../../util/util.optional";
 
 /**
  * The installation news supplier, supplies the currently used ILIAS installation
@@ -19,19 +26,19 @@ import {Optional} from "../../util/util.optional";
  * @author Nicolas Schäfli <ns@studer-raimann.ch>
  */
 export interface InstallationLinkSupplier {
-
-  /**
-   * Fetches the ILIAS installation path of the current user.
-   *
-   * @returns {Promise<string>} The found installation url.
-   *
-   * @throws ReferenceError     Thrown if the installation was not found.
-   * @throws NoSuchElementError Thrown if no user is authenticated.
-   */
-  get(): Promise<string>;
+    /**
+     * Fetches the ILIAS installation path of the current user.
+     *
+     * @returns {Promise<string>} The found installation url.
+     *
+     * @throws ReferenceError     Thrown if the installation was not found.
+     * @throws NoSuchElementError Thrown if no user is authenticated.
+     */
+    get(): Promise<string>;
 }
 
-export const INSTALLATION_LINK_PROVIDER: InjectionToken<InstallationLinkSupplier> = new InjectionToken("token for installation link supplier");
+export const INSTALLATION_LINK_PROVIDER: InjectionToken<InstallationLinkSupplier> =
+    new InjectionToken("token for installation link supplier");
 
 /**
  * The token supplier provides a valid token for authentication with the help of the
@@ -40,18 +47,19 @@ export const INSTALLATION_LINK_PROVIDER: InjectionToken<InstallationLinkSupplier
  * @author Nicolas Schäfli <ns@studer-raimann.ch>
  */
 export interface TokenSupplier {
-
-  /**
-   * Requests a valid authentication token.
-   *
-   * @returns {Promise<string>} Valid token for authentication.
-   *
-   * @throws RESTAPIException   Thrown if the auth token request failed.
-   */
-  get(): Promise<string>;
+    /**
+     * Requests a valid authentication token.
+     *
+     * @returns {Promise<string>} Valid token for authentication.
+     *
+     * @throws RESTAPIException   Thrown if the auth token request failed.
+     */
+    get(): Promise<string>;
 }
 
-export const TOKEN_SUPPLIER: InjectionToken<TokenSupplier> = new InjectionToken("token for authentication token supplier");
+export const TOKEN_SUPPLIER: InjectionToken<TokenSupplier> = new InjectionToken(
+    "token for authentication token supplier"
+);
 
 /**
  * Default implementation of an installation link supplier.
@@ -60,31 +68,34 @@ export const TOKEN_SUPPLIER: InjectionToken<TokenSupplier> = new InjectionToken(
  * @author Nicolas Schäfli <ns@studer-raimann.ch>
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class InstallationLinkSupplierImpl implements InstallationLinkSupplier {
+    constructor(
+        @Inject(CONFIG_PROVIDER)
+        private readonly configProvider: ConfigProvider,
+        @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository
+    ) {}
 
-  constructor(
-    @Inject(CONFIG_PROVIDER) private readonly configProvider: ConfigProvider,
-    @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository
-  ) {}
-
-  /**
-   *
-   * @returns {Promise<string>} The installation id.
-   *
-   * @throws ReferenceError     Thrown if the installation was not found.
-   * @throws NoSuchElementError Thrown if no user is authenticated.
-   */
-  async get(): Promise<string> {
-    const user: Optional<UserEntity> = await this.userRepository.findAuthenticatedUser();
-    if(user.isPresent()) {
-      const installation: ILIASInstallation = (await this.configProvider.loadInstallation(user.get().installationId)).get();
-      return installation.url;
+    /**
+     *
+     * @returns {Promise<string>} The installation id.
+     *
+     * @throws ReferenceError     Thrown if the installation was not found.
+     * @throws NoSuchElementError Thrown if no user is authenticated.
+     */
+    async get(): Promise<string> {
+        const user: Optional<UserEntity> =
+            await this.userRepository.findAuthenticatedUser();
+        if (user.isPresent()) {
+            const installation: ILIASInstallation = (
+                await this.configProvider.loadInstallation(
+                    user.get().installationId
+                )
+            ).get();
+            return installation.url;
+        } else throw new NoSuchElementError("No authenticated user found.");
     }
-    else
-      throw new NoSuchElementError("No authenticated user found.");
-  }
 }
 
 /**
@@ -94,23 +105,19 @@ export class InstallationLinkSupplierImpl implements InstallationLinkSupplier {
  * @author Nicolas Schäfli <ns@studer-raimann.ch>
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class AuthTokenSupplier implements TokenSupplier {
+    constructor(private readonly restProvider: ILIASRestProvider) {}
 
-  constructor(private readonly restProvider: ILIASRestProvider
-  ) {}
-
-
-  /**
-   * Supplies a short living ILIAS SSO token.
-   *
-   * @returns {Promise<string>} The auth token which can be used to authenticate the user.
-   *
-   * @throws RESTAPIException   Thrown if the auth token request failed.
-   */
-  async get(): Promise<string> {
-    return this.restProvider.getAuthToken(AuthenticationProvider.getUser());
-  }
-
+    /**
+     * Supplies a short living ILIAS SSO token.
+     *
+     * @returns {Promise<string>} The auth token which can be used to authenticate the user.
+     *
+     * @throws RESTAPIException   Thrown if the auth token request failed.
+     */
+    async get(): Promise<string> {
+        return this.restProvider.getAuthToken(AuthenticationProvider.getUser());
+    }
 }

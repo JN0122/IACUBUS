@@ -14,7 +14,6 @@ import { Logging } from "../services/logging/logging.service";
  * Wraps an ILIASObject instance and returns presentation specific stuff
  */
 export interface ILIASObjectPresenter {
-
     /**
      * Returns the ionic icon name for this object
      */
@@ -38,26 +37,26 @@ export interface ILIASObjectPresenter {
     /**
      * Return details from this object (used on the details page)
      */
-    details(): Promise<Array<{label: string, value: string}>>
+    details(): Promise<Array<{ label: string; value: string }>>;
 
     /**
      * Return a list of badges to display for this object, color should be one of ionics colors, e.g. primary
      */
-    metaBadges(): Promise<Array<{value: string, color: string}>>
+    metaBadges(): Promise<Array<{ value: string; color: string }>>;
 
     /**
      * Return a list of icons that are displayed for this object
      */
-    metaIcons(): Promise<Array<{name: string, color: string}>>
-
+    metaIcons(): Promise<Array<{ name: string; color: string }>>;
 }
 
 /**
  * A generic presenter if the object type does not match a more specific one, e.g. CourseObjectPresenter
  */
 export class GenericILIASObjectPresenter implements ILIASObjectPresenter {
-
-    private readonly log: Logger = Logging.getLogger("GenericILIASObjectPresenter");
+    private readonly log: Logger = Logging.getLogger(
+        "GenericILIASObjectPresenter"
+    );
     private readonly _icon: Promise<string | SafeUrl>;
 
     constructor(
@@ -76,14 +75,16 @@ export class GenericILIASObjectPresenter implements ILIASObjectPresenter {
     }
 
     typeLangVar(): string {
-        return "object_type."+this.iliasObject.type;
+        return "object_type." + this.iliasObject.type;
     }
 
     showTypeAsText(): boolean {
         return true;
     }
 
-    details(): Promise<Array<{label: string, value: string, translate?: boolean}>> {
+    details(): Promise<
+        Array<{ label: string; value: string; translate?: boolean }>
+    > {
         // let details = [{label: 'details.last_update', value: this.iliasObject.updatedAt ? this.iliasObject.updatedAt : this.iliasObject.createdAt}];
         const details = [];
         if (this.iliasObject.isContainer() && !this.iliasObject.isLinked()) {
@@ -91,17 +92,30 @@ export class GenericILIASObjectPresenter implements ILIASObjectPresenter {
 
             // Container objects display the used disk space of file items below
             detailPromises.push(
-                FileService.calculateDiskSpace(this.iliasObject)
-                    .then(diskSpace => {
-                        this.log.info(() => `Disk space used: ${ILIASAppUtils.formatSize(diskSpace)}`);
-                        const detail = {label: "details.used_disk_space", value: ILIASAppUtils.formatSize(diskSpace)};
+                FileService.calculateDiskSpace(this.iliasObject).then(
+                    (diskSpace) => {
+                        this.log.info(
+                            () =>
+                                `Disk space used: ${ILIASAppUtils.formatSize(
+                                    diskSpace
+                                )}`
+                        );
+                        const detail = {
+                            label: "details.used_disk_space",
+                            value: ILIASAppUtils.formatSize(diskSpace),
+                        };
                         details.push(detail);
                         return Promise.resolve(detail);
-                    })
+                    }
+                )
             );
 
             detailPromises.push(
-                Promise.resolve({label: "details.offline_available", value: this.iliasObject.isOfflineAvailable ? "yes" : "no", translate: true})
+                Promise.resolve({
+                    label: "details.offline_available",
+                    value: this.iliasObject.isOfflineAvailable ? "yes" : "no",
+                    translate: true,
+                })
             );
 
             return Promise.all(detailPromises);
@@ -110,15 +124,15 @@ export class GenericILIASObjectPresenter implements ILIASObjectPresenter {
         }
     }
 
-    async metaBadges(): Promise<Array<{value: string; color: string}>> {
+    async metaBadges(): Promise<Array<{ value: string; color: string }>> {
         return [];
     }
 
-    metaIcons(): Promise<Array<{name: string; color: string}>> {
+    metaIcons(): Promise<Array<{ name: string; color: string }>> {
         return new Promise((resolve, reject) => {
             const icons = [];
             if (this.iliasObject.isFavorite) {
-                icons.push({name: "star", color: ""});
+                icons.push({ name: "star", color: "" });
             }
             resolve(icons);
         });

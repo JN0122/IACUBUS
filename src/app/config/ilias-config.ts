@@ -24,7 +24,8 @@ export interface ILIASInstallation {
     readonly privacyPolicy: string;
 }
 
-export const CONFIG_PROVIDER: InjectionToken<ConfigProvider> = new InjectionToken<ConfigProvider>("Token for ConfigProvider");
+export const CONFIG_PROVIDER: InjectionToken<ConfigProvider> =
+    new InjectionToken<ConfigProvider>("Token for ConfigProvider");
 
 /**
  * Describes a provider for the config file of this app.
@@ -49,7 +50,9 @@ export interface ConfigProvider {
      * @returns {Promise<ILIASInstallation>} the resulting ILIAS installation
      * @throw {ReferenceError} if the given id does not exists
      */
-    loadInstallation(installationId: number): Promise<Optional<ILIASInstallation>>;
+    loadInstallation(
+        installationId: number
+    ): Promise<Optional<ILIASInstallation>>;
 
     /**
      * Returns the last loaded installation
@@ -69,16 +72,23 @@ export interface ConfigProvider {
 @Injectable()
 export class ILIASConfigProvider implements ConfigProvider {
     private readonly config: Promise<ILIASConfig>;
-    private installation: Promise<Optional<ILIASInstallation>> = Promise.resolve(Optional.empty());
+    private installation: Promise<Optional<ILIASInstallation>> =
+        Promise.resolve(Optional.empty());
 
-    constructor(private readonly http: HttpClient, private readonly translate: TranslateService) {
+    constructor(
+        private readonly http: HttpClient,
+        private readonly translate: TranslateService
+    ) {
         this.config = this.loadFile();
         this.observeTranslation();
     }
 
     observeTranslation(): void {
         this.translate.onLangChange.subscribe(async (lang: string) => {
-            if (AuthenticationProvider.isLoggedIn()) await this.loadInstallation(AuthenticationProvider.getUser().installationId);
+            if (AuthenticationProvider.isLoggedIn())
+                await this.loadInstallation(
+                    AuthenticationProvider.getUser().installationId
+                );
         });
     }
 
@@ -90,10 +100,13 @@ export class ILIASConfigProvider implements ConfigProvider {
         return this.config;
     }
 
-    async loadInstallation(installationId: number): Promise<Optional<Readonly<ILIASInstallation>>> {
+    async loadInstallation(
+        installationId: number
+    ): Promise<Optional<Readonly<ILIASInstallation>>> {
         const iliasConfig: ILIASConfig = await this.config;
 
-        let installation: ILIASInstallation | undefined = iliasConfig.installations.find((it) => it.id == installationId);
+        let installation: ILIASInstallation | undefined =
+            iliasConfig.installations.find((it) => it.id == installationId);
 
         installation = {
             id: installation.id,
@@ -103,7 +116,11 @@ export class ILIASConfigProvider implements ConfigProvider {
             apiKey: installation.apiKey,
             apiSecret: installation.apiSecret,
             accessTokenTTL: installation.accessTokenTTL,
-            privacyPolicy: installation.privacyPolicy ? installation.privacyPolicy : `https://deepportal.hq.nato.int/eacademy/${await this.translate.get("privacy").toPromise()}/`,
+            privacyPolicy: installation.privacyPolicy
+                ? installation.privacyPolicy
+                : `https://deepportal.hq.nato.int/eacademy/${await this.translate
+                      .get("privacy")
+                      .toPromise()}/`,
         };
 
         if (isDefined(installation)) {
@@ -111,7 +128,9 @@ export class ILIASConfigProvider implements ConfigProvider {
             return Optional.of(installation);
         }
 
-        throw new ReferenceError(`Installation with id '${installationId}' does not exists in file: ${CONFIG_FILE}`);
+        throw new ReferenceError(
+            `Installation with id '${installationId}' does not exists in file: ${CONFIG_FILE}`
+        );
     }
 
     private async loadFile(): Promise<ILIASConfig> {
@@ -142,10 +161,19 @@ const configSchema: object = {
                     accessTokenTTL: { type: "number" },
                     privacyPolicy: {
                         type: "string",
-                        default: "https://deepportal.hq.nato.int/eacademy/iacobus-privacy-policy/",
+                        default:
+                            "https://deepportal.hq.nato.int/eacademy/iacobus-privacy-policy/",
                     },
                 },
-                required: ["id", "title", "url", "clientId", "apiKey", "apiSecret", "accessTokenTTL"],
+                required: [
+                    "id",
+                    "title",
+                    "url",
+                    "clientId",
+                    "apiKey",
+                    "apiSecret",
+                    "accessTokenTTL",
+                ],
             },
         },
     },

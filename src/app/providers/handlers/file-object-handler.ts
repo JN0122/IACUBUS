@@ -12,15 +12,15 @@ import { FileService } from "../../services/file.service";
 import { FileData as FileMetaData } from "../ilias-rest.provider";
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
-export class DataProviderFileObjectHandler implements DataProviderILIASObjectHandler {
-
+export class DataProviderFileObjectHandler
+    implements DataProviderILIASObjectHandler
+{
     constructor(
         private readonly rest: ILIASRestProvider,
         private readonly file: FileService
-    ) {
-    }
+    ) {}
 
     onSave(iliasObject: ILIASObject, user: User): Promise<ILIASObject> {
         return this.getFileMetaData(iliasObject, user);
@@ -28,7 +28,7 @@ export class DataProviderFileObjectHandler implements DataProviderILIASObjectHan
 
     async onDelete(iliasObject: ILIASObject, user: User): Promise<void> {
         // Note: Order matters! FileService::remove still needs FileData
-        await this.file.removeFile(iliasObject)
+        await this.file.removeFile(iliasObject);
         const fileData = await FileData.find(iliasObject.id);
         await fileData.destroy();
     }
@@ -39,9 +39,15 @@ export class DataProviderFileObjectHandler implements DataProviderILIASObjectHan
      * @param user
      * @returns {Promise<ILIASObject>}
      */
-    async getFileMetaData(iliasObject: ILIASObject, user: User): Promise<ILIASObject> {
-
-        const fileMetaData: FileMetaData = await this.rest.getFileData(iliasObject.refId, user, 120000);
+    async getFileMetaData(
+        iliasObject: ILIASObject,
+        user: User
+    ): Promise<ILIASObject> {
+        const fileMetaData: FileMetaData = await this.rest.getFileData(
+            iliasObject.refId,
+            user,
+            120000
+        );
         const localFileData: FileData = await FileData.find(iliasObject.id);
 
         localFileData.readFromObject(fileMetaData);
@@ -53,5 +59,4 @@ export class DataProviderFileObjectHandler implements DataProviderILIASObjectHan
 
         return iliasObject;
     }
-
 }

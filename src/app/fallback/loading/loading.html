@@ -25,40 +25,33 @@
             <div class="candle2__fire"></div>
             <div class="sparkles-one"></div>
             <div class="sparkles-two"></div>
-            <div class="candle__smoke-one">
-
-            </div>
-            <div class="candle__smoke-two">
-
-            </div>
-
+            <div class="candle__smoke-one"></div>
+            <div class="candle__smoke-two"></div>
         </div>
-        <div class="floor">
-        </div>
-
-
+        <div class="floor"></div>
     </div>
 
     <ion-grid>
-        <ion-row class="ion-justify-content-center ion-padding">
-        </ion-row>
+        <ion-row class="ion-justify-content-center ion-padding"> </ion-row>
         <ion-row class="ion-justify-content-center ion-padding">
             <h1 class="ion-text-center" color="white">
                 {{ translateKeyForType("loading") | translate }}
             </h1>
-            <span class="ion-text-center" class=loading-subtitle>
-          {{ translateKeyForType("loading_subtitle") | translate }}
-        </span>
+            <span class="ion-text-center" class="loading-subtitle">
+                {{ translateKeyForType("loading_subtitle") | translate }}
+            </span>
         </ion-row>
         <ion-row class="ion-justify-content-center ion-padding">
-            <ion-progress-bar [value]="loadingService.progress | async"
-                              [buffer]="loadingService.progress | async"
+            <ion-progress-bar
+                [value]="loadingService.progress | async"
+                [buffer]="loadingService.progress | async"
             ></ion-progress-bar>
         </ion-row>
         <ion-row class="ion-justify-content-center ion-padding">
-            <p class="very-small-font">A new loading Animation with every Version:<br> Candles Animation by Akhil Sai Ram
-                (2018)</p>
+            <p class="very-small-font">
+                A new loading Animation with every Version:<br />
+                Candles Animation by Akhil Sai Ram (2018)
+            </p>
         </ion-row>
     </ion-grid>
-
 </ion-content>

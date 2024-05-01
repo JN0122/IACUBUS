@@ -1,21 +1,20 @@
 /** angular */
-import {Injectable} from "@angular/core";
+import { Injectable } from "@angular/core";
 /** logging */
-import {Logger} from "./logging/logging.api";
-import {Logging} from "./logging/logging.service";
+import { Logger } from "./logging/logging.api";
+import { Logging } from "./logging/logging.service";
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class FooterToolbarService {
-
     private log: Logger = Logging.getLogger(FooterToolbarService.name);
 
     offline: boolean = false;
 
     private _isLoading: boolean = false;
     private _loadingText: string = "";
-    private jobs: Array<{id: number, text: string}> = [];
+    private jobs: Array<{ id: number; text: string }> = [];
 
     constructor() {}
 
@@ -25,7 +24,7 @@ export class FooterToolbarService {
 
     addJob(id: number, text: string): void {
         this.spliceId(id);
-        this.jobs.push({id: id, text: text});
+        this.jobs.push({ id: id, text: text });
         this.updateLoading();
     }
 
@@ -41,10 +40,10 @@ export class FooterToolbarService {
     private spliceId(id: number): void {
         for (const key in this.jobs) {
             if (this.jobs[key].id == id) {
-                this.jobs.splice((<any> key), 1);
+                this.jobs.splice(<any>key, 1);
             }
         }
-    };
+    }
 
     private updateLoading(): void {
         const jobs: number = this.countJobs();
@@ -62,11 +61,9 @@ export class FooterToolbarService {
     private getCurrentText(): string {
         // with the slice we make sure the last element is not popped from the original array.
         if (this.jobs.slice(-1).pop()) {
-            const job: {id: number, text: string} = this.jobs.slice(-1).pop();
+            const job: { id: number; text: string } = this.jobs.slice(-1).pop();
             return job.text;
-        }
-        else
-            return "";
+        } else return "";
     }
 
     private countJobs(): number {

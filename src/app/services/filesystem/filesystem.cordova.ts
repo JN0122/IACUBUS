@@ -1,5 +1,10 @@
 import { FileOpener } from "@ionic-native/file-opener/ngx";
-import { DirectoryEntry, File, FileEntry, RemoveResult } from "@ionic-native/file/ngx";
+import {
+    DirectoryEntry,
+    File,
+    FileEntry,
+    RemoveResult,
+} from "@ionic-native/file/ngx";
 import { Platform } from "@ionic/angular";
 import { IOError } from "../../error/errors";
 import { CantOpenFileTypeException } from "../../exceptions/CantOpenFileTypeException";
@@ -19,23 +24,31 @@ interface PathTuple {
  * @version 1.0.0
  */
 abstract class AbstractCordovaFilesystem implements Filesystem {
-
-    private readonly abstractLog: Logger = Logging.getLogger("AbstractCordovaFilesystem");
+    private readonly abstractLog: Logger = Logging.getLogger(
+        "AbstractCordovaFilesystem"
+    );
 
     protected constructor(
         protected readonly file: File,
-        private readonly fileOpener: FileOpener,
+        private readonly fileOpener: FileOpener
     ) {}
 
     async delete(path: string): Promise<RemoveResult> {
         const pathInfo: PathTuple = await this.getAbsolutePathInfo(path);
-        return this.file.removeRecursively(pathInfo.absoluteBasePath, pathInfo.target);
+        return this.file.removeRecursively(
+            pathInfo.absoluteBasePath,
+            pathInfo.target
+        );
     }
 
     async exists(path: string): Promise<boolean> {
         const pathInfo: PathTuple = await this.getAbsolutePathInfo(path);
-        return (await this.file.checkFile(pathInfo.absoluteBasePath, pathInfo.target)) ||
-            this.file.checkDir(pathInfo.absoluteBasePath, pathInfo.target);
+        return (
+            (await this.file.checkFile(
+                pathInfo.absoluteBasePath,
+                pathInfo.target
+            )) || this.file.checkDir(pathInfo.absoluteBasePath, pathInfo.target)
+        );
     }
 
     protected async getDirectory(path: string): Promise<DirectoryEntry> {
@@ -43,41 +56,57 @@ abstract class AbstractCordovaFilesystem implements Filesystem {
         return this.file.getDirectory(
             await this.file.resolveDirectoryUrl(pathInfo.absoluteBasePath),
             pathInfo.target,
-            {create: false, exclusive: false}
-            );
+            { create: false, exclusive: false }
+        );
     }
 
     protected async getFile(path: string): Promise<FileEntry> {
         const pathInfo: PathTuple = await this.getAbsolutePathInfo(path);
-        const parent: Array<string> = path.split("/").filter((it) => it.length > 0);
+        const parent: Array<string> = path
+            .split("/")
+            .filter((it) => it.length > 0);
         parent.pop();
         return this.file.getFile(
             await this.getDirectory(parent.join("/")),
             pathInfo.target,
-            {create: false, exclusive: false}
+            { create: false, exclusive: false }
         );
     }
 
     async save(path: string, data: ArrayBuffer): Promise<FileEntry> {
         const pathInfo: PathTuple = await this.getAbsolutePathInfo(path);
-        return this.file.writeFile(pathInfo.absoluteBasePath, pathInfo.target, data, {replace: true});
+        return this.file.writeFile(
+            pathInfo.absoluteBasePath,
+            pathInfo.target,
+            data,
+            { replace: true }
+        );
     }
 
     async open(path: string, type: string = ""): Promise<void> {
-
         try {
-            this.abstractLog.debug(() => `Opening file in default application: "${path}"`);
+            this.abstractLog.debug(
+                () => `Opening file in default application: "${path}"`
+            );
             const pathInfo: PathTuple = await this.getAbsolutePathInfo(path);
             await this.fileOpener.open(
-                `${pathInfo.absoluteBasePath}/${pathInfo.target}`, type);
+                `${pathInfo.absoluteBasePath}/${pathInfo.target}`,
+                type
+            );
             this.abstractLog.trace(() => "Existing file successfully opened.");
         } catch (e) {
             if (e.status === 9) {
-                this.abstractLog.error(() => "Unable to open existing file because the file type is not supported.");
-                throw new CantOpenFileTypeException("Unable to open existing file because the file type is not supported.");
-            }
-            else {
-                this.abstractLog.error(() => "Unable to open existing file with a general error.");
+                this.abstractLog.error(
+                    () =>
+                        "Unable to open existing file because the file type is not supported."
+                );
+                throw new CantOpenFileTypeException(
+                    "Unable to open existing file because the file type is not supported."
+                );
+            } else {
+                this.abstractLog.error(
+                    () => "Unable to open existing file with a general error."
+                );
                 throw e;
             }
         }
@@ -93,48 +122,43 @@ abstract class AbstractCordovaFilesystem implements Filesystem {
 
     protected async getAbsolutePathInfo(path: string): Promise<PathTuple> {
         const pathFolders: Array<string> = Array.from([
-            (await this.getFilesystemBasePath()).replace(/\/$/, ""),    // remove / at the end of the base path.
-            ...path.split("/").filter((it) => it.length > 0)   // remove empty strings which are generated by split eg: /e/ -> ["", "e", ""]
+            (await this.getFilesystemBasePath()).replace(/\/$/, ""), // remove / at the end of the base path.
+            ...path.split("/").filter((it) => it.length > 0), // remove empty strings which are generated by split eg: /e/ -> ["", "e", ""]
         ]);
         const targetName: string | undefined = pathFolders.pop();
 
         if (typeof targetName !== "string" || targetName.length === 0) {
-            throw new IOError(`Invalid path, unable to extract directory/file name. Got path "${path}" and directory/file "${targetName}".`);
+            throw new IOError(
+                `Invalid path, unable to extract directory/file name. Got path "${path}" and directory/file "${targetName}".`
+            );
         }
 
         const pathInfo: PathTuple = {
             absoluteBasePath: pathFolders.join("/"),
-            target: targetName
+            target: targetName,
         };
 
-        this.abstractLog.trace(() => `Computed absolute path: ${pathInfo.absoluteBasePath}/${pathInfo.target}`);
+        this.abstractLog.trace(
+            () =>
+                `Computed absolute path: ${pathInfo.absoluteBasePath}/${pathInfo.target}`
+        );
 
         return pathInfo;
     }
 }
 
 export class AndroidFilesystem extends AbstractCordovaFilesystem {
-
-    constructor(
-        file: File,
-        fileOpener: FileOpener,
-    ) {
+    constructor(file: File, fileOpener: FileOpener) {
         super(file, fileOpener);
     }
 
     protected async getFilesystemBasePath(): Promise<string> {
         return this.file.externalApplicationStorageDirectory;
     }
-
-
 }
 
 export class IOSFilesystem extends AbstractCordovaFilesystem {
-
-    constructor(
-        file: File,
-        fileOpener: FileOpener,
-    ) {
+    constructor(file: File, fileOpener: FileOpener) {
         super(file, fileOpener);
     }
 
@@ -143,9 +167,16 @@ export class IOSFilesystem extends AbstractCordovaFilesystem {
     }
 }
 
-export const CORDOVA_FILESYSTEM_FACTORY: (platform: Platform, file: File, fileOpener: FileOpener) => void =
-    (platform: Platform, file: File, fileOpener2: FileOpener): Filesystem => {
-    if(platform.is("android")) {
+export const CORDOVA_FILESYSTEM_FACTORY: (
+    platform: Platform,
+    file: File,
+    fileOpener: FileOpener
+) => void = (
+    platform: Platform,
+    file: File,
+    fileOpener2: FileOpener
+): Filesystem => {
+    if (platform.is("android")) {
         return new AndroidFilesystem(file, fileOpener2);
     }
 
@@ -153,5 +184,7 @@ export const CORDOVA_FILESYSTEM_FACTORY: (platform: Platform, file: File, fileOp
         return new IOSFilesystem(file, fileOpener2);
     }
 
-    throw new Error("Cordova filesystem factory found no suitable implementation for the current platform.")
+    throw new Error(
+        "Cordova filesystem factory found no suitable implementation for the current platform."
+    );
 };

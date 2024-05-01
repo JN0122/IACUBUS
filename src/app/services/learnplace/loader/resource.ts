@@ -1,14 +1,22 @@
-import {Inject, Injectable, InjectionToken} from "@angular/core";
-import {DirectoryEntry, File, Flags} from "@ionic-native/file/ngx";
-import {Platform} from "@ionic/angular";
-import {UserEntity} from "../../../entity/user.entity";
-import {DownloadRequestOptions, FILE_DOWNLOADER, FileDownloader} from "../../../providers/file-transfer/file-download";
-import {USER_REPOSITORY, UserRepository} from "../../../providers/repository/repository.user";
-import {LINK_BUILDER, LinkBuilder} from "../../../services/link/link-builder.service";
-import {Logger} from "../../../services/logging/logging.api";
-import {Logging} from "../../../services/logging/logging.service";
-
-
+import { Inject, Injectable, InjectionToken } from "@angular/core";
+import { DirectoryEntry, File, Flags } from "@ionic-native/file/ngx";
+import { Platform } from "@ionic/angular";
+import { UserEntity } from "../../../entity/user.entity";
+import {
+    DownloadRequestOptions,
+    FILE_DOWNLOADER,
+    FileDownloader,
+} from "../../../providers/file-transfer/file-download";
+import {
+    USER_REPOSITORY,
+    UserRepository,
+} from "../../../providers/repository/repository.user";
+import {
+    LINK_BUILDER,
+    LinkBuilder,
+} from "../../../services/link/link-builder.service";
+import { Logger } from "../../../services/logging/logging.api";
+import { Logging } from "../../../services/logging/logging.service";
 
 /**
  * Builds directory paths for learnplaces.
@@ -17,7 +25,6 @@ import {Logging} from "../../../services/logging/logging.service";
  * @version 1.0.0
  */
 export interface LearnplacePathBuilder {
-
     /**
      * Crate the learnplace path and returns relative path to the learnplace folder.
      * This method will ensure that the path exists.
@@ -36,29 +43,34 @@ export interface LearnplacePathBuilder {
     getStorageLocation(): Promise<string>;
 }
 
-export const LEARNPLACE_PATH_BUILDER: InjectionToken<LearnplacePathBuilder> = new InjectionToken("token for learnplace path builder");
+export const LEARNPLACE_PATH_BUILDER: InjectionToken<LearnplacePathBuilder> =
+    new InjectionToken("token for learnplace path builder");
 
 @Injectable()
 export class LearnplacePathBuilderImpl implements LearnplacePathBuilder {
-
-    private readonly log: Logger = Logging.getLogger(LearnplacePathBuilderImpl.name);
+    private readonly log: Logger = Logging.getLogger(
+        LearnplacePathBuilderImpl.name
+    );
 
     constructor(
         private readonly file: File,
-        private readonly platform: Platform,
+        private readonly platform: Platform
     ) {}
-
 
     async createPath(userId: number): Promise<string> {
         const storageLocation: string = await this.getStorageLocation();
-        return this.createRecursive(storageLocation, "ilias-app", userId.toString(), "lernorte");
+        return this.createRecursive(
+            storageLocation,
+            "ilias-app",
+            userId.toString(),
+            "lernorte"
+        );
     }
 
     /**
      * @returns {Promise<string>} the storage location considering the platform
      */
     async getStorageLocation(): Promise<string> {
-
         if (this.platform.is("android")) {
             this.log.trace(() => "Platform Android detected");
             return this.file.externalApplicationStorageDirectory;
@@ -67,7 +79,9 @@ export class LearnplacePathBuilderImpl implements LearnplacePathBuilder {
             return this.file.dataDirectory;
         }
 
-        throw new Error("Unsupported platform. Can not return a storage location.");
+        throw new Error(
+            "Unsupported platform. Can not return a storage location."
+        );
     }
 
     /**
@@ -79,11 +93,19 @@ export class LearnplacePathBuilderImpl implements LearnplacePathBuilder {
      *
      * @returns {Promise<string>} the created directory path excluding {@code first}
      */
-    private async createRecursive(first: string, ...more: Array<string>): Promise<string> {
-
-        let previousDir: DirectoryEntry = await this.file.resolveDirectoryUrl(first);
-        for(const currentDir of more) {
-            previousDir = await this.file.getDirectory(previousDir, currentDir, <Flags>{create: true});
+    private async createRecursive(
+        first: string,
+        ...more: Array<string>
+    ): Promise<string> {
+        let previousDir: DirectoryEntry = await this.file.resolveDirectoryUrl(
+            first
+        );
+        for (const currentDir of more) {
+            previousDir = await this.file.getDirectory(
+                previousDir,
+                currentDir,
+                <Flags>{ create: true }
+            );
         }
 
         return `${more.join("/")}/`;
@@ -98,19 +120,20 @@ export class LearnplacePathBuilderImpl implements LearnplacePathBuilder {
  * @version 1.0.0
  */
 export interface ResourceTransfer {
-
-  /**
-   * Loads and stores the given resource.
-   * This method does know the host address to build the complete url of the resource.
-   *
-   * @param {string} resource - a relative path to the resource
-   *
-   * @returns {Promise<string>} the local absolute path to the stored resource
-   * @throws {ResourceLoadError} if the transfer fails
-   */
-  transfer(resource: string): Promise<string>
+    /**
+     * Loads and stores the given resource.
+     * This method does know the host address to build the complete url of the resource.
+     *
+     * @param {string} resource - a relative path to the resource
+     *
+     * @returns {Promise<string>} the local absolute path to the stored resource
+     * @throws {ResourceLoadError} if the transfer fails
+     */
+    transfer(resource: string): Promise<string>;
 }
-export const RESOURCE_TRANSFER: InjectionToken<string> = new InjectionToken("token for resource transfer");
+export const RESOURCE_TRANSFER: InjectionToken<string> = new InjectionToken(
+    "token for resource transfer"
+);
 
 /**
  * Resource loader over a http connection.
@@ -120,65 +143,73 @@ export const RESOURCE_TRANSFER: InjectionToken<string> = new InjectionToken("tok
  */
 @Injectable()
 export class HttpResourceTransfer implements ResourceTransfer {
+    private readonly log: Logger = Logging.getLogger(HttpResourceTransfer.name);
 
-  private readonly log: Logger = Logging.getLogger(HttpResourceTransfer.name);
+    constructor(
+        @Inject(LEARNPLACE_PATH_BUILDER)
+        private readonly pathBuilder: LearnplacePathBuilder,
+        @Inject(LINK_BUILDER) private readonly linkBuilder: LinkBuilder,
+        @Inject(USER_REPOSITORY)
+        private readonly userRepository: UserRepository,
+        @Inject(FILE_DOWNLOADER) private readonly downloader: FileDownloader
+    ) {}
 
-  constructor(
-    @Inject(LEARNPLACE_PATH_BUILDER) private readonly pathBuilder: LearnplacePathBuilder,
-    @Inject(LINK_BUILDER) private readonly linkBuilder: LinkBuilder,
-    @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository,
-    @Inject(FILE_DOWNLOADER) private readonly downloader: FileDownloader
-  ) {}
+    /**
+     * Loads and stores the given resource.
+     * This method does know the host address to build the complete url of the resource
+     * by using a {@link LinkBuilder}.
+     *
+     * @param {string} resource - a relative path to the resource
+     *
+     * @returns {Promise<string>} the local absolute path to the stored resource
+     * @throws {ResourceLoadError} if the transfer fails
+     */
+    async transfer(resource: string): Promise<string> {
+        try {
+            this.log.trace(() => `Read filename of ${resource}`);
+            const resourceFragments: Array<string> = resource.split("/");
+            const name: string = resourceFragments.pop();
 
-  /**
-   * Loads and stores the given resource.
-   * This method does know the host address to build the complete url of the resource
-   * by using a {@link LinkBuilder}.
-   *
-   * @param {string} resource - a relative path to the resource
-   *
-   * @returns {Promise<string>} the local absolute path to the stored resource
-   * @throws {ResourceLoadError} if the transfer fails
-   */
-  async transfer(resource: string): Promise<string> {
+            const url: string = await this.linkBuilder
+                .resource()
+                .resource(resource)
+                .build();
 
-    try {
+            const storageLocation: string =
+                await this.pathBuilder.getStorageLocation();
 
-      this.log.trace(() => `Read filename of ${resource}`);
-      const resourceFragments: Array<string> = resource.split("/");
-      const name: string = resourceFragments.pop();
+            const user: UserEntity = (
+                await this.userRepository.findAuthenticatedUser()
+            ).get();
+            const path: string = await this.pathBuilder.createPath(user.id);
 
-      const url: string = await this.linkBuilder
-        .resource()
-        .resource(resource)
-        .build();
+            this.log.trace(
+                () =>
+                    `Save file "${name}" to location "${storageLocation}${path}"`
+            );
+            const downloadOptions: DownloadRequestOptions = <
+                DownloadRequestOptions
+            >{
+                url: url,
+                filePath: `${storageLocation}${path}${name}`,
+                body: "",
+                followRedirects: true,
+                headers: {},
+                timeout: 0,
+            };
 
-      const storageLocation: string = await this.pathBuilder.getStorageLocation();
+            await this.downloader.download(downloadOptions);
 
-      const user: UserEntity = (await this.userRepository.findAuthenticatedUser()).get();
-      const path: string = await this.pathBuilder.createPath(user.id);
-
-      this.log.trace(() => `Save file "${name}" to location "${storageLocation}${path}"`);
-      const downloadOptions: DownloadRequestOptions = <DownloadRequestOptions>{
-            url: url,
-            filePath: `${storageLocation}${path}${name}`,
-            body: "",
-            followRedirects: true,
-            headers: {},
-            timeout: 0
-        };
-
-      await this.downloader.download(downloadOptions);
-
-      return `${path}${name}`;
-
-    } catch (error) {
-      this.log.debug(() => `Resource Transfer Error: ${JSON.stringify(error)}`);
-      throw new ResourceLoadError(`Could not transfer resource: resource=${resource}`);
+            return `${path}${name}`;
+        } catch (error) {
+            this.log.debug(
+                () => `Resource Transfer Error: ${JSON.stringify(error)}`
+            );
+            throw new ResourceLoadError(
+                `Could not transfer resource: resource=${resource}`
+            );
+        }
     }
-  }
-
-
 }
 
 /**
@@ -188,9 +219,8 @@ export class HttpResourceTransfer implements ResourceTransfer {
  * @version 1.0.0
  */
 export class ResourceLoadError extends Error {
-
-  constructor(message: string) {
-    super(message);
-    Object.setPrototypeOf(this, ResourceLoadError.prototype);
-  }
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, ResourceLoadError.prototype);
+    }
 }

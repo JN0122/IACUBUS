@@ -1,28 +1,63 @@
-import {LEARNPLACE_API, LearnplaceAPI} from "../../../providers/learnplace/rest/learnplace.api";
-import {LEARNPLACE_REPOSITORY, LearnplaceRepository} from "../../../providers/learnplace/repository/learnplace.repository";
-import {BlockObject, JournalEntry, LearnPlace} from "../../../providers/learnplace/rest/learnplace.pojo";
-import { LearnplaceEntity, LocationEntity, MapEntity, VisitJournalEntity } from "../../../entity/learnplace/learnplace.entity";
-import {Logging} from "../../../services/logging/logging.service";
-import {Inject, Injectable, InjectionToken} from "@angular/core";
-import {VisibilityEntity} from "../../../entity/learnplace/visibility.entity";
-import {Logger} from "../../../services/logging/logging.api";
-import {Optional} from "../../../util/util.optional";
-import {HttpRequestError, UnfinishedHttpRequestError} from "../../../providers/http";
 import {
-    AccordionMapper, LinkBlockMapper, PictureBlockMapper, TextBlockMapper, VideoBlockMapper,
-    VisitJournalMapper
+    LEARNPLACE_API,
+    LearnplaceAPI,
+} from "../../../providers/learnplace/rest/learnplace.api";
+import {
+    LEARNPLACE_REPOSITORY,
+    LearnplaceRepository,
+} from "../../../providers/learnplace/repository/learnplace.repository";
+import {
+    BlockObject,
+    JournalEntry,
+    LearnPlace,
+} from "../../../providers/learnplace/rest/learnplace.pojo";
+import {
+    LearnplaceEntity,
+    LocationEntity,
+    MapEntity,
+    VisitJournalEntity,
+} from "../../../entity/learnplace/learnplace.entity";
+import { Logging } from "../../../services/logging/logging.service";
+import { Inject, Injectable, InjectionToken } from "@angular/core";
+import { VisibilityEntity } from "../../../entity/learnplace/visibility.entity";
+import { Logger } from "../../../services/logging/logging.api";
+import { Optional } from "../../../util/util.optional";
+import {
+    HttpRequestError,
+    UnfinishedHttpRequestError,
+} from "../../../providers/http";
+import {
+    AccordionMapper,
+    LinkBlockMapper,
+    PictureBlockMapper,
+    TextBlockMapper,
+    VideoBlockMapper,
+    VisitJournalMapper,
 } from "./mappers";
-import {USER_REPOSITORY, UserRepository} from "../../../providers/repository/repository.user";
-import {UserEntity} from "../../../entity/user.entity";
-import {Observable, throwError, of, EMPTY, from, forkJoin, combineLatest, merge, defer} from "rxjs";
-import {TextblockEntity} from "../../../entity/learnplace/textblock.entity";
-import {PictureBlockEntity} from "../../../entity/learnplace/pictureBlock.entity";
-import {LinkblockEntity} from "../../../entity/learnplace/linkblock.entity";
-import {VideoBlockEntity} from "../../../entity/learnplace/videoblock.entity";
-import {AccordionEntity} from "../../../entity/learnplace/accordion.entity";
-import {isDefined} from "../../../util/util.function";
+import {
+    USER_REPOSITORY,
+    UserRepository,
+} from "../../../providers/repository/repository.user";
+import { UserEntity } from "../../../entity/user.entity";
+import {
+    Observable,
+    throwError,
+    of,
+    EMPTY,
+    from,
+    forkJoin,
+    combineLatest,
+    merge,
+    defer,
+} from "rxjs";
+import { TextblockEntity } from "../../../entity/learnplace/textblock.entity";
+import { PictureBlockEntity } from "../../../entity/learnplace/pictureBlock.entity";
+import { LinkblockEntity } from "../../../entity/learnplace/linkblock.entity";
+import { VideoBlockEntity } from "../../../entity/learnplace/videoblock.entity";
+import { AccordionEntity } from "../../../entity/learnplace/accordion.entity";
+import { isDefined } from "../../../util/util.function";
 import uuid from "uuid-js";
-import {mergeMap, map, mergeAll, catchError} from "rxjs/operators";
+import { mergeMap, map, mergeAll, catchError } from "rxjs/operators";
 import { AuthenticationProvider } from "src/app/providers/authentication.provider";
 import { RESTAPIException } from "src/app/exceptions/RESTAPIException";
 
@@ -34,7 +69,6 @@ import { RESTAPIException } from "src/app/exceptions/RESTAPIException";
  * @version 1.0.0
  */
 export interface LearnplaceLoader {
-
     /**
      * Loads all relevant data of the learnplace matching
      * the given {@code objectId} and stores them.
@@ -43,7 +77,7 @@ export interface LearnplaceLoader {
      *
      * @throws {LearnplaceLoadingError} if the learnplace could not be loaded
      */
-    load(objectId: number): Promise<void>
+    load(objectId: number): Promise<void>;
 
     /**
      * Loads only the learnplace matching
@@ -53,7 +87,7 @@ export interface LearnplaceLoader {
      *
      * @throws {LearnplaceLoadingError} if the learnplace could not be loaded
      */
-    loadLearnplace(objectId: number): Promise<void>
+    loadLearnplace(objectId: number): Promise<void>;
 
     /**
      * Loads only the blocks and the visitjournal of a learnplace matching
@@ -63,10 +97,11 @@ export interface LearnplaceLoader {
      *
      * @throws {LearnplaceLoadingError} if the learnplace could not be loaded
      */
-    loadBlocks(objectId: number, lp?: LearnplaceEntity): Promise<void>
+    loadBlocks(objectId: number, lp?: LearnplaceEntity): Promise<void>;
 }
 
-export const LEARNPLACE_LOADER: InjectionToken<LearnplaceLoader> = new InjectionToken("token four learnplace loader");
+export const LEARNPLACE_LOADER: InjectionToken<LearnplaceLoader> =
+    new InjectionToken("token four learnplace loader");
 
 /**
  * Loads a single learnplace over ILIAS rest and stores
@@ -77,118 +112,192 @@ export const LEARNPLACE_LOADER: InjectionToken<LearnplaceLoader> = new Injection
  */
 @Injectable()
 export class RestLearnplaceLoader implements LearnplaceLoader {
-
     private readonly log: Logger = Logging.getLogger(RestLearnplaceLoader.name);
 
     constructor(
         @Inject(LEARNPLACE_API) private readonly learnplaceAPI: LearnplaceAPI,
-        @Inject(LEARNPLACE_REPOSITORY) private readonly learnplaceRepository: LearnplaceRepository,
-        @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository,
+        @Inject(LEARNPLACE_REPOSITORY)
+        private readonly learnplaceRepository: LearnplaceRepository,
+        @Inject(USER_REPOSITORY)
+        private readonly userRepository: UserRepository,
         private readonly textBlockMapper: TextBlockMapper,
         private readonly pictureBlockMapper: PictureBlockMapper,
         private readonly linkBlockMapper: LinkBlockMapper,
         private readonly videoBlockMapper: VideoBlockMapper,
         private readonly accordionMapper: AccordionMapper,
         private readonly visitJournalMapper: VisitJournalMapper
-    ) {
-    }
+    ) {}
 
-    async loadLearnplace(objectId: number, update: boolean = false): Promise<void> {
-        const user: Optional<UserEntity> = await this.userRepository.findAuthenticatedUser();
-
+    async loadLearnplace(
+        objectId: number,
+        update: boolean = false
+    ): Promise<void> {
+        const user: Optional<UserEntity> =
+            await this.userRepository.findAuthenticatedUser();
 
         // const lpEntity: Observable<LearnplaceEntity>;
-        if(!user.isPresent()) {
+        if (!user.isPresent()) {
             return;
-        };
+        }
 
-        const lpEntity: Promise<LearnplaceEntity> = from(this.learnplaceRepository.findByObjectIdAndUserId(objectId, user.get().id))
+        const lpEntity: Promise<LearnplaceEntity> = from(
+            this.learnplaceRepository.findByObjectIdAndUserId(
+                objectId,
+                user.get().id
+            )
+        )
             .pipe(
                 mergeMap((lp: Optional<LearnplaceEntity>) => {
-                    return defer(() => this.learnplaceAPI.getLearnPlace(objectId))
-                        .pipe(
+                    return defer(() =>
+                        this.learnplaceAPI.getLearnPlace(objectId)
+                    ).pipe(
                         map((it) => {
-                            const lpEntity: LearnplaceEntity = new LearnplaceEntity();
-                            console.error("getting lp from api")
+                            const lpEntity: LearnplaceEntity =
+                                new LearnplaceEntity();
+                            console.error("getting lp from api");
 
-                            return lpEntity.applies<LearnplaceEntity>(function(): void {
-                                this.id = uuid.create(4).toString();
-                                this.objectId = objectId;
-                                this.user = Promise.resolve(user.get());
+                            return lpEntity.applies<LearnplaceEntity>(
+                                function (): void {
+                                    this.id = uuid.create(4).toString();
+                                    this.objectId = objectId;
+                                    this.user = Promise.resolve(user.get());
 
-                                this.map = Optional.ofNullable(this.map).orElse(new MapEntity()).applies(function(): void {
-                                    this.zoom = it.map.zoomLevel;
-                                    this.visibility = (new VisibilityEntity()).applies(function(): void {
-                                        this.value = it.map.visibility;
-                                    })
-                                });
+                                    this.map = Optional.ofNullable(this.map)
+                                        .orElse(new MapEntity())
+                                        .applies(function (): void {
+                                            this.zoom = it.map.zoomLevel;
+                                            this.visibility =
+                                                new VisibilityEntity().applies(
+                                                    function (): void {
+                                                        this.value =
+                                                            it.map.visibility;
+                                                    }
+                                                );
+                                        });
 
-                                this.location = Optional.ofNullable(this.location).orElse(new LocationEntity()).applies(function(): void {
-                                    this.latitude = it.location.latitude;
-                                    this.longitude = it.location.longitude;
-                                    this.radius = it.location.radius;
-                                    this.elevation = it.location.elevation;
-                                });
-                            });
+                                    this.location = Optional.ofNullable(
+                                        this.location
+                                    )
+                                        .orElse(new LocationEntity())
+                                        .applies(function (): void {
+                                            this.latitude =
+                                                it.location.latitude;
+                                            this.longitude =
+                                                it.location.longitude;
+                                            this.radius = it.location.radius;
+                                            this.elevation =
+                                                it.location.elevation;
+                                        });
+                                }
+                            );
                         }),
-                        catchError(err => {
+                        catchError((err) => {
                             if (lp.isPresent()) {
-                                console.warn('getting lp from db');
+                                console.warn("getting lp from db");
                                 return of(lp.get());
                             } else {
                                 // some err occured and we dont have a downloaded version
-                                console.error('We dont have anything here', err);
+                                console.error(
+                                    "We dont have anything here",
+                                    err
+                                );
                                 return of(err);
                             }
                         })
-                    )
+                    );
                 })
-            ).toPromise();
+            )
+            .toPromise();
 
         try {
             await this.learnplaceRepository.save(await lpEntity);
         } catch (error) {
             if (
                 error instanceof RESTAPIException ||
-                error instanceof UnfinishedHttpRequestError) {
-                    return;
-                }
+                error instanceof UnfinishedHttpRequestError
+            ) {
+                return;
+            }
             console.error("Error by loading Learnplace: ", error);
             throw error;
         }
     }
 
     async loadBlocks(objectId: number, lp?: LearnplaceEntity): Promise<void> {
-        const blocks: Observable<BlockObject> = from(this.learnplaceAPI.getBlocks(objectId));
+        const blocks: Observable<BlockObject> = from(
+            this.learnplaceAPI.getBlocks(objectId)
+        );
         const learnplaceEntity: Observable<LearnplaceEntity> = lp
             ? of(lp)
-            : from(this.learnplaceRepository.findByObjectIdAndUserId(objectId, AuthenticationProvider.getUser().id)).pipe(map(val => val.get()));
+            : from(
+                  this.learnplaceRepository.findByObjectIdAndUserId(
+                      objectId,
+                      AuthenticationProvider.getUser().id
+                  )
+              ).pipe(map((val) => val.get()));
 
-        const journalEntries: Observable<Array<JournalEntry>> = from(this.learnplaceAPI.getJournalEntries(objectId));
+        const journalEntries: Observable<Array<JournalEntry>> = from(
+            this.learnplaceAPI.getJournalEntries(objectId)
+        );
 
-        const visitJournalEntities: Observable<Array<VisitJournalEntity>> = forkJoin(learnplaceEntity, journalEntries,
-            (learnplaceEntity, journalEntries) => from(this.visitJournalMapper.map(learnplaceEntity.visitJournal, journalEntries))
+        const visitJournalEntities: Observable<Array<VisitJournalEntity>> =
+            forkJoin(
+                learnplaceEntity,
+                journalEntries,
+                (learnplaceEntity, journalEntries) =>
+                    from(
+                        this.visitJournalMapper.map(
+                            learnplaceEntity.visitJournal,
+                            journalEntries
+                        )
+                    )
+            ).pipe(mergeAll());
+
+        const textBlockEntities: Observable<Array<TextblockEntity>> = forkJoin(
+            learnplaceEntity,
+            blocks,
+            (entity, blocks) =>
+                from(this.textBlockMapper.map(entity.textBlocks, blocks.text))
         ).pipe(mergeAll());
 
-        const textBlockEntities: Observable<Array<TextblockEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.textBlockMapper.map(entity.textBlocks, blocks.text))
+        const pictureBlockEntities: Observable<Array<PictureBlockEntity>> =
+            forkJoin(learnplaceEntity, blocks, (entity, blocks) =>
+                from(
+                    this.pictureBlockMapper.map(
+                        entity.pictureBlocks,
+                        blocks.picture
+                    )
+                )
+            ).pipe(mergeAll());
+
+        const linkBlockEntities: Observable<Array<LinkblockEntity>> = forkJoin(
+            learnplaceEntity,
+            blocks,
+            (entity, blocks) =>
+                from(
+                    this.linkBlockMapper.map(
+                        entity.linkBlocks,
+                        blocks.iliasLink
+                    )
+                )
         ).pipe(mergeAll());
 
-        const pictureBlockEntities: Observable<Array<PictureBlockEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.pictureBlockMapper.map(entity.pictureBlocks, blocks.picture))
-        ).pipe(mergeAll());
+        const videoBlockEntities: Observable<Array<VideoBlockEntity>> =
+            forkJoin(learnplaceEntity, blocks, (entity, blocks) =>
+                from(
+                    this.videoBlockMapper.map(entity.videoBlocks, blocks.video)
+                )
+            ).pipe(mergeAll());
 
-        const linkBlockEntities: Observable<Array<LinkblockEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.linkBlockMapper.map(entity.linkBlocks, blocks.iliasLink))
-        ).pipe(mergeAll());
-
-        const videoBlockEntities: Observable<Array<VideoBlockEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.videoBlockMapper.map(entity.videoBlocks, blocks.video))
-        ).pipe(mergeAll());
-
-        const accordionBlockEntities: Observable<Array<AccordionEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.accordionMapper.map(entity.accordionBlocks, blocks.accordion))
-        ).pipe(mergeAll());
+        const accordionBlockEntities: Observable<Array<AccordionEntity>> =
+            forkJoin(learnplaceEntity, blocks, (entity, blocks) =>
+                from(
+                    this.accordionMapper.map(
+                        entity.accordionBlocks,
+                        blocks.accordion
+                    )
+                )
+            ).pipe(mergeAll());
 
         // tslint:disable-next-line: deprecation
         return combineLatest(
@@ -199,9 +308,16 @@ export class RestLearnplaceLoader implements LearnplaceLoader {
             linkBlockEntities,
             videoBlockEntities,
             accordionBlockEntities,
-            (entity, visitJournal, textBlocks, pictureBlocks, linkBlocks, videoBlocks, accordionBlocks) =>
-                entity.applies(function(): void {
-
+            (
+                entity,
+                visitJournal,
+                textBlocks,
+                pictureBlocks,
+                linkBlocks,
+                videoBlocks,
+                accordionBlocks
+            ) =>
+                entity.applies(function (): void {
                     this.visitJournal = visitJournal;
                     this.textBlocks = textBlocks;
                     this.pictureBlocks = pictureBlocks;
@@ -209,39 +325,45 @@ export class RestLearnplaceLoader implements LearnplaceLoader {
                     this.videoBlocks = videoBlocks;
                     this.accordionBlocks = accordionBlocks;
                 })
-        ).pipe(
-            mergeMap(it => from(this.learnplaceRepository.save(it))),
-            mergeMap(it => EMPTY),
-            catchError((error, _) => {
+        )
+            .pipe(
+                mergeMap((it) => from(this.learnplaceRepository.save(it))),
+                mergeMap((it) => EMPTY),
+                catchError((error, _) => {
+                    if (
+                        error instanceof HttpRequestError ||
+                        error instanceof UnfinishedHttpRequestError
+                    ) {
+                        return learnplaceEntity;
+                    }
 
-                if (error instanceof HttpRequestError || error instanceof UnfinishedHttpRequestError) {
-                    return learnplaceEntity;
-                }
+                    return throwError(error);
+                }),
+                mergeMap((it) => {
+                    if (isDefined(it.id)) {
+                        return from(this.learnplaceRepository.exists(it.id));
+                    }
 
-                return throwError(error);
-            }),
-            mergeMap(it => {
+                    return of(false);
+                }),
+                mergeMap((exists) => {
+                    if (exists) {
+                        this.log.warn(
+                            () =>
+                                `Blocks of Learnplace with object id "${objectId}" could not be loaded, but is available from local storage`
+                        );
+                        return EMPTY;
+                    }
 
-                if (isDefined(it.id)) {
-                    return from(this.learnplaceRepository.exists(it.id));
-                }
-
-                return of(false);
-            }),
-            mergeMap(exists => {
-
-                if (exists) {
-                    this.log.warn(() => `Blocks of Learnplace with object id "${objectId}" could not be loaded, but is available from local storage`);
-                    return EMPTY;
-                }
-
-                return throwError(new LearnplaceLoadingError(`Could not load blocks of learnplace with id "${objectId}" over http connection`));
-
-            })
-        ).toPromise();
+                    return throwError(
+                        new LearnplaceLoadingError(
+                            `Could not load blocks of learnplace with id "${objectId}" over http connection`
+                        )
+                    );
+                })
+            )
+            .toPromise();
     }
-
-
 
     /**
      * Loads all relevant data of the learnplace matching
@@ -255,42 +377,96 @@ export class RestLearnplaceLoader implements LearnplaceLoader {
      * @throws {LearnplaceLoadingError} if the learnplace could not be loaded
      */
     async load(objectId: number): Promise<void> {
-        const learnplace: Observable<LearnPlace> = from(this.learnplaceAPI.getLearnPlace(objectId));
-        const blocks: Observable<BlockObject> = from(this.learnplaceAPI.getBlocks(objectId));
-        const journalEntries: Observable<Array<JournalEntry>> = from(this.learnplaceAPI.getJournalEntries(objectId));
-
-        const user: Observable<Optional<UserEntity>> = from(this.userRepository.findAuthenticatedUser());
-
-        const learnplaceEntity: Observable<LearnplaceEntity> = user.pipe(
-            mergeMap(it => from(this.learnplaceRepository.findByObjectIdAndUserId(objectId, it.get().id))),
-            map(it => it.orElse(new LearnplaceEntity().applies(function(): void {
-                this.id = uuid.create(4).toString();
-            })))
+        const learnplace: Observable<LearnPlace> = from(
+            this.learnplaceAPI.getLearnPlace(objectId)
+        );
+        const blocks: Observable<BlockObject> = from(
+            this.learnplaceAPI.getBlocks(objectId)
+        );
+        const journalEntries: Observable<Array<JournalEntry>> = from(
+            this.learnplaceAPI.getJournalEntries(objectId)
         );
 
-        const visitJournalEntities: Observable<Array<VisitJournalEntity>> = forkJoin(learnplaceEntity, journalEntries,
-            (learnplaceEntity, journalEntries) => from(this.visitJournalMapper.map(learnplaceEntity.visitJournal, journalEntries))
+        const user: Observable<Optional<UserEntity>> = from(
+            this.userRepository.findAuthenticatedUser()
+        );
+
+        const learnplaceEntity: Observable<LearnplaceEntity> = user.pipe(
+            mergeMap((it) =>
+                from(
+                    this.learnplaceRepository.findByObjectIdAndUserId(
+                        objectId,
+                        it.get().id
+                    )
+                )
+            ),
+            map((it) =>
+                it.orElse(
+                    new LearnplaceEntity().applies(function (): void {
+                        this.id = uuid.create(4).toString();
+                    })
+                )
+            )
+        );
+
+        const visitJournalEntities: Observable<Array<VisitJournalEntity>> =
+            forkJoin(
+                learnplaceEntity,
+                journalEntries,
+                (learnplaceEntity, journalEntries) =>
+                    from(
+                        this.visitJournalMapper.map(
+                            learnplaceEntity.visitJournal,
+                            journalEntries
+                        )
+                    )
+            ).pipe(mergeAll());
+
+        const textBlockEntities: Observable<Array<TextblockEntity>> = forkJoin(
+            learnplaceEntity,
+            blocks,
+            (entity, blocks) =>
+                from(this.textBlockMapper.map(entity.textBlocks, blocks.text))
         ).pipe(mergeAll());
 
-        const textBlockEntities: Observable<Array<TextblockEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.textBlockMapper.map(entity.textBlocks, blocks.text))
+        const pictureBlockEntities: Observable<Array<PictureBlockEntity>> =
+            forkJoin(learnplaceEntity, blocks, (entity, blocks) =>
+                from(
+                    this.pictureBlockMapper.map(
+                        entity.pictureBlocks,
+                        blocks.picture
+                    )
+                )
+            ).pipe(mergeAll());
+
+        const linkBlockEntities: Observable<Array<LinkblockEntity>> = forkJoin(
+            learnplaceEntity,
+            blocks,
+            (entity, blocks) =>
+                from(
+                    this.linkBlockMapper.map(
+                        entity.linkBlocks,
+                        blocks.iliasLink
+                    )
+                )
         ).pipe(mergeAll());
 
-        const pictureBlockEntities: Observable<Array<PictureBlockEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.pictureBlockMapper.map(entity.pictureBlocks, blocks.picture))
-        ).pipe(mergeAll());
+        const videoBlockEntities: Observable<Array<VideoBlockEntity>> =
+            forkJoin(learnplaceEntity, blocks, (entity, blocks) =>
+                from(
+                    this.videoBlockMapper.map(entity.videoBlocks, blocks.video)
+                )
+            ).pipe(mergeAll());
 
-        const linkBlockEntities: Observable<Array<LinkblockEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.linkBlockMapper.map(entity.linkBlocks, blocks.iliasLink))
-        ).pipe(mergeAll());
-
-        const videoBlockEntities: Observable<Array<VideoBlockEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.videoBlockMapper.map(entity.videoBlocks, blocks.video))
-        ).pipe(mergeAll());
-
-        const accordionBlockEntities: Observable<Array<AccordionEntity>> = forkJoin(learnplaceEntity, blocks,
-            (entity, blocks) => from(this.accordionMapper.map(entity.accordionBlocks, blocks.accordion))
-        ).pipe(mergeAll());
+        const accordionBlockEntities: Observable<Array<AccordionEntity>> =
+            forkJoin(learnplaceEntity, blocks, (entity, blocks) =>
+                from(
+                    this.accordionMapper.map(
+                        entity.accordionBlocks,
+                        blocks.accordion
+                    )
+                )
+            ).pipe(mergeAll());
 
         return combineLatest(
             learnplace,
@@ -302,25 +478,40 @@ export class RestLearnplaceLoader implements LearnplaceLoader {
             linkBlockEntities,
             videoBlockEntities,
             accordionBlockEntities,
-            (learnplace, user, entity, visitJournal, textBlocks, pictureBlocks, linkBlocks, videoBlocks, accordionBlocks) =>
-                entity.applies(function(): void {
-
+            (
+                learnplace,
+                user,
+                entity,
+                visitJournal,
+                textBlocks,
+                pictureBlocks,
+                linkBlocks,
+                videoBlocks,
+                accordionBlocks
+            ) =>
+                entity.applies(function (): void {
                     this.objectId = learnplace.objectId;
                     this.user = Promise.resolve(user.get());
 
-                    this.map = Optional.ofNullable(this.map).orElse(new MapEntity()).applies(function(): void {
-                        this.zoom = learnplace.map.zoomLevel;
-                        this.visibility = (new VisibilityEntity()).applies(function(): void {
-                            this.value = learnplace.map.visibility;
-                        })
-                    });
+                    this.map = Optional.ofNullable(this.map)
+                        .orElse(new MapEntity())
+                        .applies(function (): void {
+                            this.zoom = learnplace.map.zoomLevel;
+                            this.visibility = new VisibilityEntity().applies(
+                                function (): void {
+                                    this.value = learnplace.map.visibility;
+                                }
+                            );
+                        });
 
-                    this.location = Optional.ofNullable(this.location).orElse(new LocationEntity()).applies(function(): void {
-                        this.latitude = learnplace.location.latitude;
-                        this.longitude = learnplace.location.longitude;
-                        this.radius = learnplace.location.radius;
-                        this.elevation = learnplace.location.elevation;
-                    });
+                    this.location = Optional.ofNullable(this.location)
+                        .orElse(new LocationEntity())
+                        .applies(function (): void {
+                            this.latitude = learnplace.location.latitude;
+                            this.longitude = learnplace.location.longitude;
+                            this.radius = learnplace.location.radius;
+                            this.elevation = learnplace.location.elevation;
+                        });
 
                     this.visitJournal = visitJournal;
                     this.textBlocks = textBlocks;
@@ -329,36 +520,44 @@ export class RestLearnplaceLoader implements LearnplaceLoader {
                     this.videoBlocks = videoBlocks;
                     this.accordionBlocks = accordionBlocks;
                 })
-        ).pipe(
-                mergeMap(it => from(this.learnplaceRepository.save(it))),
-                mergeMap(_ => EMPTY), // we want to emit void, so we map the save observable to an empty one
+        )
+            .pipe(
+                mergeMap((it) => from(this.learnplaceRepository.save(it))),
+                mergeMap((_) => EMPTY), // we want to emit void, so we map the save observable to an empty one
                 catchError((error, _) => {
-
-                    if (error instanceof HttpRequestError || error instanceof UnfinishedHttpRequestError) {
+                    if (
+                        error instanceof HttpRequestError ||
+                        error instanceof UnfinishedHttpRequestError
+                    ) {
                         return learnplaceEntity;
                     }
 
                     return throwError(error);
                 }),
-                mergeMap(it => {
-
+                mergeMap((it) => {
                     if (isDefined(it.id)) {
                         return from(this.learnplaceRepository.exists(it.id));
                     }
 
                     return of(false);
                 }),
-                mergeMap(exists => {
-
+                mergeMap((exists) => {
                     if (exists) {
-                        this.log.warn(() => `Learnplace with object id "${objectId}" could not be loaded, but is available from local storage`);
+                        this.log.warn(
+                            () =>
+                                `Learnplace with object id "${objectId}" could not be loaded, but is available from local storage`
+                        );
                         return EMPTY;
                     }
 
-                    return throwError(new LearnplaceLoadingError(`Could not load learnplace with id "${objectId}" over http connection`));
-
+                    return throwError(
+                        new LearnplaceLoadingError(
+                            `Could not load learnplace with id "${objectId}" over http connection`
+                        )
+                    );
                 })
-            ).toPromise();
+            )
+            .toPromise();
     }
 }
 
@@ -369,7 +568,6 @@ export class RestLearnplaceLoader implements LearnplaceLoader {
  * @version 1.0.1
  */
 export class LearnplaceLoadingError extends Error {
-
     constructor(message: string) {
         super(message);
         Object.setPrototypeOf(this, LearnplaceLoadingError.prototype);

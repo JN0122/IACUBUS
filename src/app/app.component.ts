@@ -4,7 +4,12 @@ import { Router } from "@angular/router";
 import { AppVersion } from "@ionic-native/app-version/ngx";
 /** ionic-native */
 import { SplashScreen } from "@ionic-native/splash-screen/ngx";
-import { ModalController, NavController, Platform, ToastController } from "@ionic/angular";
+import {
+    ModalController,
+    NavController,
+    Platform,
+    ToastController,
+} from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 /** models */
 import { Settings } from "./models/settings";
@@ -22,12 +27,12 @@ import getMessage = Logging.getMessage;
 interface NavigatorSplashScreen {
     splashscreen: {
         hide(): void;
-    }
+    };
 }
 
 @Component({
     selector: "app-root",
-    templateUrl: "app.component.html"
+    templateUrl: "app.component.html",
 })
 export class AppComponent {
     /**
@@ -54,7 +59,7 @@ export class AppComponent {
         private readonly navCtrl: NavController,
         private readonly toastCtrl: ToastController,
         private readonly translate: TranslateService,
-        private readonly networkProvider: NetworkProvider,
+        private readonly networkProvider: NetworkProvider
     ) {
         this.splashScreen.hide();
         this.initializeApp();
@@ -64,7 +69,6 @@ export class AppComponent {
      * Initialize everything that has to be done on start up.
      */
     private async initializeApp(): Promise<void> {
-
         try {
             this.log.debug(() => "Initialize app component");
 
@@ -75,7 +79,7 @@ export class AppComponent {
             // This function call may logs the user out, therefore re validate if user is logged in afterwards
             await this.validateUserLoginSessionVersion();
 
-            if(AuthenticationProvider.isLoggedIn()) {
+            if (AuthenticationProvider.isLoggedIn()) {
                 // await this.sync.resetOfflineSynchronization(true);
                 await this.themeProvider.synchronizeAndSetCustomTheme();
                 await this.startDownloadingOfflineContent();
@@ -88,20 +92,28 @@ export class AppComponent {
 
             this.log.info(() => "App component init successful");
         } catch (error) {
-            const message: string = getMessage(error,  `Error occurred: \n${JSON.stringify(error)}`);
-            const errorType: string = (error instanceof Error) ? error.name : "N/a";
-            this.log.fatal(() => `Could not initialize app. Error type: ${errorType} Message: ${message}`)
+            const message: string = getMessage(
+                error,
+                `Error occurred: \n${JSON.stringify(error)}`
+            );
+            const errorType: string =
+                error instanceof Error ? error.name : "N/a";
+            this.log.fatal(
+                () =>
+                    `Could not initialize app. Error type: ${errorType} Message: ${message}`
+            );
         } finally {
             this.log.trace(() => "Hide splash screen");
-            ((navigator as unknown) as NavigatorSplashScreen).splashscreen.hide();
+            (navigator as unknown as NavigatorSplashScreen).splashscreen.hide();
         }
     }
 
     private async validateUserLoginSessionVersion(): Promise<void> {
-        if(AuthenticationProvider.isLoggedIn()) {
+        if (AuthenticationProvider.isLoggedIn()) {
             this.log.debug(() => "Validate user login session version");
-            const currentAppVersion: string = await this.appVersionPlugin.getVersionNumber();
-            if(this.user.lastVersionLogin !== currentAppVersion) {
+            const currentAppVersion: string =
+                await this.appVersionPlugin.getVersionNumber();
+            if (this.user.lastVersionLogin !== currentAppVersion) {
                 await this.auth.logout();
                 this.log.info(() => "Old user session detected logout user");
             }
@@ -109,9 +121,13 @@ export class AppComponent {
     }
 
     private async startDownloadingOfflineContent(): Promise<void> {
-        this.log.debug(() => "Start downloading offline content if user activated the option");
+        this.log.debug(
+            () =>
+                "Start downloading offline content if user activated the option"
+        );
         const settings: Settings = await Settings.findByUserId(this.user.id);
-        if(settings.downloadOnStart && window.navigator.onLine) this.sync.loadAllOfflineContent();
+        if (settings.downloadOnStart && window.navigator.onLine)
+            this.sync.loadAllOfflineContent();
     }
 
     /**
@@ -131,7 +147,7 @@ export class AppComponent {
             let action: string = "back";
 
             // when on object-list-page, navigate back in the container-hierarchy
-            if(
+            if (
                 url.match(/(content|favorites)/) &&
                 !url.match(/(content|favorites)\/0/) &&
                 !url.match(/details/) &&
@@ -141,7 +157,7 @@ export class AppComponent {
             }
 
             // when on one of the tabs default pages, navigate to the desktop-page
-            if(
+            if (
                 url.match(/content\/0/) ||
                 url.match(/favorites\/0/) ||
                 url.match(/news$/) ||
@@ -151,20 +167,15 @@ export class AppComponent {
             }
 
             // when on the desktop-page, double-tap back-button for exit
-            if(
-                url.match(/home$/) ||
-                url.match(/login$/)
-            ) {
-                action = (backButtonTapped) ? "close" : "ask_close";
+            if (url.match(/home$/) || url.match(/login$/)) {
+                action = backButtonTapped ? "close" : "ask_close";
             }
 
-            if(
-                url.match(/learnplace/)
-            ) {
+            if (url.match(/learnplace/)) {
                 action = "back_to_content";
             }
 
-            switch(action) {
+            switch (action) {
                 case "to_home":
                     this.navCtrl.navigateRoot("tabs");
                     break;
@@ -174,10 +185,14 @@ export class AppComponent {
                     setTimeout(() => {
                         backButtonTapped = false;
                     }, 3000);
-                    this.toastCtrl.create({
-                        message: this.translate.instant("message.back_to_exit"),
-                        duration: 3000
-                    }).then((it: HTMLIonToastElement) => it.present());
+                    this.toastCtrl
+                        .create({
+                            message: this.translate.instant(
+                                "message.back_to_exit"
+                            ),
+                            duration: 3000,
+                        })
+                        .then((it: HTMLIonToastElement) => it.present());
                     break;
 
                 case "close":

@@ -1,4 +1,9 @@
-import { APP_INITIALIZER, FactoryProvider, Inject, Injectable } from "@angular/core";
+import {
+    APP_INITIALIZER,
+    FactoryProvider,
+    Inject,
+    Injectable,
+} from "@angular/core";
 import { Network } from "@ionic-native/network/ngx";
 import { SQLite } from "@ionic-native/sqlite/ngx";
 import { StatusBar } from "@ionic-native/status-bar/ngx";
@@ -14,12 +19,16 @@ import { Database } from "./services/database/database";
 import { DB_MIGRATION, DBMigration } from "./services/migration/migration.api";
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class AppInitialisation {
-
     private readonly FALLBACK_LANGUAGE: string = "de";
-    private readonly SUPPORTED_LANGUAGES: Set<string> = new Set(["de", "fr", "en", "it"]);
+    private readonly SUPPORTED_LANGUAGES: Set<string> = new Set([
+        "de",
+        "fr",
+        "en",
+        "it",
+    ]);
 
     constructor(
         private readonly platform: Platform,
@@ -29,8 +38,7 @@ export class AppInitialisation {
         @Inject(DB_MIGRATION) private readonly migration: DBMigration,
         private readonly translate: TranslateService,
         private readonly statusBar: StatusBar
-    ) {
-    }
+    ) {}
 
     async init(): Promise<void> {
         await this.platform.ready();
@@ -47,7 +55,9 @@ export class AppInitialisation {
     }
 
     private initStaticLegacyDatabaseMembers(): void {
-        SQLiteDatabaseService.connection = getConnection(PEGASUS_CONNECTION_NAME);
+        SQLiteDatabaseService.connection = getConnection(
+            PEGASUS_CONNECTION_NAME
+        );
     }
 
     private async loadUser(): Promise<void> {
@@ -60,21 +70,28 @@ export class AppInitialisation {
     }
 
     private async bootstrapLanguage(): Promise<void> {
-        if(AuthenticationProvider.isLoggedIn()) {
+        if (AuthenticationProvider.isLoggedIn()) {
             const user: User = AuthenticationProvider.getUser();
             const setting: Settings = await Settings.findByUserId(user.id);
             this.translate.use(setting.language);
         } else {
             // get the language of the navigator an check if it is supported. default is de
-            const language: string = !!navigator.language ? navigator.language : this.FALLBACK_LANGUAGE;
-            const languages: ReadonlyArray<string> = !!navigator.languages && navigator.languages.length > 0 ?
-                navigator.languages : [this.FALLBACK_LANGUAGE];
+            const language: string = !!navigator.language
+                ? navigator.language
+                : this.FALLBACK_LANGUAGE;
+            const languages: ReadonlyArray<string> =
+                !!navigator.languages && navigator.languages.length > 0
+                    ? navigator.languages
+                    : [this.FALLBACK_LANGUAGE];
 
             const browserLanguages: Set<string> = Intl
                 // @ts-ignore (TS 3.5 does not have a type dev for this intl function)
                 .getCanonicalLocales([language, ...languages])
                 .map((it) => it.split("-")[0])
-                .reduce((col: Set<string>, child: string) => col.add(child), new Set<string>()); // Sets in js are ordered
+                .reduce(
+                    (col: Set<string>, child: string) => col.add(child),
+                    new Set<string>()
+                ); // Sets in js are ordered
 
             let lng: string = this.FALLBACK_LANGUAGE;
             for (const langCode of browserLanguages) {
@@ -156,11 +173,8 @@ export const INIT_APP: FactoryProvider = {
  */
 export const INIT_APP: FactoryProvider = {
     provide: APP_INITIALIZER,
-    useFactory: (
-        app: AppInitialisation
-    ): (() => Promise<void>) => app.init.bind(app),
-    deps: [
-        AppInitialisation
-    ],
-    multi: true
+    useFactory: (app: AppInitialisation): (() => Promise<void>) =>
+        app.init.bind(app),
+    deps: [AppInitialisation],
+    multi: true,
 };

@@ -1,17 +1,15 @@
 /** angular */
-import {NgModule} from "@angular/core";
-import {CommonModule} from "@angular/common";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {Routes, RouterModule} from "@angular/router";
-import {IonicModule} from "@ionic/angular";
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Routes, RouterModule } from "@angular/router";
+import { IonicModule } from "@ionic/angular";
 /** misc */
-import {SettingsPage} from "./settings";
-import {TranslateModule} from "@ngx-translate/core";
-import {FileSizePipe} from "../../pipes/fileSize.pipe";
+import { SettingsPage } from "./settings";
+import { TranslateModule } from "@ngx-translate/core";
+import { FileSizePipe } from "../../pipes/fileSize.pipe";
 
-const routes: Routes = [
-    {path: "", component: SettingsPage}
-];
+const routes: Routes = [{ path: "", component: SettingsPage }];
 
 @NgModule({
     imports: [
@@ -20,11 +18,8 @@ const routes: Routes = [
         ReactiveFormsModule,
         IonicModule,
         TranslateModule,
-        RouterModule.forChild(routes)
+        RouterModule.forChild(routes),
     ],
-    declarations: [
-        SettingsPage,
-        FileSizePipe
-    ]
+    declarations: [SettingsPage, FileSizePipe],
 })
 export class SettingsPageModule {}

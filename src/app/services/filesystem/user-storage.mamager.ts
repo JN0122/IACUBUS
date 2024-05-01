@@ -14,10 +14,9 @@ export interface StorageUtilization {
 }
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class UserStorageMamager {
-
     private readonly log: Logger = Logging.getLogger("UserStorageManager");
     private storageUsageByUser: Map<number, number> = new Map<number, number>();
 
@@ -36,15 +35,33 @@ export class UserStorageMamager {
      * @param objectId
      * @param storage
      */
-    async addObjectToUserStorage(userId: number, objectId: number, storage: StorageUtilization): Promise<void> {
-        const io: ILIASObject = await ILIASObject.findByObjIdAndUserId(objectId, userId);
-        if(io.isOfflineAvailable) return;
+    async addObjectToUserStorage(
+        userId: number,
+        objectId: number,
+        storage: StorageUtilization
+    ): Promise<void> {
+        const io: ILIASObject = await ILIASObject.findByObjIdAndUserId(
+            objectId,
+            userId
+        );
+        if (io.isOfflineAvailable) return;
 
-        const difference: number = await storage.getUsedStorage(objectId, userId);
+        const difference: number = await storage.getUsedStorage(
+            objectId,
+            userId
+        );
         const total: number = await this.getUsedStorage(userId);
-        this.log.trace(() => `Add object to storage, diff: ${difference} to total: ${total}, new storage usage: ${total + difference}`);
-        if ((total + difference) < 0) {
-            this.log.error(() => `User storage manager out of sync, total: ${total}, with diff: ${difference} is negative!`);
+        this.log.trace(
+            () =>
+                `Add object to storage, diff: ${difference} to total: ${total}, new storage usage: ${
+                    total + difference
+                }`
+        );
+        if (total + difference < 0) {
+            this.log.error(
+                () =>
+                    `User storage manager out of sync, total: ${total}, with diff: ${difference} is negative!`
+            );
         }
         await this.applyDiffToStorage(userId, difference);
 
@@ -58,15 +75,33 @@ export class UserStorageMamager {
      * @param objectId
      * @param storage
      */
-    async removeObjectFromUserStorage(userId: number, objectId: number, storage: StorageUtilization): Promise<void> {
-        const io: ILIASObject = await ILIASObject.findByObjIdAndUserId(objectId, userId);
-        if(!io.isOfflineAvailable) return;
+    async removeObjectFromUserStorage(
+        userId: number,
+        objectId: number,
+        storage: StorageUtilization
+    ): Promise<void> {
+        const io: ILIASObject = await ILIASObject.findByObjIdAndUserId(
+            objectId,
+            userId
+        );
+        if (!io.isOfflineAvailable) return;
 
-        const difference: number = await storage.getUsedStorage(objectId, userId);
+        const difference: number = await storage.getUsedStorage(
+            objectId,
+            userId
+        );
         const total: number = await this.getUsedStorage(userId);
-        this.log.trace(() => `Remove object from storage, diff: ${difference} to total: ${total}, new storage usage: ${total + difference}`);
-        if ((total + difference) < 0) {
-            this.log.error(() => `User storage manager out of sync, total: ${total}, with diff: ${difference} is negative!`);
+        this.log.trace(
+            () =>
+                `Remove object from storage, diff: ${difference} to total: ${total}, new storage usage: ${
+                    total + difference
+                }`
+        );
+        if (total + difference < 0) {
+            this.log.error(
+                () =>
+                    `User storage manager out of sync, total: ${total}, with diff: ${difference} is negative!`
+            );
         }
         await this.applyDiffToStorage(userId, -difference);
 
@@ -74,7 +109,10 @@ export class UserStorageMamager {
         await io.save();
     }
 
-    private async applyDiffToStorage(userId: number, difference: number): Promise<void> {
+    private async applyDiffToStorage(
+        userId: number,
+        difference: number
+    ): Promise<void> {
         this.log.debug(() => `storage: difference ${difference}`);
         const user: User = await User.find(userId);
 
@@ -90,6 +128,9 @@ export class UserStorageMamager {
 
         user.totalUsedStorage = newTotal;
         await user.save();
-        this.log.debug(() => `storage: used ${user.totalUsedStorage}, by user with id: ${user.id}`);
+        this.log.debug(
+            () =>
+                `storage: used ${user.totalUsedStorage}, by user with id: ${user.id}`
+        );
     }
 }

@@ -2,7 +2,13 @@
 import { Injectable } from "@angular/core";
 import { FileOpener } from "@ionic-native/file-opener/ngx";
 /** ionic-native */
-import { DirectoryEntry, File, FileEntry, FileError, Flags } from "@ionic-native/file/ngx";
+import {
+    DirectoryEntry,
+    File,
+    FileEntry,
+    FileError,
+    Flags,
+} from "@ionic-native/file/ngx";
 import { Network } from "@ionic-native/network/ngx";
 import { Platform } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
@@ -18,7 +24,10 @@ import { User } from "../models/user";
 import { ILIASRestProvider } from "../providers/ilias-rest.provider";
 /** misc */
 import { isNullOrUndefined } from "../util/util.function";
-import { StorageUtilization, UserStorageMamager } from "./filesystem/user-storage.mamager";
+import {
+    StorageUtilization,
+    UserStorageMamager,
+} from "./filesystem/user-storage.mamager";
 /** logging */
 import { Logger } from "./logging/logging.api";
 import { Logging } from "./logging/logging.service";
@@ -31,10 +40,9 @@ export interface DownloadProgress {
 }
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class FileService implements StorageUtilization {
-
     private static log: Logger = Logging.getLogger("FileService");
     private log: Logger = FileService.log;
 
@@ -45,9 +53,8 @@ export class FileService implements StorageUtilization {
         private readonly file: File,
         private readonly network: Network,
         private readonly userStorageManager: UserStorageMamager,
-        private readonly fileOpener: FileOpener,
-    ) {
-    }
+        private readonly fileOpener: FileOpener
+    ) {}
 
     /**
      * Return the storage location to store files for the given user and object, depending on platform (iOS or Android)
@@ -62,7 +69,9 @@ export class FileService implements StorageUtilization {
             return `${this.file.dataDirectory}${user.id}/${iliasObject.objId}/`;
         }
 
-        throw new IllegalStateError("Application must run on ios or android to determine the correct storage location.");
+        throw new IllegalStateError(
+            "Application must run on ios or android to determine the correct storage location."
+        );
     }
 
     private async createDirectoryPath(path: string): Promise<void> {
@@ -71,17 +80,25 @@ export class FileService implements StorageUtilization {
             basePath = this.file.externalApplicationStorageDirectory;
         } else if (this.platform.is("ios")) {
             basePath = this.file.dataDirectory;
-        } else throw new IllegalStateError("Application must run on ios or android to determine the correct storage location.");
+        } else
+            throw new IllegalStateError(
+                "Application must run on ios or android to determine the correct storage location."
+            );
 
         const resourcePath: string = path.replace(basePath, "");
-        const pathShards: Array<string> = resourcePath.split("/").filter((value) => value !== "");
+        const pathShards: Array<string> = resourcePath
+            .split("/")
+            .filter((value) => value !== "");
 
-        let previousDir: DirectoryEntry = await this.file.resolveDirectoryUrl(basePath);
+        let previousDir: DirectoryEntry = await this.file.resolveDirectoryUrl(
+            basePath
+        );
         for (const shard of pathShards) {
-            previousDir = await this.file.getDirectory(previousDir, shard, <Flags>{create: true});
+            previousDir = await this.file.getDirectory(previousDir, shard, <
+                Flags
+            >{ create: true });
         }
     }
-
 
     /**
      * Download the file from given file ILIAS Object
@@ -89,14 +106,25 @@ export class FileService implements StorageUtilization {
      * @param forceDownload If set to true it will also download if you are NOT in WLAN
      * @returns {Promise<any>}
      */
-    async download(fileObject: ILIASObject, forceDownload: boolean = false): Promise<FileEntry> {
-        this.log.debug(() => `Download file with object id: ${fileObject.objId}, refId: ${fileObject.refId}, for user: ${fileObject.userId}`);
+    async download(
+        fileObject: ILIASObject,
+        forceDownload: boolean = false
+    ): Promise<FileEntry> {
+        this.log.debug(
+            () =>
+                `Download file with object id: ${fileObject.objId}, refId: ${fileObject.refId}, for user: ${fileObject.userId}`
+        );
         const user: User = await User.find(fileObject.userId);
         const settings: Settings = await Settings.findByUserId(user.id);
 
         // We don't want to download if we're not in wlan
-        if (forceDownload == false && settings.shouldntDownloadBecauseOfWLAN()) {
-            throw new NoWLANException(`Unable to download file with refId ${fileObject.refId}`);
+        if (
+            forceDownload == false &&
+            settings.shouldntDownloadBecauseOfWLAN()
+        ) {
+            throw new NoWLANException(
+                `Unable to download file with refId ${fileObject.refId}`
+            );
         }
 
         // If we have no file name we throw an error.
@@ -105,19 +133,33 @@ export class FileService implements StorageUtilization {
         }
 
         this.log.debug(() => "Resolving storage location");
-        const storageLocation: string = this.getStorageLocation(user, fileObject);
+        const storageLocation: string = this.getStorageLocation(
+            user,
+            fileObject
+        );
         await this.createDirectoryPath(storageLocation);
 
         // Provide a general listener that throws an event
         this.log.debug(() => "Start Download");
-        const fileEntry: FileEntry = await this.rest.downloadFile(fileObject.refId, storageLocation, fileObject.data.fileName);
+        const fileEntry: FileEntry = await this.rest.downloadFile(
+            fileObject.refId,
+            storageLocation,
+            fileObject.data.fileName
+        );
         this.log.debug(() => `Download Complete: ${fileEntry.fullPath}`);
 
         fileObject.needsDownload = false;
         await this.storeFileVersionLocal(fileObject);
-        this.log.debug(() => `File metadata update complete, file version local: ${fileObject.data.fileVersionDateLocal}`);
+        this.log.debug(
+            () =>
+                `File metadata update complete, file version local: ${fileObject.data.fileVersionDateLocal}`
+        );
 
-        await this.userStorageManager.addObjectToUserStorage(fileObject.userId, fileObject.objId, this);
+        await this.userStorageManager.addObjectToUserStorage(
+            fileObject.userId,
+            fileObject.objId,
+            this
+        );
         this.log.debug(() => "User storage space calculation complete");
 
         return fileEntry;
@@ -130,30 +172,66 @@ export class FileService implements StorageUtilization {
      * @returns {Promise<FileEntry>}
      */
     existsFile(fileObject: ILIASObject): Promise<FileEntry> {
-        return new Promise((resolve: any, reject: (error: FileError | Error) => void): void => {
-            User.find(fileObject.userId).then(user => {
-                const storageLocation: string = this.getStorageLocation(user, fileObject);
-                if (!window["resolveLocalFileSystemURL"]) {
-                    this.log.debug(() => "ResolveLocalFileSystemURL is not a function. You're probably not on a phone.");
-                    reject(new Error("ResolveLocalFileSystemURL is not a function. You're probably not on a phone."));
-                    return;
-                }
-                window["resolveLocalFileSystemURL"](storageLocation, (dirEntry: DirectoryEntry) => {
-                    if (fileObject.data.hasOwnProperty("fileName")) {
-                        dirEntry.getFile(fileObject.data.fileName, {create: false}, (fileEntry) => {
-                            resolve(fileEntry);
-                        }, (error) => {
-                            reject(error);
-                        });
-                    } else {
-                        reject(new Error("Metadata of file object is not present"));
-                    }
-                });
-            }).catch(error => {
-                this.log.error(() => `Encountered error while checking file: ${JSON.stringify(error)}`);
-                reject(error);
-            });
-        });
+        return new Promise(
+            (
+                resolve: any,
+                reject: (error: FileError | Error) => void
+            ): void => {
+                User.find(fileObject.userId)
+                    .then((user) => {
+                        const storageLocation: string = this.getStorageLocation(
+                            user,
+                            fileObject
+                        );
+                        if (!window["resolveLocalFileSystemURL"]) {
+                            this.log.debug(
+                                () =>
+                                    "ResolveLocalFileSystemURL is not a function. You're probably not on a phone."
+                            );
+                            reject(
+                                new Error(
+                                    "ResolveLocalFileSystemURL is not a function. You're probably not on a phone."
+                                )
+                            );
+                            return;
+                        }
+                        window["resolveLocalFileSystemURL"](
+                            storageLocation,
+                            (dirEntry: DirectoryEntry) => {
+                                if (
+                                    fileObject.data.hasOwnProperty("fileName")
+                                ) {
+                                    dirEntry.getFile(
+                                        fileObject.data.fileName,
+                                        { create: false },
+                                        (fileEntry) => {
+                                            resolve(fileEntry);
+                                        },
+                                        (error) => {
+                                            reject(error);
+                                        }
+                                    );
+                                } else {
+                                    reject(
+                                        new Error(
+                                            "Metadata of file object is not present"
+                                        )
+                                    );
+                                }
+                            }
+                        );
+                    })
+                    .catch((error) => {
+                        this.log.error(
+                            () =>
+                                `Encountered error while checking file: ${JSON.stringify(
+                                    error
+                                )}`
+                        );
+                        reject(error);
+                    });
+            }
+        );
     }
 
     /**
@@ -174,7 +252,6 @@ export class FileService implements StorageUtilization {
         await iliasObject.save();
     }
 
-
     /**
      * Deletes the local file on the device from the given ILIAS file object
      * @param fileObject
@@ -185,15 +262,25 @@ export class FileService implements StorageUtilization {
 
         const user: User = await User.find(fileObject.userId);
         if (fileObject.data.hasOwnProperty("fileName")) {
-            const storageLocation: string = this.getStorageLocation(user, fileObject);
+            const storageLocation: string = this.getStorageLocation(
+                user,
+                fileObject
+            );
 
             // There's no local file to delete.
             if (isNullOrUndefined(fileObject.data.fileVersionDateLocal)) {
-                this.log.debug(() => `Skip removal of file with objId: ${fileObject.objId}, no local file version date present`);
+                this.log.debug(
+                    () =>
+                        `Skip removal of file with objId: ${fileObject.objId}, no local file version date present`
+                );
                 return;
             }
 
-            await this.userStorageManager.removeObjectFromUserStorage(fileObject.userId, fileObject.objId, this);
+            await this.userStorageManager.removeObjectFromUserStorage(
+                fileObject.userId,
+                fileObject.objId,
+                this
+            );
 
             // We delete the file and save the metadata.
             // await this.file.removeFile(storageLocation, fileObject.data.fileName);
@@ -208,12 +295,16 @@ export class FileService implements StorageUtilization {
             basePath.pop();
 
             const targetPath: string = basePath.join("/");
-            this.log.debug(() => `Delete dir: ${fileObject}, in path: "${targetPath}"`);
-            await this.file.removeRecursively(targetPath, `${fileObject.objId}/`);
+            this.log.debug(
+                () => `Delete dir: ${fileObject}, in path: "${targetPath}"`
+            );
+            await this.file.removeRecursively(
+                targetPath,
+                `${fileObject.objId}/`
+            );
 
             fileObject.needsDownload = true;
             await this.resetFileVersionLocal(fileObject);
-
         } else {
             throw new Error("Metadata of file object is not (fully) present");
         }
@@ -235,7 +326,10 @@ export class FileService implements StorageUtilization {
         await fd.save();
     }
 
-    private async openExisting(fileEntry: FileEntry, fileObject: ILIASObject): Promise<void> {
+    private async openExisting(
+        fileEntry: FileEntry,
+        fileObject: ILIASObject
+    ): Promise<void> {
         try {
             this.log.debug(() => `Opening file: ${fileEntry.fullPath}`);
             await this.fileOpener.open(
@@ -245,10 +339,17 @@ export class FileService implements StorageUtilization {
             this.log.trace(() => "Existing file successfully opened.");
         } catch (error) {
             if (error.status == 9) {
-                this.log.error(() => "Unable to open existing file because the file type is not supported.");
-                throw new CantOpenFileTypeException("Unable to open existing file because the file type is not supported.");
+                this.log.error(
+                    () =>
+                        "Unable to open existing file because the file type is not supported."
+                );
+                throw new CantOpenFileTypeException(
+                    "Unable to open existing file because the file type is not supported."
+                );
             } else {
-                this.log.error(() => "Unable to open existing file with a general error.");
+                this.log.error(
+                    () => "Unable to open existing file with a general error."
+                );
                 throw error;
             }
         }
@@ -261,32 +362,57 @@ export class FileService implements StorageUtilization {
      * @param inUse iff set to true only used up diskspace is shown, otherwise potentially needed disk space is calculated (not precise!)
      * @returns {Promise<number>}
      */
-    static calculateDiskSpace(iliasObject: ILIASObject, inUse: boolean = true): Promise<number> {
+    static calculateDiskSpace(
+        iliasObject: ILIASObject,
+        inUse: boolean = true
+    ): Promise<number> {
         return new Promise((resolve, reject) => {
-            FileService.log.debug(() => `Calculating disk space for ilias object with refId: ${iliasObject.refId}`);
-            ILIASObject.findByParentRefIdRecursive(iliasObject.refId, iliasObject.userId).then(iliasObjects => {
-                const fileObjects: Array<ILIASObject> = iliasObjects.filter(iliasObject => {
-                    return iliasObject.type == "file";
-                });
-                let diskSpace: number = 0;
-                fileObjects.forEach(fileObject => {
+            FileService.log.debug(
+                () =>
+                    `Calculating disk space for ilias object with refId: ${iliasObject.refId}`
+            );
+            ILIASObject.findByParentRefIdRecursive(
+                iliasObject.refId,
+                iliasObject.userId
+            ).then(
+                (iliasObjects) => {
+                    const fileObjects: Array<ILIASObject> = iliasObjects.filter(
+                        (iliasObject) => {
+                            return iliasObject.type == "file";
+                        }
+                    );
+                    let diskSpace: number = 0;
+                    fileObjects.forEach((fileObject) => {
+                        const metaData = fileObject.data;
+                        if (
+                            (metaData.hasOwnProperty("fileVersionDateLocal") &&
+                                metaData.fileVersionDateLocal) ||
+                            (!inUse && metaData)
+                        ) {
+                            FileService.log.debug(
+                                () =>
+                                    `Found disk space usage: ${JSON.stringify(
+                                        fileObject.data
+                                    )}`
+                            );
 
-                    const metaData = fileObject.data;
-                    if (metaData.hasOwnProperty("fileVersionDateLocal") && metaData.fileVersionDateLocal || !inUse && metaData) {
-                        FileService.log.debug(() => `Found disk space usage: ${JSON.stringify(fileObject.data)}`);
-
-                        diskSpace += parseInt(metaData.fileSize, 10);
-                    }
-                });
-                resolve(diskSpace);
-            }, () => {
-                resolve(0);
-            });
+                            diskSpace += parseInt(metaData.fileSize, 10);
+                        }
+                    });
+                    resolve(diskSpace);
+                },
+                () => {
+                    resolve(0);
+                }
+            );
         });
     }
 
     async getUsedStorage(objectId: number, userId: number): Promise<number> {
-        const io: ILIASObject = await ILIASObject.findByObjIdAndUserId(objectId, userId);
+        const io: ILIASObject = await ILIASObject.findByObjIdAndUserId(
+            objectId,
+            userId
+        );
         if (typeof io.data.fileSize === "string") {
             return Number.parseInt(io.data.fileSize, 10);
         }
@@ -295,7 +421,10 @@ export class FileService implements StorageUtilization {
             return io.data.fileSize;
         }
 
-        this.log.warn(() => `Unable to calculate filesize of object: ${objectId} owned by user: ${userId}`);
+        this.log.warn(
+            () =>
+                `Unable to calculate filesize of object: ${objectId} owned by user: ${userId}`
+        );
         return 0;
     }
 
@@ -303,7 +432,9 @@ export class FileService implements StorageUtilization {
      * Set the fileVersionDateLocal to fileVersionDate from ILIAS
      * @param fileObject
      */
-    private async storeFileVersionLocal(fileObject: ILIASObject): Promise<ILIASObject> {
+    private async storeFileVersionLocal(
+        fileObject: ILIASObject
+    ): Promise<ILIASObject> {
         const fileData: FileData = await FileData.find(fileObject.id);
 
         // First update the local file date.
@@ -325,7 +456,9 @@ export class FileService implements StorageUtilization {
      * Reset fileVersionDateLocal
      * @param fileObject
      */
-    private async resetFileVersionLocal(fileObject: ILIASObject): Promise<ILIASObject> {
+    private async resetFileVersionLocal(
+        fileObject: ILIASObject
+    ): Promise<ILIASObject> {
         const fileData: FileData = await FileData.find(fileObject.id);
 
         this.log.debug(() => "File meta found.");
@@ -361,7 +494,6 @@ export class FileService implements StorageUtilization {
             await fd.save();
         }
     }
-
 
     /**
      * returns the online / offline status.

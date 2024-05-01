@@ -13,15 +13,15 @@
     coverage: '/All files \|\s*(\d+(\.\d+)?)/'
 
 cache:
-  - key:
-        files:
-            - package-lock.json
-    paths:
-        - *npm_cache_path
+    - key:
+          files:
+              - package-lock.json
+      paths:
+          - *npm_cache_path
 
 stages:
-  - lint
-  - test
+    - lint
+    - test
 
 lint:
     stage: lint
@@ -44,4 +44,3 @@ test:chrome_86:
     <<: *test_browser
     image: zenika/alpine-chrome:86-with-node-14
     allow_failure: true
-

@@ -1,12 +1,11 @@
-import {ActiveRecord, SQLiteConnector} from "./active-record";
-import {SQLiteDatabaseService} from "../services/database.service";
-import {User} from "./user";
+import { ActiveRecord, SQLiteConnector } from "./active-record";
+import { SQLiteDatabaseService } from "../services/database.service";
+import { User } from "./user";
 
 /**
  * Holds additional meta data for ILIAS file objects
  */
 export class FileData extends ActiveRecord<FileData> {
-
     /**
      * Internal ID of the corresponding ILIASObject
      */
@@ -55,17 +54,20 @@ export class FileData extends ActiveRecord<FileData> {
     fileLearningProgressPushToServer: boolean;
 
     constructor(id: number = 0) {
-        super(id, new SQLiteConnector("files", [
-            "iliasObjectId",
-            "fileName",
-            "fileSize",
-            "fileType",
-            "fileExtension",
-            "fileVersionDate",
-            "fileVersionDateLocal",
-            "fileLearningProgress",
-            "fileLearningProgressPushToServer"
-        ]));
+        super(
+            id,
+            new SQLiteConnector("files", [
+                "iliasObjectId",
+                "fileName",
+                "fileSize",
+                "fileType",
+                "fileExtension",
+                "fileVersionDate",
+                "fileVersionDateLocal",
+                "fileLearningProgress",
+                "fileLearningProgressPushToServer",
+            ])
+        );
     }
 
     needsDownload(): boolean {
@@ -75,7 +77,10 @@ export class FileData extends ActiveRecord<FileData> {
         if (!this.fileVersionDateLocal) {
             return true;
         }
-        return (Date.parse(this.fileVersionDate) > Date.parse(this.fileVersionDateLocal));
+        return (
+            Date.parse(this.fileVersionDate) >
+            Date.parse(this.fileVersionDateLocal)
+        );
     }
 
     /**
@@ -85,8 +90,10 @@ export class FileData extends ActiveRecord<FileData> {
      */
     static find(iliasObjectId: number): Promise<FileData> {
         return SQLiteDatabaseService.instance()
-            .then(db => {
-                return db.query("SELECT * FROM files WHERE iliasObjectId = ?", [iliasObjectId]);
+            .then((db) => {
+                return db.query("SELECT * FROM files WHERE iliasObjectId = ?", [
+                    iliasObjectId,
+                ]);
             })
             .then((response: any) => {
                 const fileData: FileData = new FileData();
@@ -106,11 +113,14 @@ export class FileData extends ActiveRecord<FileData> {
      */
     static getTotalDiskSpaceForUser(user: User): Promise<number> {
         return SQLiteDatabaseService.instance()
-            .then(db => {
-                return db.query("SELECT SUM(files.fileSize) AS diskSpace FROM users " +
-                    "INNER JOIN objects ON objects.userId = users.id " +
-                    "INNER JOIN files ON files.iliasObjectId = objects.id " +
-                    "WHERE users.id = ? AND objects.isOfflineAvailable = 1 GROUP BY users.id", [user.id]);
+            .then((db) => {
+                return db.query(
+                    "SELECT SUM(files.fileSize) AS diskSpace FROM users " +
+                        "INNER JOIN objects ON objects.userId = users.id " +
+                        "INNER JOIN files ON files.iliasObjectId = objects.id " +
+                        "WHERE users.id = ? AND objects.isOfflineAvailable = 1 GROUP BY users.id",
+                    [user.id]
+                );
             })
             .then((response: any) => {
                 let diskSpace: number = 0;
@@ -118,7 +128,7 @@ export class FileData extends ActiveRecord<FileData> {
                     diskSpace = response.rows.item(0).diskSpace;
                 }
                 return Promise.resolve(diskSpace);
-        });
+            });
     }
 
     /**
@@ -127,8 +137,10 @@ export class FileData extends ActiveRecord<FileData> {
      */
     static getTotalDiskSpace(): Promise<number> {
         return SQLiteDatabaseService.instance()
-            .then(db => {
-                return db.query("SELECT * FROM files WHERE fileVersionDateLocal is NOT NULL");
+            .then((db) => {
+                return db.query(
+                    "SELECT * FROM files WHERE fileVersionDateLocal is NOT NULL"
+                );
             })
             .then((response: any) => {
                 let usedDiskSpace: number = 0;
@@ -144,12 +156,17 @@ export class FileData extends ActiveRecord<FileData> {
      * fileLearningProgress is TRUE and fileLearningProgressPushToServer is TRUE
      */
     static async getOpenLearningProgressPosts(): Promise<Array<FileData>> {
-        const sql: string = "SELECT iliasObjectId FROM files WHERE fileLearningProgressPushToServer = TRUE";
-        const response: any = await SQLiteDatabaseService.instance().then(db => db.query(sql));
+        const sql: string =
+            "SELECT iliasObjectId FROM files WHERE fileLearningProgressPushToServer = TRUE";
+        const response: any = await SQLiteDatabaseService.instance().then(
+            (db) => db.query(sql)
+        );
 
         const unsynced: Array<FileData> = [];
         for (let i: number = 0; i < response.rows.length; i++) {
-            const fd: FileData = await FileData.find(response.rows.item(i).iliasObjectId);
+            const fd: FileData = await FileData.find(
+                response.rows.item(i).iliasObjectId
+            );
             unsynced.push(fd);
         }
 
@@ -161,7 +178,10 @@ export class FileData extends ActiveRecord<FileData> {
      * @returns {boolean}
      */
     isUpdated(): boolean {
-        return this.hasOwnProperty("fileVersionDateLocal") && this.fileVersionDateLocal && this.needsDownload();
+        return (
+            this.hasOwnProperty("fileVersionDateLocal") &&
+            this.fileVersionDateLocal &&
+            this.needsDownload()
+        );
     }
-
 }

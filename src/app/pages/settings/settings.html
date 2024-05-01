@@ -5,16 +5,12 @@
                 <ion-back-button text="" icon="arrow-back"></ion-back-button>
             </ion-buttons>
 
-            <ion-title>
-                {{'settings.title' | translate }}
-            </ion-title>
-
+            <ion-title> {{'settings.title' | translate }} </ion-title>
         </ion-row>
     </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding" class="page_settings">
-
     <ion-list class="general">
         <div *ngIf="settings">
             <ion-item class="ion-text-wrap" color="list-element">
@@ -26,50 +22,83 @@
                     <ion-select-option value="fr">Français</ion-select-option>
                 </ion-select>
             </ion-item>
-            <ion-item  color="list-element">
-                <ion-label style="max-width: 100%;">
+            <ion-item color="list-element">
+                <ion-label style="max-width: 100%">
                     {{'settings.downloadSize' | translate }}
                 </ion-label>
-                <div style="width: 50px;" slot="end">
-                    <ion-input class="ion-no-margin ion-text-right" type="number" inputmode="decimal"
-                               [(ngModel)]="settings.downloadSize"></ion-input>
+                <div style="width: 50px" slot="end">
+                    <ion-input
+                        class="ion-no-margin ion-text-right"
+                        type="number"
+                        inputmode="decimal"
+                        [(ngModel)]="settings.downloadSize"
+                    ></ion-input>
                 </div>
-                <ion-label slot="end" class="ion-no-margin ion-margin-vertical">&nbsp;MB</ion-label>
+                <ion-label slot="end" class="ion-no-margin ion-margin-vertical"
+                    >&nbsp;MB</ion-label
+                >
             </ion-item>
             <ion-item class="ion-text-wrap" color="list-element">
                 <ion-label>
                     {{'settings.downloadOnStart' | translate }}
                 </ion-label>
-                <ion-toggle slot="end" [(ngModel)]="settings.downloadOnStart"></ion-toggle>
+                <ion-toggle
+                    slot="end"
+                    [(ngModel)]="settings.downloadOnStart"
+                ></ion-toggle>
             </ion-item>
             <ion-item class="ion-text-wrap" color="list-element">
                 <ion-label>
                     {{'settings.downloadWLAN' | translate }}
                 </ion-label>
-                <ion-toggle slot="end" [(ngModel)]="settings.downloadWlan"></ion-toggle>
+                <ion-toggle
+                    slot="end"
+                    [(ngModel)]="settings.downloadWlan"
+                ></ion-toggle>
             </ion-item>
             <ion-item class="ion-text-wrap" color="list-element">
-                <ion-label style="max-width: 100%;">
+                <ion-label style="max-width: 100%">
                     {{'settings.quotaSize' | translate }}
                 </ion-label>
-                <div style="width: 100px;" slot="end">
-                    <ion-input type="number" inputmode="decimal" class="ion-no-margin ion-text-right"
-                               [(ngModel)]="settings.quotaSize"></ion-input>
+                <div style="width: 100px" slot="end">
+                    <ion-input
+                        type="number"
+                        inputmode="decimal"
+                        class="ion-no-margin ion-text-right"
+                        [(ngModel)]="settings.quotaSize"
+                    ></ion-input>
                 </div>
             </ion-item>
             <ion-item-group>
-                <ion-item-divider color="list-element">{{ 'settings.summary' | translate }}</ion-item-divider>
+                <ion-item-divider color="list-element"
+                    >{{ 'settings.summary' | translate }}</ion-item-divider
+                >
                 <ion-item color="list-element">
-                    <ion-label [color]="quotaColor | async">{{ 'settings.total' | translate }}:
-                        {{ totalSize | async | fileSize }} / {{ settings.quotaSize*1000*1000 | fileSize }}
+                    <ion-label [color]="quotaColor | async"
+                        >{{ 'settings.total' | translate }}: {{ totalSize |
+                        async | fileSize }} / {{ settings.quotaSize*1000*1000 |
+                        fileSize }}
                     </ion-label>
-                    <ion-button class="ilias-list-action-button" class="trash-button" slot="end" (click)="deleteAllFilesPrompt()">
-                        <ion-icon class="trash-icon" slot="icon-only" src="assets/icon/bin.svg"></ion-icon>
+                    <ion-button
+                        class="ilias-list-action-button"
+                        class="trash-button"
+                        slot="end"
+                        (click)="deleteAllFilesPrompt()"
+                    >
+                        <ion-icon
+                            class="trash-icon"
+                            slot="icon-only"
+                            src="assets/icon/bin.svg"
+                        ></ion-icon>
                     </ion-button>
                 </ion-item>
             </ion-item-group>
             <ion-col>
-                <ion-button class="ion-margin-horizontal" expand="block" (click)="saveSettings()" >{{ 'Save' | translate }}
+                <ion-button
+                    class="ion-margin-horizontal"
+                    expand="block"
+                    (click)="saveSettings()"
+                    >{{ 'Save' | translate }}
                 </ion-button>
             </ion-col>
         </div>
@@ -81,5 +110,4 @@
             </ion-row>
         </ion-grid>
     </ion-list>
-
 </ion-content>

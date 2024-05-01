@@ -1,7 +1,7 @@
 #map {
     width: 100%;
     height: 100%;
-    background-color: #E6E4E0; // background color of mapbox
+    background-color: #e6e4e0; // background color of mapbox
 }
 
 .marker-wrapper {
@@ -10,7 +10,7 @@
 }
 
 .marker {
-    background-image: url('../../../assets/icon/map_marker_001.png');
+    background-image: url("../../../assets/icon/map_marker_001.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -18,7 +18,6 @@
     height: 2.5em;
     transition: 0.2s ease-in;
 }
-
 
 .marker.selected {
     transition: 0.4s ease-out;

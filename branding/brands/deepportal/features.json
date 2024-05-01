@@ -1,7 +1,4 @@
 {
-    "disabled": [
-        "sahs",
-        "htlm"
-    ],
+    "disabled": ["sahs", "htlm"],
     "customTheme": true
 }

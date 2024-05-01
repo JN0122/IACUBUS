@@ -19,14 +19,12 @@ describe("NetworkProvider", () => {
         CELL_3G: "",
         CELL_4G: "",
         CELL: "",
-        NONE: "none"
+        NONE: "none",
     };
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [
-                {provide: Network, useValue: spyNetwork},
-            ]
+            providers: [{ provide: Network, useValue: spyNetwork }],
         });
         service = TestBed.inject(NetworkProvider);
     });

@@ -1,9 +1,18 @@
 import { Component, Inject, NgZone } from "@angular/core";
 import { AppVersion } from "@ionic-native/app-version/ngx";
-import { AlertController, ModalController, NavController, Platform } from "@ionic/angular";
+import {
+    AlertController,
+    ModalController,
+    NavController,
+    Platform,
+} from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { ViewWillEnter } from "ionic-lifecycle-interface";
-import { CONFIG_PROVIDER, ILIASConfigProvider, ILIASInstallation } from "../../config/ilias-config";
+import {
+    CONFIG_PROVIDER,
+    ILIASConfigProvider,
+    ILIASInstallation,
+} from "../../config/ilias-config";
 import { LoadingPage } from "../../fallback/loading/loading.component";
 import { Settings } from "../../models/settings";
 import { User } from "../../models/user";
@@ -13,10 +22,9 @@ import { SynchronizationService } from "../../services/synchronization.service";
 
 @Component({
     templateUrl: "login.html",
-    styleUrls: ["./login.scss"]
+    styleUrls: ["./login.scss"],
 })
 export class LoginPage implements ViewWillEnter {
-
     readonly appName: Promise<string>;
     readonly installations: Array<ILIASInstallation> = [];
 
@@ -26,27 +34,29 @@ export class LoginPage implements ViewWillEnter {
     installationId: number;
     readonly appVersionStr: Promise<string>;
 
-    constructor(private readonly platform: Platform,
-                private readonly sync: SynchronizationService,
-                @Inject(CONFIG_PROVIDER) private readonly configProvider: ILIASConfigProvider,
-                private readonly appVersion: AppVersion,
-                private readonly auth: AuthenticationProvider,
-                private readonly alertCtr: AlertController,
-                private readonly translate: TranslateService,
-                private readonly themeProvider: ThemeProvider,
-                private readonly modal: ModalController,
-                private readonly navCtrl: NavController,
-                private readonly ngZone: NgZone,
-                private readonly themeProivder: ThemeProvider
+    constructor(
+        private readonly platform: Platform,
+        private readonly sync: SynchronizationService,
+        @Inject(CONFIG_PROVIDER)
+        private readonly configProvider: ILIASConfigProvider,
+        private readonly appVersion: AppVersion,
+        private readonly auth: AuthenticationProvider,
+        private readonly alertCtr: AlertController,
+        private readonly translate: TranslateService,
+        private readonly themeProvider: ThemeProvider,
+        private readonly modal: ModalController,
+        private readonly navCtrl: NavController,
+        private readonly ngZone: NgZone,
+        private readonly themeProivder: ThemeProvider
     ) {
-      this.configProvider.loadConfig().then(config => {
-          this.installations.push(...config.installations);
-          this.installationId = this.installations[0].id;
-      });
+        this.configProvider.loadConfig().then((config) => {
+            this.installations.push(...config.installations);
+            this.installationId = this.installations[0].id;
+        });
 
-      this.appName = appVersion.getAppName();
+        this.appName = appVersion.getAppName();
 
-      this.appVersionStr = this.appVersion.getVersionNumber();
+        this.appVersionStr = this.appVersion.getVersionNumber();
     }
 
     ionViewWillEnter(): void {
@@ -54,7 +64,7 @@ export class LoginPage implements ViewWillEnter {
     }
 
     async login(): Promise<void> {
-        if(!this.checkOnline()) return;
+        if (!this.checkOnline()) return;
         const installation: ILIASInstallation = this.getSelectedInstallation();
         await this.auth.browserLogin(installation);
         const loadingPage: HTMLIonModalElement = await this.modal.create({
@@ -63,8 +73,8 @@ export class LoginPage implements ViewWillEnter {
             backdropDismiss: false,
         });
 
-        if(AuthenticationProvider.isLoggedIn()) {
-            await loadingPage.present()
+        if (AuthenticationProvider.isLoggedIn()) {
+            await loadingPage.present();
             await this.loginSequence();
             await this.ngZone.run(() => this.navCtrl.navigateRoot("tabs"));
             await loadingPage.dismiss();
@@ -85,12 +95,14 @@ export class LoginPage implements ViewWillEnter {
      * if the device is offline, inform the user with an alert and return false
      */
     private checkOnline(): boolean {
-        if(!window.navigator.onLine) {
-            this.alertCtr.create({
-                header: this.translate.instant("offline_title"),
-                message: this.translate.instant("offline_content"),
-                buttons: [{text: "Ok"}]
-            }).then((alert: HTMLIonAlertElement) => alert.present());
+        if (!window.navigator.onLine) {
+            this.alertCtr
+                .create({
+                    header: this.translate.instant("offline_title"),
+                    message: this.translate.instant("offline_content"),
+                    buttons: [{ text: "Ok" }],
+                })
+                .then((alert: HTMLIonAlertElement) => alert.present());
             return false;
         }
         return true;
@@ -111,16 +123,16 @@ export class LoginPage implements ViewWillEnter {
     private async checkAndLoadOfflineContent(): Promise<void> {
         const user: User = AuthenticationProvider.getUser();
         const settings: Settings = await Settings.findByUserId(user.id);
-        if (settings.downloadOnStart && window.navigator.onLine) this.sync.loadAllOfflineContent();
+        if (settings.downloadOnStart && window.navigator.onLine)
+            this.sync.loadAllOfflineContent();
     }
 
     /**
      * @returns {ILIASInstallation}
      */
     protected getSelectedInstallation(): ILIASInstallation {
-        return this.installations.filter(installation => {
-            return (installation.id == this.installationId);
+        return this.installations.filter((installation) => {
+            return installation.id == this.installationId;
         })[0];
     }
-
 }

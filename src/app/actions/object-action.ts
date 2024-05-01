@@ -1,11 +1,9 @@
 export interface ILIASObjectActionAlert {
-    title: string,
-    subTitle: string
+    title: string;
+    subTitle: string;
 }
 
-
 export abstract class ILIASObjectAction {
-
     static idCounter: number = 9999999;
 
     title: string;
@@ -20,34 +18,30 @@ export abstract class ILIASObjectAction {
     /**
      * Returns a object if this action needs an alert before it is executed
      */
-    abstract alert(): ILIASObjectActionAlert|undefined;
+    abstract alert(): ILIASObjectActionAlert | undefined;
 
     instanceId(): number {
-        if(this.id === null) {
+        if (this.id === null) {
             this.id = ILIASObjectAction.idCounter;
             ILIASObjectAction.idCounter++;
         }
         return this.id;
     }
-
 }
 
 export abstract class ILIASObjectActionResult {
-    constructor(public message: string ) {
-    }
+    constructor(public message: string) {}
 }
 
 /**
  * An instance of this class can be returned when an action resolves its promise.
  */
-export class ILIASObjectActionSuccess extends ILIASObjectActionResult {
-}
+export class ILIASObjectActionSuccess extends ILIASObjectActionResult {}
 
 /**
  * An instance of this class can be returned when an action rejects its promise.
  */
-export class ILIASObjectActionError extends ILIASObjectActionResult{
-}
+export class ILIASObjectActionError extends ILIASObjectActionResult {}
 
 export class ILIASObjectActionNoMessage extends ILIASObjectActionResult {
     constructor() {

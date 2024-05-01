@@ -3,20 +3,9 @@
     "compilerOptions": {
         "outDir": "../out-tsc/app",
         "resolveJsonModule": true,
-        "types": [
-            "node"
-        ]
+        "types": ["node"]
     },
-    "files": [
-        "standard.ts",
-        "polyfills.ts",
-        "main.ts"
-    ],
-    "exclude": [
-        "test.ts",
-        "**/*.spec.ts"
-    ],
-  "include": [
-    "src/**/*.d.ts"
-  ]
+    "files": ["standard.ts", "polyfills.ts", "main.ts"],
+    "exclude": ["test.ts", "**/*.spec.ts"],
+    "include": ["src/**/*.d.ts"]
 }

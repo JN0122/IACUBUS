@@ -1,13 +1,16 @@
 /** angular */
-import {Inject, Injectable, InjectionToken} from "@angular/core";
+import { Inject, Injectable, InjectionToken } from "@angular/core";
 /** providers */
-import {NEWS_REST, NewsItem, NewsRest} from "../../providers/ilias/news.rest";
-import {USER_REPOSITORY, UserRepository} from "../../providers/repository/repository.user";
+import { NEWS_REST, NewsItem, NewsRest } from "../../providers/ilias/news.rest";
+import {
+    USER_REPOSITORY,
+    UserRepository,
+} from "../../providers/repository/repository.user";
 /** misc */
-import {NewsEntity} from "../../entity/news.entity";
-import {User} from "../../models/user";
-import {UserEntity} from "../../entity/user.entity";
-import {AuthenticationProvider} from "../../providers/authentication.provider";
+import { NewsEntity } from "../../entity/news.entity";
+import { User } from "../../models/user";
+import { UserEntity } from "../../entity/user.entity";
+import { AuthenticationProvider } from "../../providers/authentication.provider";
 import { IliasObjectService } from "../ilias-object.service";
 
 /**
@@ -17,15 +20,15 @@ import { IliasObjectService } from "../ilias-object.service";
  * @author nschaefli <ns@studer-raimann.ch>
  */
 export interface NewsSynchronization {
-
-  /**
-   * Synchronize the the news of the current authenticated user.
-   *
-   * @returns {Promise<void>}
-   */
-  synchronize(): Promise<void>;
+    /**
+     * Synchronize the the news of the current authenticated user.
+     *
+     * @returns {Promise<void>}
+     */
+    synchronize(): Promise<void>;
 }
-export const NEWS_SYNCHRONIZATION: InjectionToken<NewsSynchronization> = new InjectionToken("token for news service synchronization");
+export const NEWS_SYNCHRONIZATION: InjectionToken<NewsSynchronization> =
+    new InjectionToken("token for news service synchronization");
 
 /**
  * The standard implementation of news service synchronization.
@@ -34,48 +37,53 @@ export const NEWS_SYNCHRONIZATION: InjectionToken<NewsSynchronization> = new Inj
  * @author nschaefli <ns@studer-raimann.ch>
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class NewsSynchronizationImpl implements NewsSynchronization {
+    constructor(
+        @Inject(NEWS_REST) private readonly newsRest: NewsRest,
+        @Inject(USER_REPOSITORY)
+        private readonly userRepository: UserRepository,
+        private readonly iliasObjectService: IliasObjectService
+    ) {}
 
+    /**
+     * Synchronize the personal ILIAS news of the current authenticated user.
+     *
+     * @returns {Promise<void>}
+     */
+    async synchronize(): Promise<void> {
+        const news: Array<NewsItem> = await this.newsRest.getNews();
+        const mappedNews: Array<NewsEntity> = news.map(this.mapToEntity);
 
-  constructor(
-    @Inject(NEWS_REST)        private readonly newsRest: NewsRest,
-    @Inject(USER_REPOSITORY)  private readonly userRepository: UserRepository,
-    private readonly iliasObjectService: IliasObjectService
-  ) {}
+        const activeUser: User = AuthenticationProvider.getUser();
+        if (activeUser !== undefined) {
+            const user: UserEntity = (
+                await this.userRepository.find(activeUser.id)
+            ).get();
+            user.news = mappedNews;
+            await this.userRepository.save(user);
 
-  /**
-   * Synchronize the personal ILIAS news of the current authenticated user.
-   *
-   * @returns {Promise<void>}
-   */
-  async synchronize(): Promise<void> {
-    const news: Array<NewsItem> = await this.newsRest.getNews();
-    const mappedNews: Array<NewsEntity> = news.map(this.mapToEntity);
-
-    const activeUser: User = AuthenticationProvider.getUser();
-    if (activeUser !== undefined) {
-        const user: UserEntity = (await this.userRepository.find(activeUser.id)).get();
-        user.news = mappedNews;
-        await this.userRepository.save(user);
-
-        await this.iliasObjectService.downloadIlObjByRefID(news.map(val => val.newsContext));
+            await this.iliasObjectService.downloadIlObjByRefID(
+                news.map((val) => val.newsContext)
+            );
+        }
     }
-  }
 
-  private mapToEntity(newsItem: NewsItem): NewsEntity {
-    const entity: NewsEntity = new NewsEntity();
+    private mapToEntity(newsItem: NewsItem): NewsEntity {
+        const entity: NewsEntity = new NewsEntity();
 
-    entity.newsId = newsItem.newsId;
-    entity.newsContext = newsItem.newsContext;
-    entity.title = newsItem.title.slice(newsItem.title.indexOf(":")+1, newsItem.title.length);
-    entity.subtitle = newsItem.subtitle;
-    entity.content = newsItem.content;
-    entity.createDate = newsItem.createDate;
-    entity.updateDate = newsItem.updateDate;
+        entity.newsId = newsItem.newsId;
+        entity.newsContext = newsItem.newsContext;
+        entity.title = newsItem.title.slice(
+            newsItem.title.indexOf(":") + 1,
+            newsItem.title.length
+        );
+        entity.subtitle = newsItem.subtitle;
+        entity.content = newsItem.content;
+        entity.createDate = newsItem.createDate;
+        entity.updateDate = newsItem.updateDate;
 
-    return entity;
-  }
+        return entity;
+    }
 }
-

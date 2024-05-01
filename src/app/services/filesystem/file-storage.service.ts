@@ -1,21 +1,20 @@
-import {DirectoryEntry, Entry, File, Flags} from "@ionic-native/file/ngx";
-import {Platform} from "@ionic/angular";
-import {Injectable} from "@angular/core";
-import {AuthenticationProvider} from "../../providers/authentication.provider";
-import {User} from "../../models/user";
+import { DirectoryEntry, Entry, File, Flags } from "@ionic-native/file/ngx";
+import { Platform } from "@ionic/angular";
+import { Injectable } from "@angular/core";
+import { AuthenticationProvider } from "../../providers/authentication.provider";
+import { User } from "../../models/user";
 import { Logger } from "../logging/logging.api";
 import { Logging } from "../logging/logging.service";
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class FileStorageService {
-
     private readonly log: Logger = Logging.getLogger("FileStorageService");
 
     constructor(
         private readonly fileSystem: File,
-        private readonly platform: Platform,
+        private readonly platform: Platform
     ) {}
 
     /**
@@ -24,10 +23,14 @@ export class FileStorageService {
      * @param name name of the directory
      * @param createRecursive when set to true, will create the target directory if it does not exist yet
      */
-    async dirForUser(name: string, createRecursive: boolean = false): Promise<string> {
+    async dirForUser(
+        name: string,
+        createRecursive: boolean = false
+    ): Promise<string> {
         const storageLocation: string = await this.getStorageLocation();
         const userRoot: string = await this.rootForUser();
-        if(createRecursive) await this.createRecursive(storageLocation, userRoot, name);
+        if (createRecursive)
+            await this.createRecursive(storageLocation, userRoot, name);
         return `${storageLocation}${userRoot}/${name}/`;
     }
 
@@ -44,13 +47,15 @@ export class FileStorageService {
      */
     async getStorageLocation(): Promise<string> {
         await this.platform.ready();
-        if(this.platform.is("android")) {
+        if (this.platform.is("android")) {
             return this.fileSystem.externalApplicationStorageDirectory;
         } else if (this.platform.is("ios")) {
             return this.fileSystem.dataDirectory;
         }
 
-        throw new Error("Unsupported platform. Can not return a storage location.");
+        throw new Error(
+            "Unsupported platform. Can not return a storage location."
+        );
     }
 
     /**
@@ -62,11 +67,19 @@ export class FileStorageService {
      *
      * @returns {Promise<string>} the created directory path excluding {@code first}
      */
-    async createRecursive(first: string, ...more: Array<string>): Promise<string> {
-        let previousDir: DirectoryEntry = await this.fileSystem.resolveDirectoryUrl(first);
-        for(const currentDirs of more) {
-            for(const currentDir of currentDirs.split("/"))
-                previousDir = await this.fileSystem.getDirectory(previousDir, currentDir, <Flags>{create: true});
+    async createRecursive(
+        first: string,
+        ...more: Array<string>
+    ): Promise<string> {
+        let previousDir: DirectoryEntry =
+            await this.fileSystem.resolveDirectoryUrl(first);
+        for (const currentDirs of more) {
+            for (const currentDir of currentDirs.split("/"))
+                previousDir = await this.fileSystem.getDirectory(
+                    previousDir,
+                    currentDir,
+                    <Flags>{ create: true }
+                );
         }
 
         return `${more.join("/")}/`;
@@ -75,22 +88,46 @@ export class FileStorageService {
     /**
      * moves a directory from an old location to a new one, replacing the directory at the new location, if it already exists
      */
-    async moveAndReplaceDir(path: string, dirName: string, newPath: string, newDirName: string, copy: boolean = false): Promise<boolean> {
+    async moveAndReplaceDir(
+        path: string,
+        dirName: string,
+        newPath: string,
+        newDirName: string,
+        copy: boolean = false
+    ): Promise<boolean> {
         try {
             try {
                 await this.fileSystem.removeRecursively(newPath, newDirName);
-            } catch(error) {
+            } catch (error) {
                 // Error code 1 means path not found which is the desired outcome of the operation
                 if (error.code !== 1) {
-                    this.log.warn(() => `Unable to remove "${newPath}${newDirName}" resulted in error ${error.message} continue...`);
+                    this.log.warn(
+                        () =>
+                            `Unable to remove "${newPath}${newDirName}" resulted in error ${error.message} continue...`
+                    );
                 }
             } finally {
-                if(copy) await this.fileSystem.copyDir(path, dirName, newPath, newDirName);
-                else await this.fileSystem.moveDir(path, dirName, newPath, newDirName);
+                if (copy)
+                    await this.fileSystem.copyDir(
+                        path,
+                        dirName,
+                        newPath,
+                        newDirName
+                    );
+                else
+                    await this.fileSystem.moveDir(
+                        path,
+                        dirName,
+                        newPath,
+                        newDirName
+                    );
             }
             return true;
-        } catch(error) {
-            this.log.warn(() => `Unable to move and replace "${path}${dirName}" => "${newPath}${newDirName}" resulted in error ${error.message}`);
+        } catch (error) {
+            this.log.warn(
+                () =>
+                    `Unable to move and replace "${path}${dirName}" => "${newPath}${newDirName}" resulted in error ${error.message}`
+            );
             return false;
         }
     }
@@ -102,7 +139,7 @@ export class FileStorageService {
         try {
             await this.fileSystem.removeRecursively(path, dirName);
             return true;
-        } catch(e) {
+        } catch (e) {
             return false;
         }
     }
@@ -117,7 +154,7 @@ export class FileStorageService {
         try {
             await this.fileSystem.removeFile(path, fileName);
             return true;
-        } catch(e) {
+        } catch (e) {
             return false;
         }
     }
@@ -132,7 +169,7 @@ export class FileStorageService {
         let ind: number = dir.lastIndexOf("/");
         dir = dir.substring(0, ind);
         ind = dir.lastIndexOf("/");
-        return [dir.substring(0, ind), dir.substring(ind+1, dir.length)];
+        return [dir.substring(0, ind), dir.substring(ind + 1, dir.length)];
     }
 
     /**
@@ -152,14 +189,16 @@ export class FileStorageService {
         let diskSpace: number = 0;
 
         let newList: Array<Entry>;
-        while(list.length) {
+        while (list.length) {
             const entry: Entry = list.pop();
-            if(entry.isFile) {
-                entry.getMetadata(md => diskSpace += md.size);
+            if (entry.isFile) {
+                entry.getMetadata((md) => (diskSpace += md.size));
             } else {
-                const dirArr: Array<string> = this.decomposeDirUrl(entry.nativeURL);
+                const dirArr: Array<string> = this.decomposeDirUrl(
+                    entry.nativeURL
+                );
                 newList = await this.fileSystem.listDir(dirArr[0], dirArr[1]);
-                newList.forEach(e => list.push(e));
+                newList.forEach((e) => list.push(e));
             }
         }
 

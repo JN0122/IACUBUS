@@ -1,4 +1,4 @@
-import {Injectable, InjectionToken} from "@angular/core";
+import { Injectable, InjectionToken } from "@angular/core";
 
 /**
  * Describes a supplier for data needed for {@link ILIASRest}.
@@ -10,13 +10,13 @@ import {Injectable, InjectionToken} from "@angular/core";
  * @version 1.0.0
  */
 export interface OAuth2DataSupplier {
-
-  /**
-   * @returns {Promise<ClientCredentials>} the client credentials that should be used
-   */
-   getClientCredentials(): Promise<ClientCredentials>
+    /**
+     * @returns {Promise<ClientCredentials>} the client credentials that should be used
+     */
+    getClientCredentials(): Promise<ClientCredentials>;
 }
-export const OAUTH2_DATA_SUPPLIER: InjectionToken<OAuth2DataSupplier> = new InjectionToken("oauth2 data supplier");
+export const OAUTH2_DATA_SUPPLIER: InjectionToken<OAuth2DataSupplier> =
+    new InjectionToken("oauth2 data supplier");
 
 /**
  * Describes a consumer, that will be called when the response
@@ -26,15 +26,15 @@ export const OAUTH2_DATA_SUPPLIER: InjectionToken<OAuth2DataSupplier> = new Inje
  * @version 1.0.0
  */
 export interface TokenResponseConsumer {
-
-  /**
-   * Performs this operation on the given argument.
-   *
-   * @param {OAuth2Token} token   - the response of an access token url
-   */
-  accept(token: OAuth2Token): Promise<void>
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param {OAuth2Token} token   - the response of an access token url
+     */
+    accept(token: OAuth2Token): Promise<void>;
 }
-export const TOKEN_RESPONSE_CONSUMER: InjectionToken<TokenResponseConsumer> = new InjectionToken("token response consumer");
+export const TOKEN_RESPONSE_CONSUMER: InjectionToken<TokenResponseConsumer> =
+    new InjectionToken("token response consumer");
 
 /**
  * Default implementation of a {@link TokenResponseConsumer}.
@@ -46,10 +46,12 @@ export const TOKEN_RESPONSE_CONSUMER: InjectionToken<TokenResponseConsumer> = ne
  * @version 1.0.0
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
- export class DefaultTokenResponseConsumer implements TokenResponseConsumer {
-  accept(token: OAuth2Token): Promise<void> { return Promise.resolve() }
+export class DefaultTokenResponseConsumer implements TokenResponseConsumer {
+    accept(token: OAuth2Token): Promise<void> {
+        return Promise.resolve();
+    }
 }
 
 /**
@@ -65,11 +67,11 @@ export const TOKEN_RESPONSE_CONSUMER: InjectionToken<TokenResponseConsumer> = ne
  * @property {Token} token            - The token values
  */
 export interface ClientCredentials {
-  readonly clientId: string;
-  readonly clientSecret: string;
-  readonly apiURL: string,
-  readonly accessTokenURL: string;
-  readonly token: Token;
+    readonly clientId: string;
+    readonly clientSecret: string;
+    readonly apiURL: string;
+    readonly accessTokenURL: string;
+    readonly token: Token;
 }
 
 /**
@@ -85,11 +87,11 @@ export interface ClientCredentials {
  * @property {accessTokenTTL}        - time to life of the token in seconds
  */
 export interface Token {
-  readonly type: string;
-  readonly accessToken: string;
-  readonly refreshToken: string;
-  readonly lastAccessTokenUpdate: number;
-  readonly accessTokenTTL: number;
+    readonly type: string;
+    readonly accessToken: string;
+    readonly refreshToken: string;
+    readonly lastAccessTokenUpdate: number;
+    readonly accessTokenTTL: number;
 }
 
 /**
@@ -104,8 +106,8 @@ export interface Token {
  * @property {string} token_type      - the access token type e.g. bearer
  */
 export interface OAuth2Token {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  token_type: string;
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    token_type: string;
 }

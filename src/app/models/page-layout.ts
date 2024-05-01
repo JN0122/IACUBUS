@@ -3,27 +3,23 @@
  */
 
 export class PageLayout {
+    readonly icon: string = "assets/icon/info.svg";
+    readonly text: string;
 
-  readonly icon: string = "assets/icon/info.svg";
-  readonly text: string;
-
-  constructor(
-    type: string = ""
-  ) {
-
-    switch (type) {
-      case "crs":
-        this.text = "page-layout.course";
-        break;
-      case "grp":
-        this.text = "page-layout.group";
-        break;
-      case "fold":
-        this.text = "page-layout.folder";
-        break;
-      default:
-        this.text = "page-layout.default";
-        break;
+    constructor(type: string = "") {
+        switch (type) {
+            case "crs":
+                this.text = "page-layout.course";
+                break;
+            case "grp":
+                this.text = "page-layout.group";
+                break;
+            case "fold":
+                this.text = "page-layout.folder";
+                break;
+            default:
+                this.text = "page-layout.default";
+                break;
+        }
     }
-  }
 }

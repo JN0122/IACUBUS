@@ -26,9 +26,17 @@ async function patch() {
     const mode = 0o666;
 
     try {
-        const filePath = join(process.cwd(), "platforms", "android", "app", "src", "main", "AndroidManifest.xml");
+        const filePath = join(
+            process.cwd(),
+            "platforms",
+            "android",
+            "app",
+            "src",
+            "main",
+            "AndroidManifest.xml"
+        );
         const match = /<application/g;
-        const replace = '<application android:usesCleartextTraffic="true"'
+        const replace = '<application android:usesCleartextTraffic="true"';
 
         handle = await open(filePath, "r", mode);
         const content = await handle.readFile("utf8");
@@ -46,15 +54,19 @@ async function patch() {
         await handle.writeFile(patchedManifest, "utf8");
 
         console.info("Android cleartext permission patch applied");
-
     } catch (error) {
         if (error.code === "ENOENT") {
-            console.info("Skip android permission patch, platform not installed");
+            console.info(
+                "Skip android permission patch, platform not installed"
+            );
             return;
         }
 
         process.exitCode = 1;
-        console.error("Encountered error while patching android manifest: ", error);
+        console.error(
+            "Encountered error while patching android manifest: ",
+            error
+        );
     } finally {
         await handle?.close();
     }

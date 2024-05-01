@@ -6,52 +6,50 @@ import {
     JoinTableOptions,
     ManyToMany,
     PrimaryGeneratedColumn,
-    RelationOptions
+    RelationOptions,
 } from "typeorm/browser";
-import {NewsEntity} from "./news.entity";
+import { NewsEntity } from "./news.entity";
 
 @Entity("users")
 export class UserEntity {
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @PrimaryGeneratedColumn()
-  id: number;
+    @Column()
+    iliasUserId: number;
 
-  @Column()
-  iliasUserId: number;
+    @Column()
+    iliasLogin: string;
 
-  @Column()
-  iliasLogin: string;
+    @Column()
+    installationId: number;
 
-  @Column()
-  installationId: number;
+    @Column()
+    accessToken: string;
 
-  @Column()
-  accessToken: string;
+    @Column()
+    refreshToken: string;
 
-  @Column()
-  refreshToken: string;
+    @Column()
+    lastTokenUpdate: number;
 
-  @Column()
-  lastTokenUpdate: number;
+    @Column()
+    totalUsedStorage: number;
 
-  @Column()
-  totalUsedStorage: number;
-
-  @ManyToMany(type => NewsEntity, <RelationOptions>{
-    cascade: true,
-    eager: true
-  })
-  @JoinTable(<JoinTableOptions>{
-    name: "users_news",
-    joinColumn: <JoinColumnOptions> {
-      name: "usersId",
-      referencedColumnName: "id"
-    },
-    inverseJoinColumn: <JoinColumnOptions> {
-      name: "newsId",
-      referencedColumnName: "newsId"
-    }
-  })
-  news: Array<NewsEntity>;
-
+    @ManyToMany((type) => NewsEntity, <RelationOptions>{
+        cascade: true,
+        eager: true,
+    })
+    @JoinTable(<JoinTableOptions>{
+        name: "users_news",
+        joinColumn: <JoinColumnOptions>{
+            name: "usersId",
+            referencedColumnName: "id",
+        },
+        inverseJoinColumn: <JoinColumnOptions>{
+            name: "newsId",
+            referencedColumnName: "newsId",
+        },
+    })
+    news: Array<NewsEntity>;
 }

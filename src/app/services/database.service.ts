@@ -7,8 +7,7 @@ export interface DatabaseService {
 }
 
 class LegacySQLQueryResultCollection {
-
-    [Symbol.iterator]: Generator = function*(): Iterator<unknown> {
+    [Symbol.iterator]: Generator = function* (): Iterator<unknown> {
         for (const item of this.items) {
             yield item;
         }
@@ -18,10 +17,7 @@ class LegacySQLQueryResultCollection {
         return this.items.length;
     }
 
-    constructor(
-        private readonly items: ReadonlyArray<unknown>
-    ) {
-    }
+    constructor(private readonly items: ReadonlyArray<unknown>) {}
 
     item(index: number): unknown {
         return this.items[index];
@@ -32,15 +28,13 @@ class LegacySQLQueryResultCollection {
  * Abstracts access to database (SQLite)
  */
 export class SQLiteDatabaseService implements DatabaseService {
-
     private static singleton: SQLiteDatabaseService;
     private static WRITE_LOCK: Promise<unknown> = Promise.resolve();
     static connection: Connection;
 
     private readonly log: Logger = Logging.getLogger("SQLiteDatabaseService");
 
-    private constructor() {
-    }
+    private constructor() {}
 
     /**
      * Return singleton instance of DatabaseService
@@ -65,19 +59,23 @@ export class SQLiteDatabaseService implements DatabaseService {
      */
     async query(sql: string, params: Array<unknown> = []): Promise<any> {
         await this.waitForWriteLockRelease();
-        const result: Array<unknown> = await SQLiteDatabaseService.connection.query(sql, params);
+        const result: Array<unknown> =
+            await SQLiteDatabaseService.connection.query(sql, params);
         this.log.debug(() => `Query result: ${JSON.stringify(result)}`);
         return {
             rows: new LegacySQLQueryResultCollection(result),
             rowsAffected: 0,
-            insertId: 0
+            insertId: 0,
         };
         // return this.database.executeSql(sql, params);
     }
 
-    async transaction<T>(project: (entityManager: EntityManager) => Promise<T>): Promise<T> {
+    async transaction<T>(
+        project: (entityManager: EntityManager) => Promise<T>
+    ): Promise<T> {
         await this.waitForWriteLockRelease();
-        const result: Promise<T> = SQLiteDatabaseService.connection.transaction(project);
+        const result: Promise<T> =
+            SQLiteDatabaseService.connection.transaction(project);
         SQLiteDatabaseService.WRITE_LOCK = result;
         return result;
     }
@@ -87,6 +85,6 @@ export class SQLiteDatabaseService implements DatabaseService {
         do {
             lock = SQLiteDatabaseService.WRITE_LOCK;
             await lock;
-        } while(lock !== SQLiteDatabaseService.WRITE_LOCK);
+        } while (lock !== SQLiteDatabaseService.WRITE_LOCK);
     }
 }

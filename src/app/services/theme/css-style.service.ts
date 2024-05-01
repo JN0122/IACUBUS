@@ -1,10 +1,13 @@
-import {Injectable} from "@angular/core";
-import {AuthenticationProvider} from "../../providers/authentication.provider";
-import {Settings} from "../../models/settings";
-import { FeaturePolicyService, Features } from "../policy/feature-policy.service";
+import { Injectable } from "@angular/core";
+import { AuthenticationProvider } from "../../providers/authentication.provider";
+import { Settings } from "../../models/settings";
+import {
+    FeaturePolicyService,
+    Features,
+} from "../policy/feature-policy.service";
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class CssStyleService {
     customIsSet: boolean;
@@ -18,46 +21,42 @@ export class CssStyleService {
         "primary_tint",
         "contrast_normal",
         "contrast_normal_rgb",
-        "contrast_shade"
+        "contrast_shade",
     ];
 
     private propertyNames: object = {
-        "primary_shade" : [
+        primary_shade: [
             "--ion-color-primary-shade",
-            "--ion-color-secondary-shade"
+            "--ion-color-secondary-shade",
         ],
-        "primary_shade_rgb" : [
+        primary_shade_rgb: [
             "--ion-color-primary-rgb",
             "--ion-color-secondary-rgb",
             "--ion-color-tertiary-contrast-rgb",
         ],
-        "primary_normal": [
+        primary_normal: [
             "--ion-color-primary",
             "--ion-color-secondary",
-            "--ion-color-tertiary-contrast"
+            "--ion-color-tertiary-contrast",
         ],
-        "primary_tint": [
+        primary_tint: [
             "--ion-color-primary-tint",
-            "--ion-color-secondary-tint"
+            "--ion-color-secondary-tint",
         ],
-        "contrast_normal": [
+        contrast_normal: [
             "--ion-color-primary-contrast",
             "--ion-color-secondary-contrast",
-            "--ion-color-tertiary-tint"
+            "--ion-color-tertiary-tint",
         ],
-        "contrast_normal_rgb": [
+        contrast_normal_rgb: [
             "--ion-color-primary-contrast-rgb",
             "--ion-color-secondary-contrast-rgb",
-            "--ion-color-tertiary-rgb"
+            "--ion-color-tertiary-rgb",
         ],
-        "contrast_shade" : [
-            "--ion-color-tertiary-shade"
-        ]
+        contrast_shade: ["--ion-color-tertiary-shade"],
     };
 
-    constructor(
-        private readonly featurePolicy: FeaturePolicyService
-    ) {}
+    constructor(private readonly featurePolicy: FeaturePolicyService) {}
 
     /**
      * checks whether the theme should be managed dynamically
@@ -73,8 +72,8 @@ export class CssStyleService {
     async setCustomColor(): Promise<void> {
         const themeCols: object = await this.getThemeColors();
 
-        this.colorNames.forEach(colorName =>
-            this.propertyNames[colorName].forEach(propertyName =>
+        this.colorNames.forEach((colorName) =>
+            this.propertyNames[colorName].forEach((propertyName) =>
                 this.setCSSValue(propertyName, themeCols[colorName])
             )
         );
@@ -86,8 +85,8 @@ export class CssStyleService {
      * sets the coloring according to the default settings in the scss-stylesheets
      */
     setDefaultColor(): void {
-        this.colorNames.forEach(name =>
-            this.propertyNames[name].forEach(property =>
+        this.colorNames.forEach((name) =>
+            this.propertyNames[name].forEach((property) =>
                 document.documentElement.style.removeProperty(property)
             )
         );
@@ -99,7 +98,9 @@ export class CssStyleService {
      * reads a css-value from the root-element
      */
     private getCSSValue(name: string): string {
-        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return getComputedStyle(document.documentElement)
+            .getPropertyValue(name)
+            .trim();
     }
 
     /**
@@ -131,8 +132,9 @@ export class CssStyleService {
      * computes the colors of the theme, based on a custom primary color
      */
     private async getThemeColors(): Promise<object> {
-        const settings: Settings = await AuthenticationProvider.getUser().settings;
-        this.customColorHex =  this.getCustomColor(settings);
+        const settings: Settings = await AuthenticationProvider.getUser()
+            .settings;
+        this.customColorHex = this.getCustomColor(settings);
         this.customColorContrast = settings.themeContrastColor;
 
         function toRgbRange(v: number): number {
@@ -140,22 +142,24 @@ export class CssStyleService {
         }
 
         const normal: Array<number> = this.hexToRgb(this.customColorHex);
-        const shade: Array<number> = normal.map(v => toRgbRange(v - 12));
-        const tint: Array<number> = normal.map(v => toRgbRange(v + 12), 255);
+        const shade: Array<number> = normal.map((v) => toRgbRange(v - 12));
+        const tint: Array<number> = normal.map((v) => toRgbRange(v + 12), 255);
 
-        const contrast: Array<number> =  this.customColorContrast ? [255, 255, 255] : [10, 10, 10];
-        const cShade: Array<number> = this.customColorContrast ?
-            contrast.map(v => toRgbRange(v - 40)) :
-            contrast.map(v => toRgbRange(v + 40));
+        const contrast: Array<number> = this.customColorContrast
+            ? [255, 255, 255]
+            : [10, 10, 10];
+        const cShade: Array<number> = this.customColorContrast
+            ? contrast.map((v) => toRgbRange(v - 40))
+            : contrast.map((v) => toRgbRange(v + 40));
 
         return {
-            "primary_shade" : this.rgbToHex(shade),
-            "primary_shade_rgb" : `${shade[0]},${shade[1]},${shade[2]}`,
-            "primary_normal": this.rgbToHex(normal),
-            "primary_tint": this.rgbToHex(tint),
-            "contrast_normal": this.rgbToHex(contrast),
-            "contrast_normal_rgb": `${contrast[0]},${contrast[1]},${contrast[2]}`,
-            "contrast_shade": this.rgbToHex(cShade)
+            primary_shade: this.rgbToHex(shade),
+            primary_shade_rgb: `${shade[0]},${shade[1]},${shade[2]}`,
+            primary_normal: this.rgbToHex(normal),
+            primary_tint: this.rgbToHex(tint),
+            contrast_normal: this.rgbToHex(contrast),
+            contrast_normal_rgb: `${contrast[0]},${contrast[1]},${contrast[2]}`,
+            contrast_shade: this.rgbToHex(cShade),
         };
     }
 
@@ -169,7 +173,7 @@ export class CssStyleService {
         }
 
         let hex: string = "#";
-        rgb.forEach(v => hex += toTwoDigitHex(v));
+        rgb.forEach((v) => (hex += toTwoDigitHex(v)));
         return hex;
     }
 
@@ -179,8 +183,8 @@ export class CssStyleService {
     private hexToRgb(hex: string): Array<number> {
         const rgb: Array<number> = [];
 
-        for(let i: number = 1; i < hex.length; i += 2) {
-            const hVal: string = `0x${hex[i]}${hex[i+1]}`;
+        for (let i: number = 1; i < hex.length; i += 2) {
+            const hVal: string = `0x${hex[i]}${hex[i + 1]}`;
             const val: number = parseInt(hVal, 16);
             rgb.push(val);
         }

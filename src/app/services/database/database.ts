@@ -1,16 +1,16 @@
 /** angular */
-import {Inject, Injectable} from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 /** logging */
-import {Logger} from "../logging/logging.api";
-import {Logging} from "../logging/logging.service";
+import { Logger } from "../logging/logging.api";
+import { Logging } from "../logging/logging.service";
 /** misc */
-import {createConnection} from "typeorm/browser";
+import { createConnection } from "typeorm/browser";
 import {
     DATABASE_CONFIGURATION_ADAPTER,
     DatabaseConfigurationAdapter,
     DatabaseConnectionRegistry,
     DatabaseOptions,
-    DEFAULT_CONNECTION_NAME
+    DEFAULT_CONNECTION_NAME,
 } from "./database.api";
 
 /**
@@ -20,16 +20,16 @@ import {
  * @version 1.1.1
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class Database {
-
     private readonly readyConnections: Array<string> = [];
 
     private readonly log: Logger = Logging.getLogger(Database.name);
 
     constructor(
-        @Inject(DATABASE_CONFIGURATION_ADAPTER) private readonly configurationAdapter: DatabaseConfigurationAdapter,
+        @Inject(DATABASE_CONFIGURATION_ADAPTER)
+        private readonly configurationAdapter: DatabaseConfigurationAdapter,
         private readonly registry: DatabaseConnectionRegistry
     ) {
         this.configurationAdapter.addConnections(this.registry);
@@ -50,19 +50,23 @@ export class Database {
      *
      * @param {string} connectionName - the connection name to use
      */
-    async ready(connectionName: string = DEFAULT_CONNECTION_NAME): Promise<void> {
-
+    async ready(
+        connectionName: string = DEFAULT_CONNECTION_NAME
+    ): Promise<void> {
         if (this.readyConnections.indexOf(connectionName) > -1) {
             return Promise.resolve();
         }
 
-        const connection: DatabaseOptions = this.registry.getConnection(connectionName);
+        const connection: DatabaseOptions =
+            this.registry.getConnection(connectionName);
 
-        this.log.trace(() => `Create database connection: name=${connectionName}`);
+        this.log.trace(
+            () => `Create database connection: name=${connectionName}`
+        );
         await createConnection(connection.getOptions());
         this.log.info(() => `Connection ${connectionName} is ready`);
-        if(connection.hasOwnProperty("init")) {
-            await <Promise<void>>(connection["init"]());
+        if (connection.hasOwnProperty("init")) {
+            await (<Promise<void>>connection["init"]());
             this.log.info(() => `Connection ${connectionName} bootstrapped`);
         }
 

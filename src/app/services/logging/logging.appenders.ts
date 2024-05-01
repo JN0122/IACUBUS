@@ -1,4 +1,4 @@
-import {LogEntry, LogLevel, LogLevelAppender} from "./logging.api";
+import { LogEntry, LogLevel, LogLevelAppender } from "./logging.api";
 
 /**
  * An appender that logs to the console.
@@ -7,10 +7,11 @@ import {LogEntry, LogLevel, LogLevelAppender} from "./logging.api";
  * @version 1.0.0
  */
 export class ConsoleLogAppender extends LogLevelAppender {
-
     protected write(logEntry: LogEntry): void {
         const time: Date = new Date(logEntry.time);
-        const message: string = `[${time.toLocaleString()}] [${LogLevel[logEntry.level]}] ${logEntry.location} - ${logEntry.message()}`;
+        const message: string = `[${time.toLocaleString()}] [${
+            LogLevel[logEntry.level]
+        }] ${logEntry.location} - ${logEntry.message()}`;
         switch (logEntry.level) {
             case LogLevel.TRACE:
             case LogLevel.DEBUG:
@@ -30,5 +31,4 @@ export class ConsoleLogAppender extends LogLevelAppender {
                 return;
         }
     }
-
 }

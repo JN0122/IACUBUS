@@ -1,7 +1,7 @@
-import {Injectable, InjectionToken} from "@angular/core";
-import {File} from "@ionic-native/file/ngx";
-import {Platform} from "@ionic/angular";
-import {FileStorageService} from "../../services/filesystem/file-storage.service";
+import { Injectable, InjectionToken } from "@angular/core";
+import { File } from "@ionic-native/file/ngx";
+import { Platform } from "@ionic/angular";
+import { FileStorageService } from "../../services/filesystem/file-storage.service";
 
 /**
  * Builds directory paths for learning module.
@@ -23,7 +23,10 @@ export interface LearningModulePathBuilder {
     /**
      * constructs the absolute path for a location relative to the root directory (with ending /)
      */
-    dirInLocalLmDir(location: string, createRecursive: boolean): Promise<string>;
+    dirInLocalLmDir(
+        location: string,
+        createRecursive: boolean
+    ): Promise<string>;
 
     /**
      * constructs the absolute path to the directory containing the contents of the learning module (with ending /)
@@ -36,16 +39,19 @@ export interface LearningModulePathBuilder {
     absoluteBasePath(): Promise<string>;
 }
 
-export const LEARNING_MODULE_PATH_BUILDER: InjectionToken<LearningModulePathBuilder> = new InjectionToken("token for learning module path builder");
+export const LEARNING_MODULE_PATH_BUILDER: InjectionToken<LearningModulePathBuilder> =
+    new InjectionToken("token for learning module path builder");
 
 @Injectable()
-export class LearningModulePathBuilderImpl implements LearningModulePathBuilder {
+export class LearningModulePathBuilderImpl
+    implements LearningModulePathBuilder
+{
     lmsBaseDirName: string = "learning_modules/";
 
     constructor(
         private readonly file: File,
         private readonly platform: Platform,
-        private readonly fileStorage: FileStorageService,
+        private readonly fileStorage: FileStorageService
     ) {}
 
     lmDirName(objId: number): string {
@@ -57,10 +63,18 @@ export class LearningModulePathBuilderImpl implements LearningModulePathBuilder 
         return this.fileStorage.dirForUser(baseDir, true);
     }
 
-    async dirInLocalLmDir(path: string = "", createRecursive: boolean = false): Promise<string> {
+    async dirInLocalLmDir(
+        path: string = "",
+        createRecursive: boolean = false
+    ): Promise<string> {
         path = this.withoutEndingSlash(path);
-        const baseDir: string = path.length ? this.lmsBaseDirName : this.withoutEndingSlash(this.lmsBaseDirName);
-        return this.fileStorage.dirForUser(`${baseDir}${path}`, createRecursive);
+        const baseDir: string = path.length
+            ? this.lmsBaseDirName
+            : this.withoutEndingSlash(this.lmsBaseDirName);
+        return this.fileStorage.dirForUser(
+            `${baseDir}${path}`,
+            createRecursive
+        );
     }
 
     async getLmDirByObjId(objId: number): Promise<string> {
@@ -71,6 +85,6 @@ export class LearningModulePathBuilderImpl implements LearningModulePathBuilder 
      * returns the path provided in the argument, but without an ending /
      */
     private withoutEndingSlash(path: string): string {
-        return path[path.length-1] === "/" ? path.slice(0, -1) : path;
+        return path[path.length - 1] === "/" ? path.slice(0, -1) : path;
     }
 }

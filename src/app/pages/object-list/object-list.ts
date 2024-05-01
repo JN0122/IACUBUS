@@ -1,68 +1,109 @@
-import {Component, Inject, NgZone} from "@angular/core";
-import {ActivatedRoute, ParamMap, Router} from "@angular/router";
-import {ActionSheetController, AlertController, LoadingController, ModalController, NavController, ToastController} from "@ionic/angular";
-import {Builder} from "../../services/builder.base";
-import {FileService} from "../../services/file.service";
-import {FooterToolbarService, Job} from "../../services/footer-toolbar.service";
-import {LINK_BUILDER, LinkBuilder} from "../../services/link/link-builder.service";
+import { Component, Inject, NgZone } from "@angular/core";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import {
+    ActionSheetController,
+    AlertController,
+    LoadingController,
+    ModalController,
+    NavController,
+    ToastController,
+} from "@ionic/angular";
+import { Builder } from "../../services/builder.base";
+import { FileService } from "../../services/file.service";
+import {
+    FooterToolbarService,
+    Job,
+} from "../../services/footer-toolbar.service";
+import {
+    LINK_BUILDER,
+    LinkBuilder,
+} from "../../services/link/link-builder.service";
 import { FeaturePolicyService } from "../../services/policy/feature-policy.service";
-import {SynchronizationService} from "../../services/synchronization.service";
-import {DesktopItem} from "../../models/desktop-item";
-import {ILIASObject} from "../../models/ilias-object";
-import {PageLayout} from "../../models/page-layout";
-import {TimeLine} from "../../models/timeline";
-import {User} from "../../models/user";
-import {DownloadAndOpenFileExternalAction} from "../../actions/download-and-open-file-external-action";
-import {MarkAsFavoriteAction} from "../../actions/mark-as-favorite-action";
-import {ILIASObjectAction, ILIASObjectActionResult, ILIASObjectActionSuccess} from "../../actions/object-action";
-import {OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY, OpenObjectInILIASAction} from "../../actions/open-object-in-ilias-action";
-import {ShowDetailsPageAction} from "../../actions/show-details-page-action";
-import {ShowObjectListPageAction} from "../../actions/show-object-list-page-action";
-import {SynchronizeAction} from "../../actions/synchronize-action";
-import {UnMarkAsFavoriteAction} from "../../actions/unmark-as-favorite-action";
-import {OPEN_LEARNPLACE_ACTION_FACTORY, OpenLearnplaceActionFunction} from "../../actions/open-learnplace-action";
-import {REMOVE_LOCAL_LEARNPLACE_ACTION_FUNCTION, RemoveLocalLearnplaceActionFunction} from "../../actions/remove-local-learnplace-action";
-import {Logger} from "../../services/logging/logging.api";
-import {Logging} from "../../services/logging/logging.service";
-import {TranslateService} from "@ngx-translate/core";
-import {Exception} from "../../exceptions/Exception";
-import {AuthenticationProvider} from "../../providers/authentication.provider";
-import {TimelineLinkBuilder} from "../../services/link/timeline.builder";
-import {DefaultLinkBuilder} from "../../services/link/default.builder";
-import {ObjectListNavParams} from "./object-list.nav-params";
-import {ILIASObjectPresenter} from "../../presenters/object-presenter";
-import {ILIASObjectPresenterFactory} from "../../presenters/presenter-factory";
-import {OPEN_HTML_LEARNING_MODULE_ACTION_FACTORY, OpenHtmlLearningModuleActionFunction} from "../../learningmodule/actions/open-html-learning-module-action";
-import {InAppBrowser} from "@ionic-native/in-app-browser/ngx";
-import {UserStorageService} from "../../services/filesystem/user-storage.service";
-import {LEARNING_MODULE_PATH_BUILDER, LearningModulePathBuilder} from "../../learningmodule/services/learning-module-path-builder";
+import { SynchronizationService } from "../../services/synchronization.service";
+import { DesktopItem } from "../../models/desktop-item";
+import { ILIASObject } from "../../models/ilias-object";
+import { PageLayout } from "../../models/page-layout";
+import { TimeLine } from "../../models/timeline";
+import { User } from "../../models/user";
+import { DownloadAndOpenFileExternalAction } from "../../actions/download-and-open-file-external-action";
+import { MarkAsFavoriteAction } from "../../actions/mark-as-favorite-action";
+import {
+    ILIASObjectAction,
+    ILIASObjectActionResult,
+    ILIASObjectActionSuccess,
+} from "../../actions/object-action";
+import {
+    OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY,
+    OpenObjectInILIASAction,
+} from "../../actions/open-object-in-ilias-action";
+import { ShowDetailsPageAction } from "../../actions/show-details-page-action";
+import { ShowObjectListPageAction } from "../../actions/show-object-list-page-action";
+import { SynchronizeAction } from "../../actions/synchronize-action";
+import { UnMarkAsFavoriteAction } from "../../actions/unmark-as-favorite-action";
+import {
+    OPEN_LEARNPLACE_ACTION_FACTORY,
+    OpenLearnplaceActionFunction,
+} from "../../actions/open-learnplace-action";
+import {
+    REMOVE_LOCAL_LEARNPLACE_ACTION_FUNCTION,
+    RemoveLocalLearnplaceActionFunction,
+} from "../../actions/remove-local-learnplace-action";
+import { Logger } from "../../services/logging/logging.api";
+import { Logging } from "../../services/logging/logging.service";
+import { TranslateService } from "@ngx-translate/core";
+import { Exception } from "../../exceptions/Exception";
+import { AuthenticationProvider } from "../../providers/authentication.provider";
+import { TimelineLinkBuilder } from "../../services/link/timeline.builder";
+import { DefaultLinkBuilder } from "../../services/link/default.builder";
+import { ObjectListNavParams } from "./object-list.nav-params";
+import { ILIASObjectPresenter } from "../../presenters/object-presenter";
+import { ILIASObjectPresenterFactory } from "../../presenters/presenter-factory";
+import {
+    OPEN_HTML_LEARNING_MODULE_ACTION_FACTORY,
+    OpenHtmlLearningModuleActionFunction,
+} from "../../learningmodule/actions/open-html-learning-module-action";
+import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
+import { UserStorageService } from "../../services/filesystem/user-storage.service";
+import {
+    LEARNING_MODULE_PATH_BUILDER,
+    LearningModulePathBuilder,
+} from "../../learningmodule/services/learning-module-path-builder";
 import {
     OPEN_SCORM_LEARNING_MODULE_ACTION_FACTORY,
-    OpenScormLearningModuleActionFunction
+    OpenScormLearningModuleActionFunction,
 } from "../../learningmodule/actions/open-scorm-learning-module-action";
-import { NetworkProvider, NetworkStatus } from "src/app/providers/network.provider";
-import { LearnplaceManagerImpl, LEARNPLACE_MANAGER } from "src/app/services/learnplace/learnplace.management";
+import {
+    NetworkProvider,
+    NetworkStatus,
+} from "src/app/providers/network.provider";
+import {
+    LearnplaceManagerImpl,
+    LEARNPLACE_MANAGER,
+} from "src/app/services/learnplace/learnplace.management";
 import { MapComponent } from "src/app/components/map/map.component";
-import { MapService, MAP_SERVICE } from "src/app/services/learnplace/map.service";
+import {
+    MapService,
+    MAP_SERVICE,
+} from "src/app/services/learnplace/map.service";
 import { first } from "rxjs/operators";
 import { forkJoin } from "rxjs";
 
 // summarizes the state of the currently displayed object-list-page
 interface PageState {
-    favorites: boolean,
-    online: boolean,
-    loading: boolean,
-    loadingLive: boolean,
-    loadingOffline: boolean,
-    refreshing: boolean,
-    desktop: boolean,
-    learnplaces: boolean
+    favorites: boolean;
+    online: boolean;
+    loading: boolean;
+    loadingLive: boolean;
+    loadingOffline: boolean;
+    refreshing: boolean;
+    desktop: boolean;
+    learnplaces: boolean;
 }
 
 @Component({
     selector: "page-object-list",
     templateUrl: "object-list.html",
-    styleUrls: ["object-list.scss"]
+    styleUrls: ["object-list.scss"],
 })
 export class ObjectListPage {
     private previewLoading: HTMLIonLoadingElement;
@@ -75,52 +116,59 @@ export class ObjectListPage {
         loadingOffline: false,
         refreshing: false,
         desktop: undefined,
-        learnplaces: false
+        learnplaces: false,
     };
 
     pageTitle: string;
     parent: ILIASObject;
-    content: Array<{object: ILIASObject, presenter: ILIASObjectPresenter}> = [];
+    content: Array<{ object: ILIASObject; presenter: ILIASObjectPresenter }> =
+        [];
 
     pageLayout: PageLayout;
     timeline: TimeLine;
 
     private readonly log: Logger = Logging.getLogger(ObjectListPage.name);
 
-    constructor(private readonly navCtrl: NavController,
-                private readonly router: Router,
-                private readonly route: ActivatedRoute,
-                private readonly actionSheet: ActionSheetController,
-                private readonly file: FileService,
-                readonly sync: SynchronizationService,
-                private readonly modal: ModalController,
-                private readonly loadingController: LoadingController,
-                private readonly alert: AlertController,
-                private readonly toast: ToastController,
-                private readonly translate: TranslateService,
-                private readonly ngZone: NgZone,
-                private readonly browser: InAppBrowser,
-                private readonly userStorage: UserStorageService,
-                private readonly ilObjPresenterFactory: ILIASObjectPresenterFactory,
-                readonly footerToolbar: FooterToolbarService,
-                @Inject(OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY)
-                private readonly openInIliasActionFactory: (title: string, urlBuilder: Builder<Promise<string>>) => OpenObjectInILIASAction,
-                @Inject(LINK_BUILDER)
-                private readonly linkBuilder: LinkBuilder,
-                @Inject(OPEN_LEARNPLACE_ACTION_FACTORY)
-                private readonly openLearnplaceActionFactory: OpenLearnplaceActionFunction,
-                @Inject(REMOVE_LOCAL_LEARNPLACE_ACTION_FUNCTION)
-                private readonly removeLocalLearnplaceActionFactory: RemoveLocalLearnplaceActionFunction,
-                @Inject(OPEN_HTML_LEARNING_MODULE_ACTION_FACTORY)
-                private readonly openHtmlLearningModuleActionFactory: OpenHtmlLearningModuleActionFunction,
-                @Inject(OPEN_SCORM_LEARNING_MODULE_ACTION_FACTORY)
-                private readonly openScormLearningModuleActionFactory: OpenScormLearningModuleActionFunction,
-                @Inject(LEARNING_MODULE_PATH_BUILDER) private readonly pathBuilder: LearningModulePathBuilder,
-                private readonly featurePolicy: FeaturePolicyService,
-                private readonly networkProvider: NetworkProvider,
-                @Inject(LEARNPLACE_MANAGER) private readonly lpManager: LearnplaceManagerImpl,
-                @Inject(MAP_SERVICE) private readonly mapService: MapService
-    ) { }
+    constructor(
+        private readonly navCtrl: NavController,
+        private readonly router: Router,
+        private readonly route: ActivatedRoute,
+        private readonly actionSheet: ActionSheetController,
+        private readonly file: FileService,
+        readonly sync: SynchronizationService,
+        private readonly modal: ModalController,
+        private readonly loadingController: LoadingController,
+        private readonly alert: AlertController,
+        private readonly toast: ToastController,
+        private readonly translate: TranslateService,
+        private readonly ngZone: NgZone,
+        private readonly browser: InAppBrowser,
+        private readonly userStorage: UserStorageService,
+        private readonly ilObjPresenterFactory: ILIASObjectPresenterFactory,
+        readonly footerToolbar: FooterToolbarService,
+        @Inject(OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY)
+        private readonly openInIliasActionFactory: (
+            title: string,
+            urlBuilder: Builder<Promise<string>>
+        ) => OpenObjectInILIASAction,
+        @Inject(LINK_BUILDER)
+        private readonly linkBuilder: LinkBuilder,
+        @Inject(OPEN_LEARNPLACE_ACTION_FACTORY)
+        private readonly openLearnplaceActionFactory: OpenLearnplaceActionFunction,
+        @Inject(REMOVE_LOCAL_LEARNPLACE_ACTION_FUNCTION)
+        private readonly removeLocalLearnplaceActionFactory: RemoveLocalLearnplaceActionFunction,
+        @Inject(OPEN_HTML_LEARNING_MODULE_ACTION_FACTORY)
+        private readonly openHtmlLearningModuleActionFactory: OpenHtmlLearningModuleActionFunction,
+        @Inject(OPEN_SCORM_LEARNING_MODULE_ACTION_FACTORY)
+        private readonly openScormLearningModuleActionFactory: OpenScormLearningModuleActionFunction,
+        @Inject(LEARNING_MODULE_PATH_BUILDER)
+        private readonly pathBuilder: LearningModulePathBuilder,
+        private readonly featurePolicy: FeaturePolicyService,
+        private readonly networkProvider: NetworkProvider,
+        @Inject(LEARNPLACE_MANAGER)
+        private readonly lpManager: LearnplaceManagerImpl,
+        @Inject(MAP_SERVICE) private readonly mapService: MapService
+    ) {}
 
     /* = = = = = = = *
      *  NAVIGATION   *
@@ -129,18 +177,26 @@ export class ObjectListPage {
     /**
      * changes displayed container to its parent
      */
-    static async navigateBackInHierarchy(navCtrl: NavController): Promise<void> {
+    static async navigateBackInHierarchy(
+        navCtrl: NavController
+    ): Promise<void> {
         ObjectListNavParams.child = await ObjectListNavParams.child.parent;
-        const tab: string = ObjectListNavParams.favorites ? "favorites" : "content";
-        const depth: number = ObjectListNavParams.depth-1;
+        const tab: string = ObjectListNavParams.favorites
+            ? "favorites"
+            : "content";
+        const depth: number = ObjectListNavParams.depth - 1;
         await navCtrl.navigateBack(`tabs/${tab}/${depth}`);
     }
 
     /**
      * navigates back to last page in object-list
      */
-    static async navigateBackToObjectList(navCtrl: NavController): Promise<void> {
-        const tab: string = ObjectListNavParams.favorites ? "favorites" : "content";
+    static async navigateBackToObjectList(
+        navCtrl: NavController
+    ): Promise<void> {
+        const tab: string = ObjectListNavParams.favorites
+            ? "favorites"
+            : "content";
         const depth: number = ObjectListNavParams.depth;
         await navCtrl.navigateBack(`tabs/${tab}/${depth}`);
     }
@@ -161,7 +217,7 @@ export class ObjectListPage {
 
         ObjectListNavParams.depth = parseInt(params.get("depth"), 10);
         ObjectListNavParams.favorites = Boolean(url.match(/favorites/));
-        if(!ObjectListNavParams.depth) ObjectListNavParams.child = undefined;
+        if (!ObjectListNavParams.depth) ObjectListNavParams.child = undefined;
     }
 
     /* = = = = = = = *
@@ -175,13 +231,19 @@ export class ObjectListPage {
         this.content = [];
         this.parent = ObjectListNavParams.child;
 
-        if(this.parent) {
+        if (this.parent) {
             this.pageTitle = this.parent.title;
             this.pageLayout = new PageLayout(this.parent.type);
             this.timeline = new TimeLine(this.parent.type);
         } else {
             this.pageTitle = "";
-            this.translate.get((ObjectListNavParams.favorites) ? "favorites.title" : "object-list.title").subscribe((lng) => this.pageTitle = lng);
+            this.translate
+                .get(
+                    ObjectListNavParams.favorites
+                        ? "favorites.title"
+                        : "object-list.title"
+                )
+                .subscribe((lng) => (this.pageTitle = lng));
             this.pageLayout = new PageLayout();
             this.timeline = new TimeLine();
         }
@@ -191,8 +253,7 @@ export class ObjectListPage {
      * method to set values of this.state, after which the view will be rendered
      */
     private setPageStateAndRender(state: Partial<PageState>): void {
-        for(const p in state)
-            this.state[p] = state[p];
+        for (const p in state) this.state[p] = state[p];
         this.updatePageState();
     }
 
@@ -204,9 +265,12 @@ export class ObjectListPage {
             page.state.favorites = ObjectListNavParams.favorites;
             page.state.online = window.navigator.onLine;
             page.state.loadingLive = SynchronizationService.state.liveLoading;
-            page.state.loadingOffline = SynchronizationService.state.loadingOfflineContent;
+            page.state.loadingOffline =
+                SynchronizationService.state.loadingOfflineContent;
             page.state.desktop = page.parent === undefined;
-            page.state.learnplaces = page.content.filter(val => val.object.type === "xsrl").length > 1;
+            page.state.learnplaces =
+                page.content.filter((val) => val.object.type === "xsrl")
+                    .length > 1;
         }
 
         renderView ? this.ngZone.run(() => updateFn(this)) : updateFn(this);
@@ -217,8 +281,7 @@ export class ObjectListPage {
      */
     checkPageState(state: Partial<PageState>): boolean {
         this.updatePageState(false);
-        for(const p in state)
-            if(state[p] !== this.state[p]) return false;
+        for (const p in state) if (state[p] !== this.state[p]) return false;
         return true;
     }
 
@@ -226,7 +289,7 @@ export class ObjectListPage {
      * observes the network status and updates on changes
      */
     observeNetworkState(): void {
-        this.networkProvider.state.subscribe(state => {
+        this.networkProvider.state.subscribe((state) => {
             const currentState: PageState = this.state;
             currentState.online = state === NetworkStatus.Online ? true : false;
             this.setPageStateAndRender(currentState);
@@ -243,7 +306,7 @@ export class ObjectListPage {
     ionViewWillEnter(): void {
         this.updateNavParams();
         this.setPageAttributes();
-        this.setPageStateAndRender({loading: true});
+        this.setPageStateAndRender({ loading: true });
     }
 
     /**
@@ -260,29 +323,30 @@ export class ObjectListPage {
      * loads the content of the parent-container for display
      */
     async loadAndRenderContent(event: any = undefined): Promise<void> {
-        this.setPageStateAndRender({loading: true});
-        if(event) {
+        this.setPageStateAndRender({ loading: true });
+        if (event) {
             event.target.complete();
             event.target.disabled = true;
         }
 
         // execute sync
-        if(ObjectListNavParams.favorites) {
+        if (ObjectListNavParams.favorites) {
             // wait for offline sync
             await this.waitForOfflineSync();
             this.updatePageState(false);
-            if(this.state.online && event) await this.sync.loadAllOfflineContent();
+            if (this.state.online && event)
+                await this.sync.loadAllOfflineContent();
             // collect all offline available objects
             await this.setLoadedFavorites();
         } else {
-            if(this.state.online) await this.sync.liveLoad(this.parent);
+            if (this.state.online) await this.sync.liveLoad(this.parent);
             await this.setLiveLoadedContent(this.parent === undefined);
         }
 
         // update view after sync
         this.footerToolbar.removeJob(Job.Synchronize);
-        if(event) event.target.disabled = false;
-        this.setPageStateAndRender({loading: false});
+        if (event) event.target.disabled = false;
+        this.setPageStateAndRender({ loading: false });
         await this.lpManager.setLearnplaces(this.getLearnplaces());
     }
 
@@ -290,13 +354,14 @@ export class ObjectListPage {
      * the method returns when the offline sync is not running, checking all 0.1s
      */
     async waitForOfflineSync(): Promise<void> {
-        while(this.state.loadingOffline) await new Promise((resolve, reject) => {
-            const wait: NodeJS.Timeout = setTimeout(() => {
-                clearTimeout(wait);
-                this.updatePageState(false);
-                resolve();
-            }, 100)
-        });
+        while (this.state.loadingOffline)
+            await new Promise((resolve, reject) => {
+                const wait: NodeJS.Timeout = setTimeout(() => {
+                    clearTimeout(wait);
+                    this.updatePageState(false);
+                    resolve();
+                }, 100);
+            });
         this.updatePageState();
     }
 
@@ -304,7 +369,7 @@ export class ObjectListPage {
      * loads available content without synchronization and user-feedback
      */
     async refreshContent(): Promise<void> {
-        if(ObjectListNavParams.favorites) await this.setLoadedFavorites();
+        if (ObjectListNavParams.favorites) await this.setLoadedFavorites();
         else await this.setLiveLoadedContent(this.parent === undefined);
         this.updatePageState();
     }
@@ -313,20 +378,28 @@ export class ObjectListPage {
      * load favorites from db cache
      */
     async setLoadedFavorites(): Promise<void> {
-        const favorites: Array<ILIASObject> = (this.parent === undefined) ?
-            await ILIASObject.getFavoritesByUserId(AuthenticationProvider.getUser().id) :
-            await ILIASObject.findByParentRefId(this.parent.refId, AuthenticationProvider.getUser().id);
+        const favorites: Array<ILIASObject> =
+            this.parent === undefined
+                ? await ILIASObject.getFavoritesByUserId(
+                      AuthenticationProvider.getUser().id
+                  )
+                : await ILIASObject.findByParentRefId(
+                      this.parent.refId,
+                      AuthenticationProvider.getUser().id
+                  );
         this.sortAndSetObjectList(favorites);
     }
 
     /**
      * loads the object data from db cache
      */
-    private async setLiveLoadedContent(isDesktopObject: boolean): Promise<void> {
+    private async setLiveLoadedContent(
+        isDesktopObject: boolean
+    ): Promise<void> {
         const user: User = AuthenticationProvider.getUser();
-        const loaded: Array<ILIASObject> = (isDesktopObject) ?
-            await DesktopItem.findByUserId(user.id) :
-            await ILIASObject.findByParentRefId(this.parent.refId, user.id);
+        const loaded: Array<ILIASObject> = isDesktopObject
+            ? await DesktopItem.findByUserId(user.id)
+            : await ILIASObject.findByParentRefId(this.parent.refId, user.id);
         this.sortAndSetObjectList(loaded);
     }
 
@@ -335,8 +408,16 @@ export class ObjectListPage {
      */
     private sortAndSetObjectList(ilObjects: Array<ILIASObject>): void {
         ilObjects.sort(ILIASObject.compare);
-        const content: Array<{object: ILIASObject, presenter: ILIASObjectPresenter}> = [];
-        ilObjects.forEach(o => content.push({object: o, presenter: this.ilObjPresenterFactory.instance(o)}));
+        const content: Array<{
+            object: ILIASObject;
+            presenter: ILIASObjectPresenter;
+        }> = [];
+        ilObjects.forEach((o) =>
+            content.push({
+                object: o,
+                presenter: this.ilObjPresenterFactory.instance(o),
+            })
+        );
         this.content = content;
     }
 
@@ -348,7 +429,8 @@ export class ObjectListPage {
      * execute primary action of given object
      */
     onClick(iliasObject: ILIASObject): void {
-        const primaryAction: ILIASObjectAction = this.getPrimaryAction(iliasObject);
+        const primaryAction: ILIASObjectAction =
+            this.getPrimaryAction(iliasObject);
         this.executeAction(primaryAction);
     }
 
@@ -363,22 +445,31 @@ export class ObjectListPage {
             );
         }
 
-        if(iliasObject.isLinked()) {
+        if (iliasObject.isLinked()) {
             return this.openInIliasActionFactory(
                 this.translate.instant("actions.view_in_ilias"),
                 this.linkBuilder.default().target(iliasObject.refId)
             );
         }
 
-        if(iliasObject.isContainer()) {
-            return new ShowObjectListPageAction(this.translate.instant("actions.show_object_list"), iliasObject, this.navCtrl);
+        if (iliasObject.isContainer()) {
+            return new ShowObjectListPageAction(
+                this.translate.instant("actions.show_object_list"),
+                iliasObject,
+                this.navCtrl
+            );
         }
 
-        if(iliasObject.isLearnplace()) {
-            return this.openLearnplaceActionFactory(this.navCtrl, iliasObject.objId, iliasObject.title, this.modal);
+        if (iliasObject.isLearnplace()) {
+            return this.openLearnplaceActionFactory(
+                this.navCtrl,
+                iliasObject.objId,
+                iliasObject.title,
+                this.modal
+            );
         }
 
-        if(iliasObject.type === "htlm") {
+        if (iliasObject.type === "htlm") {
             return this.openHtmlLearningModuleActionFactory(
                 this.navCtrl,
                 iliasObject.objId,
@@ -387,16 +478,18 @@ export class ObjectListPage {
             );
         }
 
-        if(iliasObject.type === "sahs") {
+        if (iliasObject.type === "sahs") {
             return this.openScormLearningModuleActionFactory(
                 iliasObject.objId,
-                this.navCtrl,
+                this.navCtrl
             );
         }
 
-        if(iliasObject.type == "file") {
+        if (iliasObject.type == "file") {
             return new DownloadAndOpenFileExternalAction(
-                this.translate.instant("actions.download_and_open_in_external_app"),
+                this.translate.instant(
+                    "actions.download_and_open_in_external_app"
+                ),
                 iliasObject,
                 this.file,
                 this.translate,
@@ -406,41 +499,57 @@ export class ObjectListPage {
             );
         }
 
-        return this.openInIliasActionFactory(this.translate.instant("actions.view_in_ilias"), this.linkBuilder.default().target(iliasObject.refId));
+        return this.openInIliasActionFactory(
+            this.translate.instant("actions.view_in_ilias"),
+            this.linkBuilder.default().target(iliasObject.refId)
+        );
     }
 
     executeAction(action: ILIASObjectAction): void {
         //const hash: number = action.instanceId();
         //this.footerToolbar.addJob(hash, "");
-        action.execute().then((result) => {
-            this.handleActionResult(result);
-            //this.footerToolbar.removeJob(hash);
-        }).catch((error) => {
-            this.log.warn(() => `Could not execute action: action=${action.constructor.name}, error=${JSON.stringify(error)}`);
-            //this.footerToolbar.removeJob(hash);
-            throw error;
-        });
+        action
+            .execute()
+            .then((result) => {
+                this.handleActionResult(result);
+                //this.footerToolbar.removeJob(hash);
+            })
+            .catch((error) => {
+                this.log.warn(
+                    () =>
+                        `Could not execute action: action=${
+                            action.constructor.name
+                        }, error=${JSON.stringify(error)}`
+                );
+                //this.footerToolbar.removeJob(hash);
+                throw error;
+            });
         this.updatePageState();
     }
 
-    executeSetFavoriteValueAction(iliasObject: ILIASObject, value: boolean): void {
+    executeSetFavoriteValueAction(
+        iliasObject: ILIASObject,
+        value: boolean
+    ): void {
         // this.updatePageState();
-        if(!this.state.online) return;
+        if (!this.state.online) return;
 
         const actions: Array<ILIASObjectAction> = [];
-        if(value) this.applyMarkAsFavoriteAction(actions, iliasObject);
+        if (value) this.applyMarkAsFavoriteAction(actions, iliasObject);
         else this.applyUnmarkAsFavoriteAction(actions, iliasObject);
         this.executeAction(actions.pop());
     }
 
     private handleActionResult(result: ILIASObjectActionResult): void {
-        if(!result) return;
-        if(result instanceof ILIASObjectActionSuccess) {
+        if (!result) return;
+        if (result instanceof ILIASObjectActionSuccess) {
             if (result.message) {
-                this.toast.create({
-                    message: result.message,
-                    duration: 3000
-                }).then((it: HTMLIonToastElement) => it.present());
+                this.toast
+                    .create({
+                        message: result.message,
+                        duration: 3000,
+                    })
+                    .then((it: HTMLIonToastElement) => it.present());
             }
         }
     }
@@ -448,36 +557,36 @@ export class ObjectListPage {
     async openLearnplacePreview(): Promise<void> {
         await this.presentLoading();
         forkJoin(this.mapService.getMapPlaces(this.lpManager.learnplaces))
-            .pipe(
-                first(),
-            ).subscribe(places => {
-                if (places.filter(lp => lp.visible).length > 0) {
+            .pipe(first())
+            .subscribe((places) => {
+                if (places.filter((lp) => lp.visible).length > 0) {
                     // tslint:disable-next-line: no-floating-promises
-                    this.modal.create({
-                        component: MapComponent,
-                        componentProps: {
-                            places: places,
-                            selectedPlace: places[0].id,
-                            showFullscreen: false
-                        },
-                        cssClass: "learnplace-preview",
-                        showBackdrop: true,
-                        backdropDismiss: true
-                    }).then(async preview => {
-                        await this.dismissLoading();
-                        await preview.present();
-                    });
+                    this.modal
+                        .create({
+                            component: MapComponent,
+                            componentProps: {
+                                places: places,
+                                selectedPlace: places[0].id,
+                                showFullscreen: false,
+                            },
+                            cssClass: "learnplace-preview",
+                            showBackdrop: true,
+                            backdropDismiss: true,
+                        })
+                        .then(async (preview) => {
+                            await this.dismissLoading();
+                            await preview.present();
+                        });
                 }
             });
     }
 
     async presentLoading(): Promise<void> {
         this.previewLoading = await this.loadingController.create({
-            cssClass: 'my-custom-class',
-            message: 'Please wait...'
-          });
-          await this.previewLoading.present();
-
+            cssClass: "my-custom-class",
+            message: "Please wait...",
+        });
+        await this.previewLoading.present();
     }
 
     async dismissLoading(): Promise<void> {
@@ -496,86 +605,122 @@ export class ObjectListPage {
         this.applyUnmarkAsFavoriteAction(actions, iliasObject);
         this.applySynchronizeAction(actions, iliasObject);
 
-        const buttons: any = actions.map(action => {
+        const buttons: any = actions.map((action) => {
             return {
                 text: action.title,
                 handler: (): void => {
                     // This action displays an alert before it gets executed
                     if (action.alert()) {
-                        this.alert.create({
-                            header: action.alert().title,
-                            subHeader: action.alert().subTitle,
-                            buttons: [
-                                {
-                                    text: this.translate.instant("cancel"),
-                                    role: "cancel"
-                                },
-                                {
-                                    text: "Ok",
-                                    handler: (): void => {
-                                        this.executeAction(action);
-                                    }
-                                }
-                            ]
-                        }).then(it => it.present());
+                        this.alert
+                            .create({
+                                header: action.alert().title,
+                                subHeader: action.alert().subTitle,
+                                buttons: [
+                                    {
+                                        text: this.translate.instant("cancel"),
+                                        role: "cancel",
+                                    },
+                                    {
+                                        text: "Ok",
+                                        handler: (): void => {
+                                            this.executeAction(action);
+                                        },
+                                    },
+                                ],
+                            })
+                            .then((it) => it.present());
                     } else {
                         this.executeAction(action);
                     }
-                }
+                },
             };
-
         });
 
         buttons.push({
             text: this.translate.instant("cancel"),
             role: "cancel",
-            handler: (): void => {
-            }
+            handler: (): void => {},
         });
 
         if (this.state.learnplaces) {
             buttons.push({
                 text: "Learnplace preview",
-                handler: (): Promise<void> => this.openLearnplacePreview()
+                handler: (): Promise<void> => this.openLearnplacePreview(),
             });
         }
 
-        this.actionSheet.create({
-            header: iliasObject.title,
-            buttons: buttons
-        }).then(it => it.present());
+        this.actionSheet
+            .create({
+                header: iliasObject.title,
+                buttons: buttons,
+            })
+            .then((it) => it.present());
     }
 
-    private applyDefaultActions(actions: Array<ILIASObjectAction>, iliasObject: ILIASObject): void {
-        actions.push(new ShowDetailsPageAction(this.translate.instant("actions.show_details"), iliasObject, this.navCtrl));
-        if(this.state.online) actions.push(
-            this.openInIliasActionFactory(this.translate.instant("actions.view_in_ilias"), this.linkBuilder.default().target(iliasObject.refId))
+    private applyDefaultActions(
+        actions: Array<ILIASObjectAction>,
+        iliasObject: ILIASObject
+    ): void {
+        actions.push(
+            new ShowDetailsPageAction(
+                this.translate.instant("actions.show_details"),
+                iliasObject,
+                this.navCtrl
+            )
         );
+        if (this.state.online)
+            actions.push(
+                this.openInIliasActionFactory(
+                    this.translate.instant("actions.view_in_ilias"),
+                    this.linkBuilder.default().target(iliasObject.refId)
+                )
+            );
     }
 
-    private applyMarkAsFavoriteAction(actions: Array<ILIASObjectAction>, iliasObject: ILIASObject): void {
-        if(!iliasObject.isFavorite && this.state.online) {
-            actions.push(new MarkAsFavoriteAction(
-                this.translate.instant("actions.mark_as_favorite"),
-                iliasObject,
-                this.sync
-            ));
+    private applyMarkAsFavoriteAction(
+        actions: Array<ILIASObjectAction>,
+        iliasObject: ILIASObject
+    ): void {
+        if (!iliasObject.isFavorite && this.state.online) {
+            actions.push(
+                new MarkAsFavoriteAction(
+                    this.translate.instant("actions.mark_as_favorite"),
+                    iliasObject,
+                    this.sync
+                )
+            );
         }
     }
 
-    private applyUnmarkAsFavoriteAction(actions: Array<ILIASObjectAction>, iliasObject: ILIASObject): void {
-        if(iliasObject.isFavorite) {
-            actions.push(new UnMarkAsFavoriteAction(
-                this.translate.instant("actions.unmark_as_favorite"),
-                iliasObject,
-                this.userStorage
-            ));
+    private applyUnmarkAsFavoriteAction(
+        actions: Array<ILIASObjectAction>,
+        iliasObject: ILIASObject
+    ): void {
+        if (iliasObject.isFavorite) {
+            actions.push(
+                new UnMarkAsFavoriteAction(
+                    this.translate.instant("actions.unmark_as_favorite"),
+                    iliasObject,
+                    this.userStorage
+                )
+            );
         }
     }
 
-    private applySynchronizeAction(actions: Array<ILIASObjectAction>, iliasObject: ILIASObject): void {
-        if(iliasObject.isFavorite  && this.state.online) {
-            actions.push(new SynchronizeAction(this.translate.instant("actions.synchronize"), iliasObject, this.sync, this.modal, this.translate));
+    private applySynchronizeAction(
+        actions: Array<ILIASObjectAction>,
+        iliasObject: ILIASObject
+    ): void {
+        if (iliasObject.isFavorite && this.state.online) {
+            actions.push(
+                new SynchronizeAction(
+                    this.translate.instant("actions.synchronize"),
+                    iliasObject,
+                    this.sync,
+                    this.modal,
+                    this.translate
+                )
+            );
         }
     }
 
@@ -583,11 +728,15 @@ export class ObjectListPage {
      * opens the parent object or the timeline of the parent object in ILIAS
      */
     private openInIlias(timeline: boolean = false): void {
-        if(this.parent == undefined) {
-            throw new Exception("Can not open link for undefined. Do not call this method on ILIAS objects with no parent.");
+        if (this.parent == undefined) {
+            throw new Exception(
+                "Can not open link for undefined. Do not call this method on ILIAS objects with no parent."
+            );
         }
 
-        const linkBuilder: TimelineLinkBuilder | DefaultLinkBuilder = timeline ? this.linkBuilder.timeline() : this.linkBuilder.default();
+        const linkBuilder: TimelineLinkBuilder | DefaultLinkBuilder = timeline
+            ? this.linkBuilder.timeline()
+            : this.linkBuilder.default();
         const action: ILIASObjectAction = this.openInIliasActionFactory(
             this.translate.instant("actions.view_in_ilias"),
             linkBuilder.target(this.parent.refId)
@@ -596,9 +745,11 @@ export class ObjectListPage {
     }
 
     private getLearnplaces(): Array<number> {
-        return this.content.map(item => {
-            if (item.object.type === "xsrl" && !!item.object)
-                return item.object.objId;
-        }).filter(id => id);
+        return this.content
+            .map((item) => {
+                if (item.object.type === "xsrl" && !!item.object)
+                    return item.object.objId;
+            })
+            .filter((id) => id);
     }
 }

@@ -1,17 +1,16 @@
 /** angular */
-import {HttpResponse as Response, HttpHeaders} from "@angular/common/http";
-import {InjectionToken, Injectable} from "@angular/core";
+import { HttpResponse as Response, HttpHeaders } from "@angular/common/http";
+import { InjectionToken, Injectable } from "@angular/core";
 /** ionic-native */
-import {HTTP, HTTPResponse} from "@ionic-native/http/ngx";
+import { HTTP, HTTPResponse } from "@ionic-native/http/ngx";
 /** logging */
-import {Logger} from "../../services/logging/logging.api";
-import {Logging} from "../../services/logging/logging.service";
+import { Logger } from "../../services/logging/logging.api";
+import { Logging } from "../../services/logging/logging.service";
 /** misc */
-import {HttpRequestError, HttpResponse} from "../http";
-import {RequestOptions} from "./file-transfer";
+import { HttpRequestError, HttpResponse } from "../http";
+import { RequestOptions } from "./file-transfer";
 
 export interface UploadRequestOptions extends RequestOptions {
-
     /**
      * The name of the resource which is uploaded.
      */
@@ -25,7 +24,6 @@ export interface UploadRequestOptions extends RequestOptions {
  * @author Nicolas Schaefli <ns@studer-raimann.ch>
  */
 export interface FileUploader {
-
     /**
      * Uploads a resource to the given url with the specified name.
      *
@@ -34,26 +32,26 @@ export interface FileUploader {
      *
      * @throws {HttpRequestError} Thrown if the download of the resource failed.
      */
-    upload(options: UploadRequestOptions): Promise<HttpResponse>
+    upload(options: UploadRequestOptions): Promise<HttpResponse>;
 }
 
-export const FILE_UPLOADER: InjectionToken<FileUploader> = new InjectionToken("token for file uploader");
+export const FILE_UPLOADER: InjectionToken<FileUploader> = new InjectionToken(
+    "token for file uploader"
+);
 
 // workaround to access the url property of the http response
 // see https://ionicframework.com/docs/native/http/
-interface HTTPResponseWorkaround extends HTTPResponse{
-    url: string
+interface HTTPResponseWorkaround extends HTTPResponse {
+    url: string;
 }
 
 /**
  * Standard file download implementation.
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
-export class FileUploaderImpl implements FileUploader{
-
-
+export class FileUploaderImpl implements FileUploader {
     private readonly log: Logger = Logging.getLogger(FileUploaderImpl.name);
     private requestCounter: number = 0;
 
@@ -68,44 +66,74 @@ export class FileUploaderImpl implements FileUploader{
      * @throws {HttpRequestError} Thrown if the upload of the resource failed.
      */
     async upload(options: UploadRequestOptions): Promise<HttpResponse> {
-
         try {
             const requestId: number = this.generateRequestId();
-            this.log.trace(() => `Upload-${requestId}: Clear cookies for request.`);
+            this.log.trace(
+                () => `Upload-${requestId}: Clear cookies for request.`
+            );
             this.http.clearCookies();
-            this.log.trace(() => `Upload-${requestId}: Redirects enabled: ${options.followRedirects}`);
+            this.log.trace(
+                () =>
+                    `Upload-${requestId}: Redirects enabled: ${options.followRedirects}`
+            );
             this.http.setFollowRedirect(options.followRedirects);
             const response: HTTPResponseWorkaround =
-                (await this.http.uploadFile(options.url, "", options.headers, options.filePath, options.name)) as HTTPResponseWorkaround;
+                (await this.http.uploadFile(
+                    options.url,
+                    "",
+                    options.headers,
+                    options.filePath,
+                    options.name
+                )) as HTTPResponseWorkaround;
             this.log.trace(() => `Upload-${requestId}: Transfer finished.`);
 
-            const rawResponse: string = (typeof (response.data) === "string") ? response.data.toString() : "";
+            const rawResponse: string =
+                typeof response.data === "string"
+                    ? response.data.toString()
+                    : "";
             const bodyBuffer: ArrayBuffer = new ArrayBuffer(rawResponse.length);
             const bodyView: DataView = new DataView(bodyBuffer);
-            for(let i: number = 0; i < rawResponse.length; i++) {
+            for (let i: number = 0; i < rawResponse.length; i++) {
                 const charCode: number = rawResponse.charCodeAt(i);
                 bodyView.setInt8(i, charCode);
             }
 
-            return new HttpResponse(new Response<ArrayBuffer>({
-                url: response.url,
-                status: response.status,
-                statusText: "",
-                body: bodyBuffer,
-                headers: new HttpHeaders(response.headers)
-            }));
-        }
-        catch (error) {
-            if(error.hasOwnProperty("error")) {
-                const response: HTTPResponseWorkaround = error as HTTPResponseWorkaround;
-                this.log.warn(() => `Request to "${response.url}" failed with status code: ${response.status} error: ${response.error}`);
-                throw new HttpRequestError(response.status, `Request to "${response.url}" failed with error: ${response.error}`)
+            return new HttpResponse(
+                new Response<ArrayBuffer>({
+                    url: response.url,
+                    status: response.status,
+                    statusText: "",
+                    body: bodyBuffer,
+                    headers: new HttpHeaders(response.headers),
+                })
+            );
+        } catch (error) {
+            if (error.hasOwnProperty("error")) {
+                const response: HTTPResponseWorkaround =
+                    error as HTTPResponseWorkaround;
+                this.log.warn(
+                    () =>
+                        `Request to "${response.url}" failed with status code: ${response.status} error: ${response.error}`
+                );
+                throw new HttpRequestError(
+                    response.status,
+                    `Request to "${response.url}" failed with error: ${response.error}`
+                );
             }
 
-            this.log.warn(() => `The resource upload failed with error: ${JSON.stringify(error)}`);
-            throw new HttpRequestError(0, `The resource upload failed with error: ${JSON.stringify(error)}`);
+            this.log.warn(
+                () =>
+                    `The resource upload failed with error: ${JSON.stringify(
+                        error
+                    )}`
+            );
+            throw new HttpRequestError(
+                0,
+                `The resource upload failed with error: ${JSON.stringify(
+                    error
+                )}`
+            );
         }
-
     }
 
     /**
@@ -115,7 +143,7 @@ export class FileUploaderImpl implements FileUploader{
      * @returns {number} The request id of the current request.
      */
     private generateRequestId(): number {
-        if(this.requestCounter === Number.MAX_SAFE_INTEGER)
+        if (this.requestCounter === Number.MAX_SAFE_INTEGER)
             this.requestCounter = 0;
 
         return ++this.requestCounter;

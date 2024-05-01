@@ -1,12 +1,18 @@
-import {ILIASObject} from "../models/ilias-object";
-import {ILIASObjectAction, ILIASObjectActionAlert, ILIASObjectActionResult, ILIASObjectActionNoMessage} from "./object-action";
-import {FileService} from "../services/file.service";
+import { ILIASObject } from "../models/ilias-object";
+import {
+    ILIASObjectAction,
+    ILIASObjectActionAlert,
+    ILIASObjectActionResult,
+    ILIASObjectActionNoMessage,
+} from "./object-action";
+import { FileService } from "../services/file.service";
 
 export class OpenFileExternalAction extends ILIASObjectAction {
-
-    constructor(public title: string,
-                       public fileObject: ILIASObject,
-                       public file: FileService) {
+    constructor(
+        public title: string,
+        public fileObject: ILIASObject,
+        public file: FileService
+    ) {
         super();
     }
 
@@ -19,5 +25,4 @@ export class OpenFileExternalAction extends ILIASObjectAction {
     alert(): ILIASObjectActionAlert | undefined {
         return undefined;
     }
-
 }

@@ -1,4 +1,4 @@
-import {Logging} from "./app/services/logging/logging.service";
+import { Logging } from "./app/services/logging/logging.service";
 
 let standardLoaded: boolean = false;
 
@@ -19,74 +19,71 @@ export function useStandard(): void {
 
     Logging.getLogger("useStandard").debug(() => "standard.ts loaded");
     Object.defineProperties(Object.prototype, {
-
         applies: {
-            value: function<T>(block: () => void): T {
+            value: function <T>(block: () => void): T {
                 block.apply(<T>this);
                 return <T>this;
             },
-            writable: true
+            writable: true,
         },
 
         also: {
-            value: function<T>(block: (it: T) => void): T {
+            value: function <T>(block: (it: T) => void): T {
                 block(<T>this);
                 return <T>this;
             },
-            writable: true
+            writable: true,
         },
 
         letIt: {
-            value: function<T, R>(block: (it: T) => R): R {
+            value: function <T, R>(block: (it: T) => R): R {
                 return block(<T>this);
             },
-            writable: true
+            writable: true,
         },
 
         takeIf: {
-            value: function<T>(predicate: (it: T) => boolean): T | undefined {
-                return (predicate(<T>this)? <T>this : undefined);
+            value: function <T>(predicate: (it: T) => boolean): T | undefined {
+                return predicate(<T>this) ? <T>this : undefined;
             },
-            writable: true
+            writable: true,
         },
 
         takeUnless: {
-            value: function<T>(predicate: (it: T) => boolean): T | undefined {
-                return (predicate(<T>this)? undefined : <T>this);
+            value: function <T>(predicate: (it: T) => boolean): T | undefined {
+                return predicate(<T>this) ? undefined : <T>this;
             },
-            writable: true
-        }
+            writable: true,
+        },
     });
     standardLoaded = true;
 }
 
 declare global {
+    interface Object {
+        /**
+         * Calls the specified function {@code block} with 'this' value and returns 'this' value.
+         */
+        applies<T>(block: (this: T) => void): T;
 
-  interface Object {
+        /**
+         * Calls the specified function {@code block} with 'this' value as its argument and returns 'this' value.
+         */
+        also<T>(block: (it: T) => void): T;
 
-    /**
-     * Calls the specified function {@code block} with 'this' value and returns 'this' value.
-     */
-    applies<T>(block: (this: T) => void): T;
+        /**
+         * Calls the specified function {@code block} with 'this' value is its argument and returns its value.
+         */
+        letIt<T, R>(block: (it: T) => R): R;
 
-    /**
-     * Calls the specified function {@code block} with 'this' value as its argument and returns 'this' value.
-     */
-    also<T>(block: (it: T) => void): T;
+        /**
+         * Returns 'this' value if it satisfies the given {@code predicate} or 'undefined', if it doesn't.
+         */
+        takeIf<T>(predicate: (it: T) => boolean): T | undefined;
 
-    /**
-     * Calls the specified function {@code block} with 'this' value is its argument and returns its value.
-     */
-    letIt<T, R>(block: (it: T) => R): R;
-
-    /**
-     * Returns 'this' value if it satisfies the given {@code predicate} or 'undefined', if it doesn't.
-     */
-    takeIf<T>(predicate: (it: T) => boolean): T | undefined;
-
-    /**
-     * Returns 'this' value if it does not satisfy the given {@code predicate} or 'undefined', if it does.
-     */
-    takeUnless<T>(predicate: (it: T) => boolean): T | undefined;
-  }
+        /**
+         * Returns 'this' value if it does not satisfy the given {@code predicate} or 'undefined', if it does.
+         */
+        takeUnless<T>(predicate: (it: T) => boolean): T | undefined;
+    }
 }

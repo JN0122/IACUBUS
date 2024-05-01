@@ -1,9 +1,12 @@
 .page_menu {
     height: 100%;
-    --background: var(--page-menu-background-color, var(--ion-color-primary)) !important;
+    --background: var(
+        --page-menu-background-color,
+        var(--ion-color-primary)
+    ) !important;
 }
 
-.menu-bottom-image{
+.menu-bottom-image {
     display: var(--page-menu-bottom-image-display, none);
 
     position: absolute;
@@ -24,14 +27,17 @@
     }
 }
 
-ion-list{
+ion-list {
     padding-top: 0;
     padding-bottom: 0;
     background: transparent !important;
 }
 
 ion-item {
-    color: var(--page-menu-background-color-contrast, var(--ion-color-primary-contrast));
+    color: var(
+        --page-menu-background-color-contrast,
+        var(--ion-color-primary-contrast)
+    );
 }
 
 ion-icon {

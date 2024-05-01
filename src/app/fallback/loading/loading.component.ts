@@ -9,16 +9,13 @@ export enum LoadingPageType {
 
 @Component({
     templateUrl: "loading.html",
-    styleUrls: ["loading.scss"]
+    styleUrls: ["loading.scss"],
 })
 export class LoadingPage {
     // the type of object that is being loaded
     static type: LoadingPageType = LoadingPageType.generic;
 
-    constructor(
-        readonly loadingService: LoadingService,
-    ) {
-    }
+    constructor(readonly loadingService: LoadingService) {}
 
     translateKeyForType(key: string): string {
         switch (LoadingPage.type) {
@@ -31,5 +28,4 @@ export class LoadingPage {
         }
         return key;
     }
-
 }

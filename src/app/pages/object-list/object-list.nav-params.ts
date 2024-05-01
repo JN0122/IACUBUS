@@ -1,4 +1,4 @@
-import {ILIASObject} from "../../models/ilias-object";
+import { ILIASObject } from "../../models/ilias-object";
 
 export class ObjectListNavParams {
     static favorites: boolean = undefined;

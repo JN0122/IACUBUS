@@ -1,11 +1,17 @@
-import {File} from "@ionic-native/file/ngx";
-import {Platform} from "@ionic/angular";
-import {Injectable, Inject} from "@angular/core";
-import {User} from "../../models/user";
-import {ILIASObject} from "../../models/ilias-object";
-import {FileService} from "../file.service";
-import {LEARNPLACE_MANAGER, LearnplaceManager} from "../../learnplace/services/learnplace.management";
-import {LEARNING_MODULE_MANAGER, LearningModuleManager} from "../../learningmodule/services/learning-module-manager";
+import { File } from "@ionic-native/file/ngx";
+import { Platform } from "@ionic/angular";
+import { Injectable, Inject } from "@angular/core";
+import { User } from "../../models/user";
+import { ILIASObject } from "../../models/ilias-object";
+import { FileService } from "../file.service";
+import {
+    LEARNPLACE_MANAGER,
+    LearnplaceManager,
+} from "../../learnplace/services/learnplace.management";
+import {
+    LEARNING_MODULE_MANAGER,
+    LearningModuleManager,
+} from "../../learningmodule/services/learning-module-manager";
 
 export interface StorageUtilization {
     /**
@@ -17,18 +23,23 @@ export interface StorageUtilization {
 }
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class ObjectStorageService {
-    private static storageDifferences: Array<{userId: number, difference: number}> = [];
+    private static storageDifferences: Array<{
+        userId: number;
+        difference: number;
+    }> = [];
     private static storageUpdateLock: boolean = false;
 
     constructor(
         private readonly fileSystem: File,
         private readonly platform: Platform,
         private readonly fileService: FileService,
-        @Inject(LEARNPLACE_MANAGER) private readonly learnplaceManager: LearnplaceManager,
-        @Inject(LEARNING_MODULE_MANAGER) private readonly learningModuleManager: LearningModuleManager
+        @Inject(LEARNPLACE_MANAGER)
+        private readonly learnplaceManager: LearnplaceManager,
+        @Inject(LEARNING_MODULE_MANAGER)
+        private readonly learningModuleManager: LearningModuleManager
     ) {}
 
     /**
@@ -37,12 +48,22 @@ export class ObjectStorageService {
      * @param objectId
      * @param storage
      */
-    static async addObjectToUserStorage(userId: number, objectId: number, storage: StorageUtilization): Promise<void> {
+    static async addObjectToUserStorage(
+        userId: number,
+        objectId: number,
+        storage: StorageUtilization
+    ): Promise<void> {
         const io: ILIASObject = await ILIASObject.find(objectId);
-        if(io.isOfflineAvailable) return;
+        if (io.isOfflineAvailable) return;
 
-        const difference: number = await storage.getUsedStorage(objectId, userId);
-        await ObjectStorageService.addDifferenceToUserStorage(userId, difference);
+        const difference: number = await storage.getUsedStorage(
+            objectId,
+            userId
+        );
+        await ObjectStorageService.addDifferenceToUserStorage(
+            userId,
+            difference
+        );
 
         io.isOfflineAvailable = true;
         await io.save();
@@ -54,12 +75,22 @@ export class ObjectStorageService {
      * @param objectId
      * @param storage
      */
-    static async removeObjectFromUserStorage(userId: number, objectId: number, storage: StorageUtilization): Promise<void> {
+    static async removeObjectFromUserStorage(
+        userId: number,
+        objectId: number,
+        storage: StorageUtilization
+    ): Promise<void> {
         const io: ILIASObject = await ILIASObject.find(objectId);
-        if(!io.isOfflineAvailable) return;
+        if (!io.isOfflineAvailable) return;
 
-        const difference: number = await storage.getUsedStorage(objectId, userId);
-        await ObjectStorageService.addDifferenceToUserStorage(userId, -difference);
+        const difference: number = await storage.getUsedStorage(
+            objectId,
+            userId
+        );
+        await ObjectStorageService.addDifferenceToUserStorage(
+            userId,
+            -difference
+        );
 
         io.isOfflineAvailable = false;
         await io.save();
@@ -70,8 +101,14 @@ export class ObjectStorageService {
      * @param userId
      * @param difference
      */
-    static async addDifferenceToUserStorage(userId: number, difference: number) {
-        ObjectStorageService.storageDifferences.push({userId: userId, difference: difference});
+    static async addDifferenceToUserStorage(
+        userId: number,
+        difference: number
+    ) {
+        ObjectStorageService.storageDifferences.push({
+            userId: userId,
+            difference: difference,
+        });
         if (!ObjectStorageService.storageUpdateLock)
             this.applyDifferenceToUserStorage();
     }
@@ -81,11 +118,13 @@ export class ObjectStorageService {
      */
     static async applyDifferenceToUserStorage() {
         ObjectStorageService.storageUpdateLock = true;
-        while(ObjectStorageService.storageDifferences.length) {
-            const entry: {userId: number, difference: number} = ObjectStorageService.storageDifferences.pop();
+        while (ObjectStorageService.storageDifferences.length) {
+            const entry: { userId: number; difference: number } =
+                ObjectStorageService.storageDifferences.pop();
             console.log(`storage: difference ${entry.difference}`);
             const user: User = await User.find(entry.userId);
-            user.totalUsedStorage = Number(user.totalUsedStorage) + Number(entry.difference);
+            user.totalUsedStorage =
+                Number(user.totalUsedStorage) + Number(entry.difference);
             await user.save();
             console.log(`storage: used ${user.totalUsedStorage} by ${user.id}`);
         }

@@ -5,11 +5,10 @@
  * @version 1.0.0
  */
 export class HardwareAccessError extends Error {
-
-  constructor(message: string) {
-    super(message);
-    Object.setPrototypeOf(this, HardwareAccessError.prototype);
-  }
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, HardwareAccessError.prototype);
+    }
 }
 
 /**
@@ -19,11 +18,10 @@ export class HardwareAccessError extends Error {
  * @version 1.0.0
  */
 export class LocationAccessError extends HardwareAccessError {
-
-  constructor(message: string) {
-    super(message);
-    Object.setPrototypeOf(this, LocationAccessError.prototype);
-  }
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, LocationAccessError.prototype);
+    }
 }
 
 /**
@@ -33,11 +31,10 @@ export class LocationAccessError extends HardwareAccessError {
  * @version 1.0.0
  */
 export class WifiAccessError extends HardwareAccessError {
-
-  constructor(message: string) {
-    super(message);
-    Object.setPrototypeOf(this, WifiAccessError.prototype);
-  }
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, WifiAccessError.prototype);
+    }
 }
 
 /**
@@ -47,9 +44,8 @@ export class WifiAccessError extends HardwareAccessError {
  * @version 1.0.0
  */
 export class RoamingAccessError extends HardwareAccessError {
-
-  constructor(message: string) {
-    super(message);
-    Object.setPrototypeOf(this, RoamingAccessError.prototype);
-  }
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, RoamingAccessError.prototype);
+    }
 }

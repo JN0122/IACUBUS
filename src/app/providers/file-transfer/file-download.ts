@@ -1,14 +1,14 @@
 /** angular */
-import {HttpResponse as Response, HttpHeaders} from "@angular/common/http";
-import {InjectionToken, Injectable} from "@angular/core";
+import { HttpResponse as Response, HttpHeaders } from "@angular/common/http";
+import { InjectionToken, Injectable } from "@angular/core";
 /** ionic-native */
-import {HTTP, HTTPResponse} from "@ionic-native/http/ngx";
+import { HTTP, HTTPResponse } from "@ionic-native/http/ngx";
 /** logging */
-import {Logger} from "../../services/logging/logging.api";
-import {Logging} from "../../services/logging/logging.service";
+import { Logger } from "../../services/logging/logging.api";
+import { Logging } from "../../services/logging/logging.service";
 /** misc */
-import {HttpRequestError, HttpResponse} from "../http";
-import {RequestOptions} from "./file-transfer";
+import { HttpRequestError, HttpResponse } from "../http";
+import { RequestOptions } from "./file-transfer";
 
 export interface DownloadRequestOptions extends RequestOptions {
     /**
@@ -25,7 +25,6 @@ export interface DownloadRequestOptions extends RequestOptions {
  * @author Nicolas Schaefli <ns@studer-raimann.ch>
  */
 export interface FileDownloader {
-
     /**
      * Downloads the resource specified by the url and writes it into the given file.
      *
@@ -34,26 +33,25 @@ export interface FileDownloader {
      *
      * @throws {HttpRequestError} Thrown if the download of the resource failed.
      */
-    download(options: DownloadRequestOptions): Promise<HttpResponse>
+    download(options: DownloadRequestOptions): Promise<HttpResponse>;
 }
 
-export const FILE_DOWNLOADER: InjectionToken<FileDownloader> = new InjectionToken("token for file downloader");
+export const FILE_DOWNLOADER: InjectionToken<FileDownloader> =
+    new InjectionToken("token for file downloader");
 
 // workaround to access the url property of the http response
 // see https://ionicframework.com/docs/native/http/
-interface HTTPResponseWorkaround extends HTTPResponse{
-    url: string
+interface HTTPResponseWorkaround extends HTTPResponse {
+    url: string;
 }
 
 /**
  * Standard file download implementation.
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
-export class FileDownloaderImpl implements FileDownloader{
-
-
+export class FileDownloaderImpl implements FileDownloader {
     private readonly log: Logger = Logging.getLogger(FileDownloaderImpl.name);
     private requestCounter: number = 0;
 
@@ -70,35 +68,65 @@ export class FileDownloaderImpl implements FileDownloader{
     async download(options: DownloadRequestOptions): Promise<HttpResponse> {
         try {
             const requestId: number = this.generateRequestId();
-            this.log.trace(() => `Download-${requestId}: Clear cookies for request.`);
+            this.log.trace(
+                () => `Download-${requestId}: Clear cookies for request.`
+            );
             this.http.clearCookies();
-            this.log.trace(() => `Download-${requestId}: Redirects enabled: ${options.followRedirects}`);
+            this.log.trace(
+                () =>
+                    `Download-${requestId}: Redirects enabled: ${options.followRedirects}`
+            );
             this.http.setFollowRedirect(options.followRedirects);
-            this.log.trace(() => `Download-${requestId}: Download url: "${options.url}", to "${options.filePath}"`);
+            this.log.trace(
+                () =>
+                    `Download-${requestId}: Download url: "${options.url}", to "${options.filePath}"`
+            );
             const response: HTTPResponseWorkaround =
-                (await this.http.downloadFile(options.url, options.body, options.headers, options.filePath)) as HTTPResponseWorkaround;
+                (await this.http.downloadFile(
+                    options.url,
+                    options.body,
+                    options.headers,
+                    options.filePath
+                )) as HTTPResponseWorkaround;
 
             this.log.trace(() => `Download-${requestId}: Transfer finished.`);
 
-            return new HttpResponse(new Response<ArrayBuffer>({
-                url: response.url,
-                status: response.status,
-                statusText: "",
-                body: new ArrayBuffer(0),
-                headers: new HttpHeaders(response.headers)
-            }));
-        }
-        catch (error) {
-            if(error.hasOwnProperty("error")) {
-                const response: HTTPResponseWorkaround = error as HTTPResponseWorkaround;
-                this.log.warn(() => `Request to "${response.url}" failed with status code: ${response.status} error: ${response.error}`);
-                throw new HttpRequestError(response.status, `Request to "${response.url}" failed with error: ${response.error}`)
+            return new HttpResponse(
+                new Response<ArrayBuffer>({
+                    url: response.url,
+                    status: response.status,
+                    statusText: "",
+                    body: new ArrayBuffer(0),
+                    headers: new HttpHeaders(response.headers),
+                })
+            );
+        } catch (error) {
+            if (error.hasOwnProperty("error")) {
+                const response: HTTPResponseWorkaround =
+                    error as HTTPResponseWorkaround;
+                this.log.warn(
+                    () =>
+                        `Request to "${response.url}" failed with status code: ${response.status} error: ${response.error}`
+                );
+                throw new HttpRequestError(
+                    response.status,
+                    `Request to "${response.url}" failed with error: ${response.error}`
+                );
             }
 
-            this.log.warn(() => `The resource download failed with error: ${JSON.stringify(error)}`);
-            throw new HttpRequestError(0, `The resource download failed with error: ${JSON.stringify(error)}`);
+            this.log.warn(
+                () =>
+                    `The resource download failed with error: ${JSON.stringify(
+                        error
+                    )}`
+            );
+            throw new HttpRequestError(
+                0,
+                `The resource download failed with error: ${JSON.stringify(
+                    error
+                )}`
+            );
         }
-
     }
 
     /**
@@ -108,7 +136,7 @@ export class FileDownloaderImpl implements FileDownloader{
      * @returns {number} The request id of the current request.
      */
     private generateRequestId(): number {
-        if(this.requestCounter === Number.MAX_SAFE_INTEGER)
+        if (this.requestCounter === Number.MAX_SAFE_INTEGER)
             this.requestCounter = 0;
 
         return ++this.requestCounter;

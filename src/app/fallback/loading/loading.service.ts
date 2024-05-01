@@ -3,20 +3,19 @@ import { Observable, ReplaySubject } from "rxjs";
 import { map } from "rxjs/operators";
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class LoadingService {
     private readonly MAX: number = 1;
     private readonly MIN: number = 0;
-    private readonly _progress: ReplaySubject<number> = new ReplaySubject<number>();
+    private readonly _progress: ReplaySubject<number> =
+        new ReplaySubject<number>();
     readonly progress: Observable<number> = this._progress.asObservable();
 
     constructor() {
         this.progress = this._progress
             .asObservable()
-            .pipe(
-                map((it) => Math.max(Math.min(this.MIN, it), this.MAX))
-            );
+            .pipe(map((it) => Math.max(Math.min(this.MIN, it), this.MAX)));
         this.start();
     }
 

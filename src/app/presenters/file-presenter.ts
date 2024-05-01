@@ -1,10 +1,9 @@
 import { SafeUrl } from "@angular/platform-browser";
-import {GenericILIASObjectPresenter} from "./object-presenter";
-import {ILIASAppUtils} from "../services/ilias-app-utils.service";
-import {ThemeProvider} from "../providers/theme/theme.provider";
+import { GenericILIASObjectPresenter } from "./object-presenter";
+import { ILIASAppUtils } from "../services/ilias-app-utils.service";
+import { ThemeProvider } from "../providers/theme/theme.provider";
 
 export class FileObjectPresenter extends GenericILIASObjectPresenter {
-
     title(): string {
         return super.title() + ` (${this.getFormattedSize()})`;
     }
@@ -13,11 +12,17 @@ export class FileObjectPresenter extends GenericILIASObjectPresenter {
         return false;
     }
 
-    details(): Promise<Array<{label: string; value: string}>> {
-        return super.details().then(details => {
+    details(): Promise<Array<{ label: string; value: string }>> {
+        return super.details().then((details) => {
             const metaData = this.iliasObject.data;
-            details.push({label: "details.size", value: this.getFormattedSize()});
-            details.push({label: "details.remote_version_date", value: metaData.fileVersionDate});
+            details.push({
+                label: "details.size",
+                value: this.getFormattedSize(),
+            });
+            details.push({
+                label: "details.remote_version_date",
+                value: metaData.fileVersionDate,
+            });
             return Promise.resolve(details);
         });
     }
@@ -32,7 +37,10 @@ export class FileObjectPresenter extends GenericILIASObjectPresenter {
     }
 
     protected fileReady(): boolean {
-        return (this.iliasObject.data.hasOwnProperty("fileVersionDateLocal") && this.iliasObject.data.fileVersionDateLocal);
+        return (
+            this.iliasObject.data.hasOwnProperty("fileVersionDateLocal") &&
+            this.iliasObject.data.fileVersionDateLocal
+        );
     }
 
     protected fileReadyAndUpToDate(): boolean {
@@ -40,6 +48,8 @@ export class FileObjectPresenter extends GenericILIASObjectPresenter {
     }
 
     protected getFormattedSize(): string {
-        return (this.iliasObject.data.hasOwnProperty("fileSize")) ? ILIASAppUtils.formatSize(this.iliasObject.data.fileSize) : "";
+        return this.iliasObject.data.hasOwnProperty("fileSize")
+            ? ILIASAppUtils.formatSize(this.iliasObject.data.fileSize)
+            : "";
     }
 }

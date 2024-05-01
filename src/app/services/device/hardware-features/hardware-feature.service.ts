@@ -1,10 +1,14 @@
 /** angular */
-import {Injectable} from "@angular/core";
-import {ModalController} from "@ionic/angular";
+import { Injectable } from "@angular/core";
+import { ModalController } from "@ionic/angular";
 /** misc */
-import {HardwareAccessError} from "./hardware-access.errors";
-import {DiagnosticUtil} from "./diagnostics.util";
-import {LocationRequirement, RoamingRequirement, WifiRequirement} from "./hardware-requirements";
+import { HardwareAccessError } from "./hardware-access.errors";
+import { DiagnosticUtil } from "./diagnostics.util";
+import {
+    LocationRequirement,
+    RoamingRequirement,
+    WifiRequirement,
+} from "./hardware-requirements";
 
 /**
  * Provides various hardware feature requirements in order to check, if these features
@@ -14,67 +18,72 @@ import {LocationRequirement, RoamingRequirement, WifiRequirement} from "./hardwa
  * @version 0.0.2
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class Hardware {
+    constructor(
+        private readonly modalCtrl: ModalController,
+        private readonly diagnosticUtil: DiagnosticUtil
+    ) {}
 
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly diagnosticUtil: DiagnosticUtil
-  ) {}
+    /**
+     * All given {@link HardwareFeature} must be enabled in order to surpass the check.
+     *
+     * @param {HardwareFeature} first - at least one feature is required
+     * @param {HardwareFeature} more - any additional feature to check
+     *
+     * @returns {HardwareRequirement} the created hardware requirement
+     */
+    requireAll(
+        first: HardwareFeature,
+        ...more: Array<HardwareFeature>
+    ): HardwareRequirement {
+        throw new Error("This method is not implemented yet");
+    }
 
-  /**
-   * All given {@link HardwareFeature} must be enabled in order to surpass the check.
-   *
-   * @param {HardwareFeature} first - at least one feature is required
-   * @param {HardwareFeature} more - any additional feature to check
-   *
-   * @returns {HardwareRequirement} the created hardware requirement
-   */
-  requireAll(first: HardwareFeature, ...more: Array<HardwareFeature>): HardwareRequirement {
-    throw new Error("This method is not implemented yet");
-  }
+    /**
+     * At least one of the given {@link HardwareFeature} must be enabled in order to surpass the check.
+     *
+     * @param {HardwareFeature} first - at least one feature is required
+     * @param {HardwareFeature} more - any additional feature to check
+     *
+     * @returns {HardwareRequirement} the created hardware requirement
+     */
+    requireAny(
+        first: HardwareFeature,
+        ...more: Array<HardwareFeature>
+    ): HardwareRequirement {
+        throw new Error("This method is not implemented yet");
+    }
 
-  /**
-   * At least one of the given {@link HardwareFeature} must be enabled in order to surpass the check.
-   *
-   * @param {HardwareFeature} first - at least one feature is required
-   * @param {HardwareFeature} more - any additional feature to check
-   *
-   * @returns {HardwareRequirement} the created hardware requirement
-   */
-  requireAny(first: HardwareFeature, ...more: Array<HardwareFeature>): HardwareRequirement {
-    throw new Error("This method is not implemented yet");
-  }
+    /**
+     * The location must be enabled in order to surpass the check.
+     *
+     * @returns {HardwareRequirement} the created hardware requirement
+     */
+    requireLocation(): HardwareRequirement {
+        return new LocationRequirement(this.modalCtrl, this.diagnosticUtil);
+    }
 
-  /**
-   * The location must be enabled in order to surpass the check.
-   *
-   * @returns {HardwareRequirement} the created hardware requirement
-   */
-  requireLocation(): HardwareRequirement {
-    return new LocationRequirement(this.modalCtrl, this.diagnosticUtil);
-  }
+    /**
+     * The wifi must be enabled in order to surpass the check.
+     *
+     * @returns {HardwareRequirement} the created hardware requirement
+     */
+    requireWifi(): HardwareRequirement {
+        return new WifiRequirement(this.modalCtrl, this.diagnosticUtil);
+    }
 
-  /**
-   * The wifi must be enabled in order to surpass the check.
-   *
-   * @returns {HardwareRequirement} the created hardware requirement
-   */
-  requireWifi(): HardwareRequirement {
-    return new WifiRequirement(this.modalCtrl, this.diagnosticUtil);
-  }
-
-  /**
-   * ANDROID ONLY!!! If this feature is used on any non Android device, the check will not be done.
-   *
-   * The roaming service must be enabled in order to surpass the check.
-   *
-   * @returns {HardwareRequirement} the created hardware requirement
-   */
-  requireRoaming(): HardwareRequirement {
-    return new RoamingRequirement(this.modalCtrl, this.diagnosticUtil);
-  }
+    /**
+     * ANDROID ONLY!!! If this feature is used on any non Android device, the check will not be done.
+     *
+     * The roaming service must be enabled in order to surpass the check.
+     *
+     * @returns {HardwareRequirement} the created hardware requirement
+     */
+    requireRoaming(): HardwareRequirement {
+        return new RoamingRequirement(this.modalCtrl, this.diagnosticUtil);
+    }
 }
 
 /**
@@ -93,22 +102,21 @@ export class Hardware {
  * @version 1.0.0
  */
 export interface HardwareRequirement {
+    /**
+     * Executes the given {@code action} when the requirement is not fulfilled.
+     *
+     * @param {Function} action - function to execute
+     *
+     * @returns {HardwareRequirement} this instance
+     */
+    onFailure(action: Function): HardwareRequirement;
 
-  /**
-   * Executes the given {@code action} when the requirement is not fulfilled.
-   *
-   * @param {Function} action - function to execute
-   *
-   * @returns {HardwareRequirement} this instance
-   */
-  onFailure(action: Function): HardwareRequirement
-
-  /**
-   * Evaluates the hardware feature and throws an {@link HardwareAccessError} if the feature is not enabled.
-   *
-   * @throws {HardwareAccessError} if the feature is not enabled
-   */
-  check(): Promise<void>
+    /**
+     * Evaluates the hardware feature and throws an {@link HardwareAccessError} if the feature is not enabled.
+     *
+     * @throws {HardwareAccessError} if the feature is not enabled
+     */
+    check(): Promise<void>;
 }
 
 /**
@@ -118,7 +126,7 @@ export interface HardwareRequirement {
  * @version 1.0.0
  */
 export enum HardwareFeature {
-  LOCATION,
-  WIFI,
-  ROAMING
+    LOCATION,
+    WIFI,
+    ROAMING,
 }

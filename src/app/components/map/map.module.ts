@@ -6,14 +6,9 @@ import { IonicModule, NavParams } from "@ionic/angular";
 
 @NgModule({
     declarations: [MapComponent],
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        IonicModule,
-    ],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule],
     exports: [MapComponent],
     entryComponents: [MapComponent],
-    providers: [NavParams]
+    providers: [NavParams],
 })
-export class MapModule { }
+export class MapModule {}

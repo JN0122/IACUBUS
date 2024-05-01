@@ -1,18 +1,18 @@
 /** angular */
-import {Inject, Injectable, InjectionToken} from "@angular/core";
-import {isDefined} from "../../util/util.function";
+import { Inject, Injectable, InjectionToken } from "@angular/core";
+import { isDefined } from "../../util/util.function";
 /** logging */
-import {Logger} from "../../services/logging/logging.api";
-import {Logging} from "../../services/logging/logging.service";
+import { Logger } from "../../services/logging/logging.api";
+import { Logging } from "../../services/logging/logging.service";
 /** misc */
-import {HttpClient, HttpResponse, RequestOptions} from "../http";
+import { HttpClient, HttpResponse, RequestOptions } from "../http";
 import {
     ClientCredentials,
     OAUTH2_DATA_SUPPLIER,
     OAuth2DataSupplier,
     OAuth2Token,
     TOKEN_RESPONSE_CONSUMER,
-    TokenResponseConsumer
+    TokenResponseConsumer,
 } from "./ilias.rest-api";
 
 const MILLISEC_TO_SEC: number = 1000;
@@ -24,16 +24,17 @@ const MILLISEC_TO_SEC: number = 1000;
  * @version 1.0.0
  */
 export interface TokenManager {
-
-  /**
-   * Ensures that the returned access token is valid.
-   *
-   * @returns {Promise<string>} the resulting access token
-   * @throws {TokenExpiredError} if no valid access token can be used
-   */
-  getAccessToken(): Promise<string>
+    /**
+     * Ensures that the returned access token is valid.
+     *
+     * @returns {Promise<string>} the resulting access token
+     * @throws {TokenExpiredError} if no valid access token can be used
+     */
+    getAccessToken(): Promise<string>;
 }
-export const TOKEN_MANAGER: InjectionToken<TokenManager> = new InjectionToken("token for token manager");
+export const TOKEN_MANAGER: InjectionToken<TokenManager> = new InjectionToken(
+    "token for token manager"
+);
 
 /**
  * Describes a REST client specialized for ILIAS.
@@ -59,32 +60,37 @@ export const TOKEN_MANAGER: InjectionToken<TokenManager> = new InjectionToken("t
  * @version 1.1.0
  */
 export interface ILIASRest {
+    /**
+     * Performs a get request to the given {@code path}.
+     *
+     * @param {string} path the endpoint without host and specific path
+     * @param {ILIASRequestOptions} options ILIAS specific request options
+     *
+     * @returns {Promise<HttpResponse>} the resulting response
+     * @throws {TokenExpiredError} if the access token is expired and could not be refreshed
+     */
+    get(path: string, options: ILIASRequestOptions): Promise<HttpResponse>;
 
-  /**
-   * Performs a get request to the given {@code path}.
-   *
-   * @param {string} path the endpoint without host and specific path
-   * @param {ILIASRequestOptions} options ILIAS specific request options
-   *
-   * @returns {Promise<HttpResponse>} the resulting response
-   * @throws {TokenExpiredError} if the access token is expired and could not be refreshed
-   */
-  get(path: string, options: ILIASRequestOptions): Promise<HttpResponse>;
-
-  /**
-   * Performs a post request to the given {@code path} with the given {@code body}
-   * as the http request body.
-   *
-   * @param {string} path - the endpoint without host and specific path
-   * @param {object} body - the request body
-   * @param {ILIASRequestOptions} options - ILIAS specific request options
-   *
-   * @returns {Promise<HttpResponse>} the resulting response
-   * @throw {TokenExpiredError} if the access token is expired and could not be refreshed
-   */
-  post(path: string, body: object, options: ILIASRequestOptions): Promise<HttpResponse>;
+    /**
+     * Performs a post request to the given {@code path} with the given {@code body}
+     * as the http request body.
+     *
+     * @param {string} path - the endpoint without host and specific path
+     * @param {object} body - the request body
+     * @param {ILIASRequestOptions} options - ILIAS specific request options
+     *
+     * @returns {Promise<HttpResponse>} the resulting response
+     * @throw {TokenExpiredError} if the access token is expired and could not be refreshed
+     */
+    post(
+        path: string,
+        body: object,
+        options: ILIASRequestOptions
+    ): Promise<HttpResponse>;
 }
-export const ILIAS_REST: InjectionToken<ILIASRest> = new InjectionToken("token for ILIAS rest");
+export const ILIAS_REST: InjectionToken<ILIASRest> = new InjectionToken(
+    "token for ILIAS rest"
+);
 
 /**
  * Manages credentials provided by the given {@link OAuth2DataSupplier}.
@@ -95,130 +101,150 @@ export const ILIAS_REST: InjectionToken<ILIASRest> = new InjectionToken("token f
  * @version 2.0.0
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
- export class ILIASTokenManager implements TokenManager {
+export class ILIASTokenManager implements TokenManager {
+    private readonly log: Logger = Logging.getLogger(ILIASTokenManager.name);
 
-   private readonly log: Logger = Logging.getLogger(ILIASTokenManager.name);
+    constructor(
+        private readonly httpClient: HttpClient,
+        @Inject(OAUTH2_DATA_SUPPLIER)
+        private readonly dataSupplier: OAuth2DataSupplier,
+        @Inject(TOKEN_RESPONSE_CONSUMER)
+        private readonly responseConsumer: TokenResponseConsumer
+    ) {}
 
-   constructor(
-     private readonly httpClient: HttpClient,
-     @Inject(OAUTH2_DATA_SUPPLIER) private readonly dataSupplier: OAuth2DataSupplier,
-     @Inject(TOKEN_RESPONSE_CONSUMER) private readonly responseConsumer: TokenResponseConsumer
-   ) {}
+    /**
+     * Ensures that the returned access token is valid.
+     * If the access token is expired, it will be refreshed.
+     *
+     * @returns {Promise<string>} the resulting access token
+     * @throws {TokenExpiredError} if no valid access token can be used and the token can not be refreshed
+     */
+    async getAccessToken(): Promise<string> {
+        try {
+            const credentials: ClientCredentials =
+                await this.dataSupplier.getClientCredentials();
 
-  /**
-   * Ensures that the returned access token is valid.
-   * If the access token is expired, it will be refreshed.
-   *
-   * @returns {Promise<string>} the resulting access token
-   * @throws {TokenExpiredError} if no valid access token can be used and the token can not be refreshed
-   */
-   async getAccessToken(): Promise<string> {
+            this.log.trace(() => "Validate access token");
+            const token: string | undefined = await this.takeIf<string>(
+                credentials.token.accessToken,
+                (): boolean =>
+                    Date.now() / MILLISEC_TO_SEC -
+                        credentials.token.lastAccessTokenUpdate <
+                    credentials.token.accessTokenTTL
+            );
 
-     try {
+            return this.orElseGet<string>(
+                token,
+                (): Promise<string> => this.updateAccessToken(credentials)
+            );
+        } catch (error) {
+            throw new TokenExpiredError("Could not get a valid access token");
+        }
+    }
 
-       const credentials: ClientCredentials = await this.dataSupplier.getClientCredentials();
+    /**
+     * Returns the given {@code object} if the given {@code condition} is true.
+     *
+     * @param {T} object - the object to check
+     * @param {() => boolean} condition - the condition to use
+     *
+     * @returns {Promise<T | undefined>} the object if the condition is true, otherwise undefined
+     */
+    private async takeIf<T>(
+        object: T,
+        condition: () => boolean
+    ): Promise<T | undefined> {
+        if (condition()) {
+            return object;
+        }
 
-       this.log.trace(() => "Validate access token");
-       const token: string | undefined = await this.takeIf<string>(credentials.token.accessToken, (): boolean =>
-         Date.now() / MILLISEC_TO_SEC - credentials.token.lastAccessTokenUpdate < credentials.token.accessTokenTTL
-       );
+        return undefined;
+    }
 
-       return this.orElseGet<string>(token, (): Promise<string> => this.updateAccessToken(credentials));
+    /**
+     * Returns the given {@code object} or the given {@code supplier} if the object is undefined.
+     *
+     * @param {T | undefined} object - the object to get
+     * @param {() => Promise<T>} supplier - the supplier to use
+     *
+     * @returns {Promise<T>} the resulting object
+     */
+    private async orElseGet<T>(
+        object: T | undefined,
+        supplier: () => Promise<T>
+    ): Promise<T> {
+        if (!isDefined(object)) {
+            return supplier();
+        }
 
-     } catch (error) {
-       throw new TokenExpiredError("Could not get a valid access token");
-     }
-   }
+        return object;
+    }
 
+    /**
+     * Refreshes the access token by the refresh token and returns it.
+     * The given arguments are used to get all relevant data to update
+     * the access token.
+     *
+     * This method calls the {@link TokenResponseConsumer} on successful update.
+     *
+     * @param {ClientCredentials} credentials - the credentials to use
+     *
+     * @returns {Promise<string>} the updated access token
+     * @throws {HttpRequestError} if the response is not ok
+     */
+    private async updateAccessToken(
+        credentials: ClientCredentials
+    ): Promise<string> {
+        const body: Map<string, string> = new Map<string, string>()
+            .set("api_key", credentials.clientId)
+            .set("api_secret", credentials.clientSecret)
+            .set("grant_type", "refresh_token")
+            .set("refresh_token", credentials.token.refreshToken);
 
-  /**
-   * Returns the given {@code object} if the given {@code condition} is true.
-   *
-   * @param {T} object - the object to check
-   * @param {() => boolean} condition - the condition to use
-   *
-   * @returns {Promise<T | undefined>} the object if the condition is true, otherwise undefined
-   */
-   private async takeIf<T>(object: T, condition: () => boolean): Promise<T| undefined> {
+        const headers: Array<[string, string]> = [
+            [
+                "Content-Type",
+                "application/x-www-form-urlencoded; charset=utf-8",
+            ],
+            ["Accept", "application/json; charset=utf-8"],
+        ];
 
-      if (condition()) {
-        return object
-      }
+        this.log.info(() => "Refresh access token by refresh token");
+        const response: HttpResponse = await this.httpClient.post(
+            credentials.accessTokenURL,
+            this.formURLEncode(body),
+            <RequestOptions>{ headers: headers }
+        );
 
-      return undefined;
-   }
+        return response.handle<Promise<string>>(async (it): Promise<string> => {
+            const data: OAuth2Token = it.json<OAuth2Token>(oAuthTokenSchema);
+            await this.responseConsumer.accept(data);
 
-  /**
-   * Returns the given {@code object} or the given {@code supplier} if the object is undefined.
-   *
-   * @param {T | undefined} object - the object to get
-   * @param {() => Promise<T>} supplier - the supplier to use
-   *
-   * @returns {Promise<T>} the resulting object
-   */
-   private async orElseGet<T>(object: T | undefined, supplier: () => Promise<T>): Promise<T> {
+            return data.access_token;
+        });
+    }
 
-     if (!isDefined(object)) {
-       return supplier();
-     }
+    private formURLEncode(fieldMap: ReadonlyMap<string, string>): string {
+        const fields: Array<string> = new Array<string>();
+        for (const field of fieldMap.entries()) {
+            fields.push(`${field[0]}=${field[1]}`);
+        }
 
-     return object
-   }
+        const rawString: string = fields.reduceRight(
+            (prev: string, curr: string) => {
+                if (prev.length > 0) {
+                    return prev + `&${curr}`;
+                }
 
-  /**
-   * Refreshes the access token by the refresh token and returns it.
-   * The given arguments are used to get all relevant data to update
-   * the access token.
-   *
-   * This method calls the {@link TokenResponseConsumer} on successful update.
-   *
-   * @param {ClientCredentials} credentials - the credentials to use
-   *
-   * @returns {Promise<string>} the updated access token
-   * @throws {HttpRequestError} if the response is not ok
-   */
-   private async updateAccessToken(credentials: ClientCredentials): Promise<string> {
-      const body: Map<string, string> = new Map<string, string>()
-          .set("api_key", credentials.clientId)
-          .set("api_secret", credentials.clientSecret)
-          .set("grant_type", "refresh_token")
-          .set("refresh_token", credentials.token.refreshToken);
+                return curr;
+            },
+            ""
+        );
 
-     const headers: Array<[string, string]> = [
-         ["Content-Type", "application/x-www-form-urlencoded; charset=utf-8"],
-         ["Accept", "application/json; charset=utf-8"]
-     ];
-
-     this.log.info(() => "Refresh access token by refresh token");
-     const response: HttpResponse =
-         await this.httpClient.post(credentials.accessTokenURL, this.formURLEncode(body), <RequestOptions>{headers: headers});
-
-     return response.handle<Promise<string>>(async(it): Promise<string> => {
-       const data: OAuth2Token = it.json<OAuth2Token>(oAuthTokenSchema);
-       await this.responseConsumer.accept(data);
-
-       return data.access_token;
-     });
-   }
-
-   private formURLEncode(fieldMap: ReadonlyMap<string, string>): string {
-       const fields: Array<string> = new Array<string>();
-       for (const field of fieldMap.entries()) {
-           fields.push(`${field[0]}=${field[1]}`);
-       }
-
-       const rawString: string = fields.reduceRight((prev: string, curr: string) => {
-           if (prev.length > 0) {
-               return prev + `&${curr}`
-           }
-
-           return curr;
-       }, "");
-
-       return encodeURI(rawString);
-   }
+        return encodeURI(rawString);
+    }
 }
 
 /**
@@ -228,96 +254,117 @@ export const ILIAS_REST: InjectionToken<ILIASRest> = new InjectionToken("token f
  * @version 1.0.1
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
- export class ILIASRestImpl implements ILIASRest {
+export class ILIASRestImpl implements ILIASRest {
+    constructor(
+        @Inject(TOKEN_MANAGER) private readonly tokenManager: TokenManager,
+        @Inject(OAUTH2_DATA_SUPPLIER)
+        private readonly dataSupplier: OAuth2DataSupplier,
+        private readonly httpClient: HttpClient
+    ) {}
 
-   constructor(
-     @Inject(TOKEN_MANAGER) private readonly tokenManager: TokenManager,
-     @Inject(OAUTH2_DATA_SUPPLIER) private readonly dataSupplier: OAuth2DataSupplier,
-     private readonly httpClient: HttpClient,
-   ) {}
+    /**
+     * Performs a get request to the given {@code path}.
+     *
+     * The path MUST start with a '/' character.
+     * The api version MUST be part of the path.
+     *
+     * @param {string} path the endpoint without host, specific path
+     * @param {ILIASRequestOptions} options ILIAS specific request options
+     *
+     * @returns {Promise<HttpResponse>} the resulting response
+     * @throws {TokenExpiredError} if the access token is expired and could not be refreshed
+     */
+    async get(
+        path: string,
+        options: ILIASRequestOptions
+    ): Promise<HttpResponse> {
+        return this.request(path, options, (url: string, opt: RequestOptions) =>
+            this.httpClient.get(url, opt)
+        );
+    }
 
-  /**
-   * Performs a get request to the given {@code path}.
-   *
-   * The path MUST start with a '/' character.
-   * The api version MUST be part of the path.
-   *
-   * @param {string} path the endpoint without host, specific path
-   * @param {ILIASRequestOptions} options ILIAS specific request options
-   *
-   * @returns {Promise<HttpResponse>} the resulting response
-   * @throws {TokenExpiredError} if the access token is expired and could not be refreshed
-   */
-  async get(path: string, options: ILIASRequestOptions): Promise<HttpResponse> {
-    return this.request(path, options, (url: string, opt: RequestOptions) => this.httpClient.get(url, opt));
-  }
+    /**
+     * Performs a post request to the given {@code path} with the given {@code body}
+     * as the http request body.
+     *
+     * The path MUST start with a '/' character.
+     * The api version MUST be part of the path.
+     *
+     * @param {string} path - the endpoint without host and specific path
+     * @param {object} body - the request body
+     * @param {ILIASRequestOptions} options - ILIAS specific request options
+     *
+     * @returns {Promise<HttpResponse>} the resulting response
+     * @throw {TokenExpiredError} if the access token is expired and could not be refreshed
+     */
+    async post(
+        path: string,
+        body: object,
+        options: ILIASRequestOptions
+    ): Promise<HttpResponse> {
+        return this.request(path, options, (url: string, opt: RequestOptions) =>
+            this.httpClient.post(url, JSON.stringify(body), opt)
+        );
+    }
 
-  /**
-   * Performs a post request to the given {@code path} with the given {@code body}
-   * as the http request body.
-   *
-   * The path MUST start with a '/' character.
-   * The api version MUST be part of the path.
-   *
-   * @param {string} path - the endpoint without host and specific path
-   * @param {object} body - the request body
-   * @param {ILIASRequestOptions} options - ILIAS specific request options
-   *
-   * @returns {Promise<HttpResponse>} the resulting response
-   * @throw {TokenExpiredError} if the access token is expired and could not be refreshed
-   */
-  async post(path: string, body: object, options: ILIASRequestOptions): Promise<HttpResponse> {
-    return this.request(path, options, (url: string, opt: RequestOptions) => this.httpClient.post(url, JSON.stringify(body), opt));
-  }
+    /**
+     * Sets up a http request by creating the complete url and the requests options.
+     *
+     * @param {string} path - the path to create the url for
+     * @param {ILIASRequestOptions} options - the requests options to use
+     * @param {RequestExecutor} executor - function called with the complete url and the request options
+     *
+     * @returns {Promise<HttpResponse>} the return value of the given {@code executor}
+     */
+    private async request(
+        path: string,
+        options: ILIASRequestOptions,
+        executor: RequestExecutor
+    ): Promise<HttpResponse> {
+        const credentials: ClientCredentials =
+            await this.dataSupplier.getClientCredentials();
 
-  /**
-   * Sets up a http request by creating the complete url and the requests options.
-   *
-   * @param {string} path - the path to create the url for
-   * @param {ILIASRequestOptions} options - the requests options to use
-   * @param {RequestExecutor} executor - function called with the complete url and the request options
-   *
-   * @returns {Promise<HttpResponse>} the return value of the given {@code executor}
-   */
-  private async request(path: string, options: ILIASRequestOptions, executor: RequestExecutor): Promise<HttpResponse> {
+        const url: string = `${credentials.apiURL}${path}`;
+        const headers: Array<[string, string]> = [
+            [
+                "Authorization",
+                `${
+                    credentials.token.type
+                } ${await this.tokenManager.getAccessToken()}`,
+            ],
+        ];
 
-    const credentials: ClientCredentials = await this.dataSupplier.getClientCredentials();
+        if (isDefined(options.accept)) headers.push(["Accept", options.accept]);
 
-    const url: string = `${credentials.apiURL}${path}`;
-    const headers: Array<[string, string]> = [
-      ["Authorization", `${credentials.token.type} ${await this.tokenManager.getAccessToken()}`]
-    ];
+        if (isDefined(options.contentType))
+            headers.push(["Content-Type", options.contentType]);
 
-    if(isDefined(options.accept))
-      headers.push(["Accept", options.accept]);
+        const requestOptions: RequestOptions = <RequestOptions>{
+            headers: headers,
+            urlParams: options.urlParams,
+        };
 
-    if(isDefined(options.contentType))
-      headers.push(["Content-Type", options.contentType]);
-
-    const requestOptions: RequestOptions = <RequestOptions>{
-      headers:headers,
-      urlParams: options.urlParams
-    };
-
-    return executor(url, requestOptions);
-  }
+        return executor(url, requestOptions);
+    }
 }
 
 // type pointer for the private #request method of ILIASRestImpl
-interface RequestExecutor { (url: string, options: RequestOptions): Promise<HttpResponse> }
+interface RequestExecutor {
+    (url: string, options: RequestOptions): Promise<HttpResponse>;
+}
 
 const oAuthTokenSchema: object = {
-  "title": "oauth2 token",
-  "type": "object",
-  "properties": {
-    "access_token": { "type": "string" },
-    "refresh_token": { "type": "string" },
-    "expires_in": { "type": "integer" },
-    "token_type": { "type": "string" }
-  },
-  "required": ["access_token", "refresh_token", "expires_in", "token_type"]
+    title: "oauth2 token",
+    type: "object",
+    properties: {
+        access_token: { type: "string" },
+        refresh_token: { type: "string" },
+        expires_in: { type: "integer" },
+        token_type: { type: "string" },
+    },
+    required: ["access_token", "refresh_token", "expires_in", "token_type"],
 };
 
 /**
@@ -327,9 +374,9 @@ const oAuthTokenSchema: object = {
  * @version 1.0.0
  */
 export interface ILIASRequestOptions {
-  readonly accept?: string,
-  readonly contentType?: string,
-  readonly urlParams?: Array<[string, string]>
+    readonly accept?: string;
+    readonly contentType?: string;
+    readonly urlParams?: Array<[string, string]>;
 }
 
 /**
@@ -339,9 +386,8 @@ export interface ILIASRequestOptions {
  * @version 1.0.0
  */
 export class TokenExpiredError extends Error {
-
-  constructor(message: string) {
-    super(message);
-    Object.setPrototypeOf(this, TokenExpiredError.prototype);
-  }
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, TokenExpiredError.prototype);
+    }
 }

@@ -1,9 +1,12 @@
 /** angular */
-import {Injectable} from "@angular/core";
-import {MissingTranslationHandler, MissingTranslationHandlerParams} from "@ngx-translate/core";
+import { Injectable } from "@angular/core";
+import {
+    MissingTranslationHandler,
+    MissingTranslationHandlerParams,
+} from "@ngx-translate/core";
 /** logging */
-import {Logger} from "../logging/logging.api";
-import {Logging} from "../logging/logging.service";
+import { Logger } from "../logging/logging.api";
+import { Logging } from "../logging/logging.service";
 
 /**
  * Fallback handler for translation.
@@ -20,19 +23,28 @@ import {Logging} from "../logging/logging.service";
  */
 @Injectable()
 export class PegasusMissingTranslationHandler extends MissingTranslationHandler {
-
     private static readonly OBJECT_TYPE_KEY: string = "object_type.";
-    private readonly log: Logger = Logging.getLogger(PegasusMissingTranslationHandler.name);
+    private readonly log: Logger = Logging.getLogger(
+        PegasusMissingTranslationHandler.name
+    );
 
     handle(params: MissingTranslationHandlerParams): string {
-
         // check if we got a object_type which indicates that we got a unknown object from ILIAS most likely a plugin
-        if(params.key.startsWith(PegasusMissingTranslationHandler.OBJECT_TYPE_KEY) === true) {
-            this.log.warn(() => `No ILIAS object translation found for "${params.key}" fallback to "Object" translation.`);
+        if (
+            params.key.startsWith(
+                PegasusMissingTranslationHandler.OBJECT_TYPE_KEY
+            ) === true
+        ) {
+            this.log.warn(
+                () =>
+                    `No ILIAS object translation found for "${params.key}" fallback to "Object" translation.`
+            );
             return "Object";
         }
 
-        this.log.warn(() => `Missing translation falling back to key "${params.key}"`);
+        this.log.warn(
+            () => `Missing translation falling back to key "${params.key}"`
+        );
         return params.key;
     }
 }

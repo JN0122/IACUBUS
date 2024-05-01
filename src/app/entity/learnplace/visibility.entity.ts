@@ -1,8 +1,7 @@
-import {Entity, PrimaryColumn} from "typeorm/browser";
+import { Entity, PrimaryColumn } from "typeorm/browser";
 
 @Entity("Visibility")
 export class VisibilityEntity {
-
-  @PrimaryColumn()
-  value: string
+    @PrimaryColumn()
+    value: string;
 }

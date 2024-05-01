@@ -4,27 +4,41 @@
     </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="page_menu">
     <ion-list>
-        <ion-item button detail="false" color="nobg-w" (click)="navigateTo('settings')">
+        <ion-item
+            button
+            detail="false"
+            color="nobg-w"
+            (click)="navigateTo('settings')"
+        >
             <ion-icon slot="start" name="settings"></ion-icon>&nbsp;
             <ion-label>{{ 'settings.title' | translate }}</ion-label>
         </ion-item>
-        <ion-item button detail="false" color="nobg-w" (click)="navigateTo('info')">
+        <ion-item
+            button
+            detail="false"
+            color="nobg-w"
+            (click)="navigateTo('info')"
+        >
             <ion-icon slot="start" name="information-circle"></ion-icon>&nbsp;
             <ion-label>{{ 'info.title' | translate }}</ion-label>
         </ion-item>
-        <ion-item button detail="false" color="nobg-w" (click)="openPrivacyPolicy(privacyPolicy)" class="privacy-pegasus">
-            <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>&nbsp;
+        <ion-item
+            button
+            detail="false"
+            color="nobg-w"
+            (click)="openPrivacyPolicy(privacyPolicy)"
+            class="privacy-pegasus"
+        >
+            <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon
+            >&nbsp;
             <ion-label>{{ 'datasecurity.title' | translate }}</ion-label>
         </ion-item>
         <ion-item button detail="false" color="nobg-w" (click)="logout()">
             <ion-icon slot="start" name="exit-outline"></ion-icon>&nbsp;
             <ion-label>{{ 'logout.title' | translate }}</ion-label>
         </ion-item>
-
     </ion-list>
     <img class="menu-bottom-image" src="assets/img/header.svg" />
 </ion-content>
-

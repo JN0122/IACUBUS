@@ -1,16 +1,48 @@
 import { Inject, Injectable } from "@angular/core";
-import { combineLatest, defer, forkJoin, from, Observable, of, Subject, Subscriber, Subscription, TeardownLogic } from "rxjs";
-import { filter, finalize, map, mergeAll, mergeMap, shareReplay, takeUntil, tap } from "rxjs/operators";
+import {
+    combineLatest,
+    defer,
+    forkJoin,
+    from,
+    Observable,
+    of,
+    Subject,
+    Subscriber,
+    Subscription,
+    TeardownLogic,
+} from "rxjs";
+import {
+    filter,
+    finalize,
+    map,
+    mergeAll,
+    mergeMap,
+    shareReplay,
+    takeUntil,
+    tap,
+} from "rxjs/operators";
 import { UserEntity } from "../../../entity/user.entity";
 import { NoSuchElementError } from "../../../error/errors";
-import { USER_REPOSITORY, UserRepository } from "../../../providers/repository/repository.user";
+import {
+    USER_REPOSITORY,
+    UserRepository,
+} from "../../../providers/repository/repository.user";
 import { Geolocation } from "../../../services/device/geolocation/geolocation.service";
 import { Logger } from "../../../services/logging/logging.api";
 import { Logging } from "../../../services/logging/logging.service";
 import { isDefined } from "../../../util/util.function";
-import { LearnplaceEntity, VisitJournalEntity } from "../../../entity/learnplace/learnplace.entity";
-import { LEARNPLACE_REPOSITORY, LearnplaceRepository } from "../../../providers/learnplace/repository/learnplace.repository";
-import { LEARNPLACE_API, LearnplaceAPI } from "../../../providers/learnplace/rest/learnplace.api";
+import {
+    LearnplaceEntity,
+    VisitJournalEntity,
+} from "../../../entity/learnplace/learnplace.entity";
+import {
+    LEARNPLACE_REPOSITORY,
+    LearnplaceRepository,
+} from "../../../providers/learnplace/repository/learnplace.repository";
+import {
+    LEARNPLACE_API,
+    LearnplaceAPI,
+} from "../../../providers/learnplace/rest/learnplace.api";
 import { IliasCoordinates } from "../geodesy";
 import { VisibilityAware } from "./visibility.context";
 
@@ -24,7 +56,7 @@ export enum VisibilityStrategyType {
     ALWAYS,
     NEVER,
     ONLY_AT_PLACE,
-    AFTER_VISIT_PLACE
+    AFTER_VISIT_PLACE,
 }
 
 /**
@@ -34,7 +66,6 @@ export enum VisibilityStrategyType {
  * @version 2.0.0
  */
 export interface VisibilityStrategy {
-
     /**
      * Uses this strategy on the given {@code object}.
      * The returned observable will notify its subscribers every time
@@ -46,7 +77,7 @@ export interface VisibilityStrategy {
      *
      * @return {Observable<T>} an observable for the given {@code object}
      */
-    on<T extends VisibilityAware>(object: T): Observable<T>
+    on<T extends VisibilityAware>(object: T): Observable<T>;
 }
 
 /**
@@ -57,7 +88,6 @@ export interface VisibilityStrategy {
  * @version 1.0.0
  */
 export interface ShutdownVisibilityStrategy extends VisibilityStrategy {
-
     /**
      * Makes sure that this strategy stops every depending task.
      */
@@ -71,7 +101,6 @@ export interface ShutdownVisibilityStrategy extends VisibilityStrategy {
  * @version 1.0.0
  */
 export interface MembershipAwareStrategy extends VisibilityStrategy {
-
     /**
      * Sets the membership of the model used in this strategy.
      *
@@ -90,7 +119,6 @@ export interface MembershipAwareStrategy extends VisibilityStrategy {
  */
 @Injectable()
 export class AlwaysStrategy implements VisibilityStrategy {
-
     /**
      * Sets the {@code visible} property of the given {@code object} to true,
      * notifies the subscriber of the returned observable and completes it.
@@ -116,7 +144,6 @@ export class AlwaysStrategy implements VisibilityStrategy {
  */
 @Injectable()
 export class NeverStrategy implements VisibilityStrategy {
-
     /**
      * Sets the {@code visible} property of the given {@code object} to false,
      * notifies the subscriber of the returned observable and completes it.
@@ -142,8 +169,9 @@ export class NeverStrategy implements VisibilityStrategy {
  * @version 1.0.0
  */
 @Injectable()
-export class OnlyAtPlaceStrategy implements MembershipAwareStrategy, ShutdownVisibilityStrategy {
-
+export class OnlyAtPlaceStrategy
+    implements MembershipAwareStrategy, ShutdownVisibilityStrategy
+{
     private membershipId: string = "";
 
     private readonly dispose$: Subject<void> = new Subject<void>();
@@ -151,7 +179,8 @@ export class OnlyAtPlaceStrategy implements MembershipAwareStrategy, ShutdownVis
     private readonly log: Logger = Logging.getLogger(OnlyAtPlaceStrategy.name);
 
     constructor(
-        @Inject(LEARNPLACE_REPOSITORY) private readonly learnplaceRepository: LearnplaceRepository,
+        @Inject(LEARNPLACE_REPOSITORY)
+        private readonly learnplaceRepository: LearnplaceRepository,
         private readonly geolocation: Geolocation
     ) {}
 
@@ -181,35 +210,65 @@ export class OnlyAtPlaceStrategy implements MembershipAwareStrategy, ShutdownVis
      */
     on<T extends VisibilityAware>(object: T): Observable<T> {
         return new Observable((subscriber: Subscriber<T>): TeardownLogic => {
-
             subscriber.next(object);
 
-            console.log("Watch position for visibility 'Only at Place' membership id: ", this.membershipId);
+            console.log(
+                "Watch position for visibility 'Only at Place' membership id: ",
+                this.membershipId
+            );
 
-            const learnplaceCoordinates: Observable<[IliasCoordinates, LearnplaceEntity]> =
-                defer(() => this.learnplaceRepository.find(this.membershipId)).pipe(
-                    map((it) => it.orElseThrow(() => new NoSuchElementError(`No learnplace found: id=${this.membershipId}`))),
-                    map((it): [IliasCoordinates, LearnplaceEntity] => [new IliasCoordinates(it.location.latitude, it.location.longitude), it])
-                );
+            const learnplaceCoordinates: Observable<
+                [IliasCoordinates, LearnplaceEntity]
+            > = defer(() =>
+                this.learnplaceRepository.find(this.membershipId)
+            ).pipe(
+                map((it) =>
+                    it.orElseThrow(
+                        () =>
+                            new NoSuchElementError(
+                                `No learnplace found: id=${this.membershipId}`
+                            )
+                    )
+                ),
+                map((it): [IliasCoordinates, LearnplaceEntity] => [
+                    new IliasCoordinates(
+                        it.location.latitude,
+                        it.location.longitude
+                    ),
+                    it,
+                ])
+            );
 
-            this.log.trace(() => "Watch position for visibility 'Only at Place'");
-            const watch: Subscription = combineLatest([this.geolocation.watchPosition(), learnplaceCoordinates])
+            this.log.trace(
+                () => "Watch position for visibility 'Only at Place'"
+            );
+            const watch: Subscription = combineLatest([
+                this.geolocation.watchPosition(),
+                learnplaceCoordinates,
+            ])
                 .pipe(
-                    filter(it => isDefined(it[0].coords)),
+                    filter((it) => isDefined(it[0].coords)),
                     takeUntil(this.dispose$)
                 )
                 .subscribe({
                     next: (location): void => {
-
                         const learnplace: LearnplaceEntity = location[1][1];
-                        const learnplaceCoord: IliasCoordinates = location[1][0];
+                        const learnplaceCoord: IliasCoordinates =
+                            location[1][0];
 
-                        const currentCoordinates: IliasCoordinates = new IliasCoordinates(location[0].coords.latitude, location[0].coords.longitude);
-                        object.visible = learnplaceCoord.isNearTo(currentCoordinates, learnplace.location.radius);
+                        const currentCoordinates: IliasCoordinates =
+                            new IliasCoordinates(
+                                location[0].coords.latitude,
+                                location[0].coords.longitude
+                            );
+                        object.visible = learnplaceCoord.isNearTo(
+                            currentCoordinates,
+                            learnplace.location.radius
+                        );
                         subscriber.next(object);
                     },
                     error: (err): void => subscriber.error(err),
-                    complete: (): void => subscriber.complete()
+                    complete: (): void => subscriber.complete(),
                 });
 
             return (): void => watch.unsubscribe();
@@ -231,14 +290,16 @@ export class OnlyAtPlaceStrategy implements MembershipAwareStrategy, ShutdownVis
  * @version 1.0.0
  */
 @Injectable()
-export class AfterVisitPlaceStrategy implements MembershipAwareStrategy, ShutdownVisibilityStrategy {
-
+export class AfterVisitPlaceStrategy
+    implements MembershipAwareStrategy, ShutdownVisibilityStrategy
+{
     private membershipId: string = "";
 
     private readonly dispose$: Subject<void> = new Subject<void>();
 
     constructor(
-        @Inject(LEARNPLACE_REPOSITORY) private readonly learnplaceRepository: LearnplaceRepository,
+        @Inject(LEARNPLACE_REPOSITORY)
+        private readonly learnplaceRepository: LearnplaceRepository,
         @Inject(LEARNPLACE_API) private readonly learnplaceAPI: LearnplaceAPI,
         private readonly geolocation: Geolocation,
         @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository
@@ -272,59 +333,105 @@ export class AfterVisitPlaceStrategy implements MembershipAwareStrategy, Shutdow
      * @return {Observable<T>} an observable for the given {@code object}
      */
     on<T extends VisibilityAware>(object: T): Observable<T> {
+        const learnplace: Observable<LearnplaceEntity> = from(
+            this.learnplaceRepository.find(this.membershipId)
+        ).pipe(
+            map((it) =>
+                it.orElseThrow(
+                    () =>
+                        new NoSuchElementError(
+                            `No learnplace found with id: ${this.membershipId}`
+                        )
+                )
+            ),
+            shareReplay(1)
+        );
 
-        const learnplace: Observable<LearnplaceEntity> = from(this.learnplaceRepository.find(this.membershipId))
-            .pipe(
-                map(it => it.orElseThrow(() => new NoSuchElementError(`No learnplace found with id: ${this.membershipId}`))),
-                shareReplay(1)
-            );
-
-        const user: Observable<UserEntity> = from(this.userRepository.findAuthenticatedUser())
-            .pipe(map(it => it.get()));
+        const user: Observable<UserEntity> = from(
+            this.userRepository.findAuthenticatedUser()
+        ).pipe(map((it) => it.get()));
 
         const learnplaceCoordinate: Observable<IliasCoordinates> =
-            learnplace.pipe(map(it => new IliasCoordinates(it.location.latitude, it.location.longitude)));
-
-        return forkJoin({learnplace, user, learnplaceCoordinate}).pipe(map((it) => {
-            const { learnplace, user, learnplaceCoordinate }:
-                {learnplace: LearnplaceEntity, user: UserEntity, learnplaceCoordinate: IliasCoordinates} = it;
-            if (isDefined(learnplace.visitJournal.find(it => it.userId == user.iliasUserId))) {
-                object.visible = true;
-                return of(object);
-            }
-
-            return of(
-                of(object),
-                this.geolocation.watchPosition().pipe(
-                    filter(it => isDefined(it.coords)),
-                    filter(it => {
-                        const currentCoordinates: IliasCoordinates = new IliasCoordinates(it.coords.latitude, it.coords.longitude);
-                        return learnplaceCoordinate.isNearTo(currentCoordinates, learnplace.location.radius);
-                    }),
-                    mergeMap((_) => {
-                        const journal: VisitJournalEntity = new VisitJournalEntity();
-                        journal.learnplace = learnplace;
-                        journal.synchronized = false;
-                        journal.time = Date.now() / 1000;
-                        learnplace.visitJournal.push(journal);
-                        return from(this.learnplaceAPI.addJournalEntry(learnplace.objectId, journal.time)).pipe(
-                            map((_) => journal));
-                    }),
-                    tap((it) => {
-                        it.synchronized = true;
-                    }),
-                    finalize(() => {
-                        return from(this.learnplaceRepository.save(learnplace));
-                    }),
-                    map((_) => {
-                        object.visible = true;
-                        this.shutdown();
-                        return object;
-                    }),
-                    takeUntil(this.dispose$),
+            learnplace.pipe(
+                map(
+                    (it) =>
+                        new IliasCoordinates(
+                            it.location.latitude,
+                            it.location.longitude
+                        )
                 )
-            ).pipe(mergeAll());
-        }), mergeAll());
+            );
+
+        return forkJoin({ learnplace, user, learnplaceCoordinate }).pipe(
+            map((it) => {
+                const {
+                    learnplace,
+                    user,
+                    learnplaceCoordinate,
+                }: {
+                    learnplace: LearnplaceEntity;
+                    user: UserEntity;
+                    learnplaceCoordinate: IliasCoordinates;
+                } = it;
+                if (
+                    isDefined(
+                        learnplace.visitJournal.find(
+                            (it) => it.userId == user.iliasUserId
+                        )
+                    )
+                ) {
+                    object.visible = true;
+                    return of(object);
+                }
+
+                return of(
+                    of(object),
+                    this.geolocation.watchPosition().pipe(
+                        filter((it) => isDefined(it.coords)),
+                        filter((it) => {
+                            const currentCoordinates: IliasCoordinates =
+                                new IliasCoordinates(
+                                    it.coords.latitude,
+                                    it.coords.longitude
+                                );
+                            return learnplaceCoordinate.isNearTo(
+                                currentCoordinates,
+                                learnplace.location.radius
+                            );
+                        }),
+                        mergeMap((_) => {
+                            const journal: VisitJournalEntity =
+                                new VisitJournalEntity();
+                            journal.learnplace = learnplace;
+                            journal.synchronized = false;
+                            journal.time = Date.now() / 1000;
+                            learnplace.visitJournal.push(journal);
+                            return from(
+                                this.learnplaceAPI.addJournalEntry(
+                                    learnplace.objectId,
+                                    journal.time
+                                )
+                            ).pipe(map((_) => journal));
+                        }),
+                        tap((it) => {
+                            it.synchronized = true;
+                        }),
+                        finalize(() => {
+                            return from(
+                                this.learnplaceRepository.save(learnplace)
+                            );
+                        }),
+                        map((_) => {
+                            object.visible = true;
+                            this.shutdown();
+                            return object;
+                        }),
+                        takeUntil(this.dispose$)
+                    )
+                ).pipe(mergeAll());
+            }),
+            mergeAll()
+        );
     }
 
     /**

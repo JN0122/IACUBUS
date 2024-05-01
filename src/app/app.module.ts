@@ -1,5 +1,10 @@
 import { HttpClient, HttpClientModule, XhrFactory } from "@angular/common/http";
-import { ClassProvider, ErrorHandler, FactoryProvider, NgModule } from "@angular/core";
+import {
+    ClassProvider,
+    ErrorHandler,
+    FactoryProvider,
+    NgModule,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -20,16 +25,33 @@ import { StatusBar } from "@ionic-native/status-bar/ngx";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { Zip } from "@ionic-native/zip/ngx";
 /** angular */
-import { IonicModule, IonicRouteStrategy, ModalController, NavController, Platform } from "@ionic/angular";
-import { MissingTranslationHandler, TranslateLoader, TranslateModule, TranslateService } from "@ngx-translate/core";
+import {
+    IonicModule,
+    IonicRouteStrategy,
+    ModalController,
+    NavController,
+    Platform,
+} from "@ionic/angular";
+import {
+    MissingTranslationHandler,
+    TranslateLoader,
+    TranslateModule,
+    TranslateService,
+} from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
-import { OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY, OpenObjectInILIASAction } from "./actions/open-object-in-ilias-action";
+import {
+    OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY,
+    OpenObjectInILIASAction,
+} from "./actions/open-object-in-ilias-action";
 import { INIT_APP } from "./app-initialisation";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 /** configs */
 import { CONFIG_PROVIDER, ILIASConfigProvider } from "./config/ilias-config";
-import { Oauth2DataSupplierImpl, TokenResponseConsumerImpl } from "./config/ilias.rest-config";
+import {
+    Oauth2DataSupplierImpl,
+    TokenResponseConsumerImpl,
+} from "./config/ilias.rest-config";
 import { TypeORMConfigurationAdapter } from "./config/typeORM-config";
 /** misc */
 import { PegasusErrorHandler } from "./error-handler";
@@ -45,75 +67,142 @@ import { WifiFallbackScreen } from "./fallback/wifi/wifi-fallback.component";
 import {
     OPEN_HTML_LEARNING_MODULE_ACTION_FACTORY,
     OpenHtmlLearningModuleAction,
-    OpenHtmlLearningModuleActionFunction
+    OpenHtmlLearningModuleActionFunction,
 } from "./learningmodule/actions/open-html-learning-module-action";
 import {
     OPEN_SCORM_LEARNING_MODULE_ACTION_FACTORY,
     OpenScormLearningModuleAction,
-    OpenScormLearningModuleActionFunction
+    OpenScormLearningModuleActionFunction,
 } from "./learningmodule/actions/open-scorm-learning-module-action";
 /** learning modules */
-import { LEARNING_MODULE_LOADER, RestLearningModuleLoader } from "./learningmodule/services/learning-module-loader";
-import { LEARNING_MODULE_MANAGER, LearningModuleManager, LearningModuleManagerImpl } from "./learningmodule/services/learning-module-manager";
+import {
+    LEARNING_MODULE_LOADER,
+    RestLearningModuleLoader,
+} from "./learningmodule/services/learning-module-loader";
+import {
+    LEARNING_MODULE_MANAGER,
+    LearningModuleManager,
+    LearningModuleManagerImpl,
+} from "./learningmodule/services/learning-module-manager";
 import {
     LEARNING_MODULE_PATH_BUILDER,
     LearningModulePathBuilder,
-    LearningModulePathBuilderImpl
+    LearningModulePathBuilderImpl,
 } from "./learningmodule/services/learning-module-path-builder";
 // actions for learnplaces
-import { OPEN_LEARNPLACE_ACTION_FACTORY, OpenLearnplaceAction, OpenLearnplaceActionFunction } from "./actions/open-learnplace-action";
+import {
+    OPEN_LEARNPLACE_ACTION_FACTORY,
+    OpenLearnplaceAction,
+    OpenLearnplaceActionFunction,
+} from "./actions/open-learnplace-action";
 import {
     REMOVE_LOCAL_LEARNPLACE_ACTION_FUNCTION,
     RemoveLocalLearnplaceAction,
-    RemoveLocalLearnplaceActionFunction
+    RemoveLocalLearnplaceActionFunction,
 } from "./actions/remove-local-learnplace-action";
 // providers for learnplaces
-import { LEARNPLACE_REPOSITORY, TypeORMLearnplaceRepository } from "./providers/learnplace/repository/learnplace.repository";
-import { MAP_REPOSITORY, TypeORMMapRepository } from "./providers/learnplace/repository/map.repository";
-import { TypeORMVisitJournalRepository, VISIT_JOURNAL_REPOSITORY } from "./providers/learnplace/repository/visitjournal.repository";
-import { ILIASLearnplaceAPI, LEARNPLACE_API } from "./providers/learnplace/rest/learnplace.api";
+import {
+    LEARNPLACE_REPOSITORY,
+    TypeORMLearnplaceRepository,
+} from "./providers/learnplace/repository/learnplace.repository";
+import {
+    MAP_REPOSITORY,
+    TypeORMMapRepository,
+} from "./providers/learnplace/repository/map.repository";
+import {
+    TypeORMVisitJournalRepository,
+    VISIT_JOURNAL_REPOSITORY,
+} from "./providers/learnplace/repository/visitjournal.repository";
+import {
+    ILIASLearnplaceAPI,
+    LEARNPLACE_API,
+} from "./providers/learnplace/rest/learnplace.api";
 /** learnplaces */
 // services for learnplaces
-import { LEARNPLACE_MANAGER, LearnplaceManager, LearnplaceManagerImpl } from "./services/learnplace/learnplace.management";
-import { LEARNPLACE_LOADER, RestLearnplaceLoader } from "./services/learnplace/loader/learnplace";
+import {
+    LEARNPLACE_MANAGER,
+    LearnplaceManager,
+    LearnplaceManagerImpl,
+} from "./services/learnplace/learnplace.management";
+import {
+    LEARNPLACE_LOADER,
+    RestLearnplaceLoader,
+} from "./services/learnplace/loader/learnplace";
 import {
     AccordionMapper,
     LinkBlockMapper,
     PictureBlockMapper,
     TextBlockMapper,
     VideoBlockMapper,
-    VisitJournalMapper
+    VisitJournalMapper,
 } from "./services/learnplace/loader/mappers";
-import { HttpResourceTransfer, LEARNPLACE_PATH_BUILDER, LearnplacePathBuilderImpl, RESOURCE_TRANSFER } from "./services/learnplace/loader/resource";
-import { MAP_SERVICE, VisibilityManagedMapService } from "./services/learnplace/map.service";
+import {
+    HttpResourceTransfer,
+    LEARNPLACE_PATH_BUILDER,
+    LearnplacePathBuilderImpl,
+    RESOURCE_TRANSFER,
+} from "./services/learnplace/loader/resource";
+import {
+    MAP_SERVICE,
+    VisibilityManagedMapService,
+} from "./services/learnplace/map.service";
 import { VisibilityStrategyApplier } from "./services/learnplace/visibility/visibility.context";
-import { AfterVisitPlaceStrategy, AlwaysStrategy, NeverStrategy, OnlyAtPlaceStrategy } from "./services/learnplace/visibility/visibility.strategy";
+import {
+    AfterVisitPlaceStrategy,
+    AlwaysStrategy,
+    NeverStrategy,
+    OnlyAtPlaceStrategy,
+} from "./services/learnplace/visibility/visibility.strategy";
 import {
     SynchronizedVisitJournalWatch,
     VISIT_JOURNAL_SYNCHRONIZATION,
     VISIT_JOURNAL_WATCH,
-    VisitJournalSynchronizationImpl
+    VisitJournalSynchronizationImpl,
 } from "./services/learnplace/visitjournal.service";
 import { OnboardingPageModule } from "./pages/onboarding/onboarding.module";
 import { HardwareFeaturePage } from "./pages/test-hardware-feature/test-hardware-feature";
 import { AuthenticationProvider } from "./providers/authentication.provider";
 /** providers */
 import { DataProvider } from "./providers/data-provider.provider";
-import { FILE_DOWNLOADER, FileDownloaderImpl } from "./providers/file-transfer/file-download";
-import { FILE_UPLOADER, FileUploaderImpl } from "./providers/file-transfer/file-upload";
-import { HttpClient as PegasusHttpClient, PegasusXhrFactory } from "./providers/http";
+import {
+    FILE_DOWNLOADER,
+    FileDownloaderImpl,
+} from "./providers/file-transfer/file-download";
+import {
+    FILE_UPLOADER,
+    FileUploaderImpl,
+} from "./providers/file-transfer/file-upload";
+import {
+    HttpClient as PegasusHttpClient,
+    PegasusXhrFactory,
+} from "./providers/http";
 import { ILIASRestProvider } from "./providers/ilias-rest.provider";
-import { ILIAS_REST, ILIASRestImpl, ILIASTokenManager, TOKEN_MANAGER } from "./providers/ilias/ilias.rest";
-import { OAUTH2_DATA_SUPPLIER, TOKEN_RESPONSE_CONSUMER } from "./providers/ilias/ilias.rest-api";
+import {
+    ILIAS_REST,
+    ILIASRestImpl,
+    ILIASTokenManager,
+    TOKEN_MANAGER,
+} from "./providers/ilias/ilias.rest";
+import {
+    OAUTH2_DATA_SUPPLIER,
+    TOKEN_RESPONSE_CONSUMER,
+} from "./providers/ilias/ilias.rest-api";
 import { NEWS_REST, NewsRestImpl } from "./providers/ilias/news.rest";
-import { USER_REPOSITORY, UserRepository, UserTypeORMRepository } from "./providers/repository/repository.user";
+import {
+    USER_REPOSITORY,
+    UserRepository,
+    UserTypeORMRepository,
+} from "./providers/repository/repository.user";
 import { IconProvider } from "./providers/theme/icon.provider";
 //import {SyncFinishedModal} from "./pages/sync-finished-modal/sync-finished-modal";
 //import {TestPage} from "./pages/test/test";
 /** services */
 import { Builder } from "./services/builder.base";
 import { Database } from "./services/database/database";
-import { DATABASE_CONFIGURATION_ADAPTER, DatabaseConnectionRegistry } from "./services/database/database.api";
+import {
+    DATABASE_CONFIGURATION_ADAPTER,
+    DatabaseConnectionRegistry,
+} from "./services/database/database.api";
 import { GeolocationModule } from "./services/device/geolocation/geolocation.module";
 import { DiagnosticUtil } from "./services/device/hardware-features/diagnostics.util";
 import { Hardware } from "./services/device/hardware-features/hardware-feature.service";
@@ -122,25 +211,61 @@ import { FilesystemModule } from "./services/filesystem/filesystem.module";
 import { UserStorageService } from "./services/filesystem/user-storage.service";
 import { FooterToolbarService } from "./services/footer-toolbar.service";
 import { PegasusMissingTranslationHandler } from "./services/language/translation-missing-handler";
-import { DEFAULT_LINK_BUILDER, DefaultLinkBuilder, DefaultLinkBuilderImpl } from "./services/link/default.builder";
-import { LINK_BUILDER, LinkBuilderImpl } from "./services/link/link-builder.service";
+import {
+    DEFAULT_LINK_BUILDER,
+    DefaultLinkBuilder,
+    DefaultLinkBuilderImpl,
+} from "./services/link/default.builder";
+import {
+    LINK_BUILDER,
+    LinkBuilderImpl,
+} from "./services/link/link-builder.service";
 import {
     AuthTokenSupplier,
     INSTALLATION_LINK_PROVIDER,
     InstallationLinkSupplier,
     InstallationLinkSupplierImpl,
     TOKEN_SUPPLIER,
-    TokenSupplier
+    TokenSupplier,
 } from "./services/link/link-builder.supplier";
-import { LOADING_LINK_BUILDER, LoadingLinkBuilder, LoadingLinkBuilderImpl } from "./services/link/loading.builder";
-import { LOGIN_LINK_BUILDER, LoginLinkBuilder, LoginLinkBuilderImpl } from "./services/link/login.builder";
-import { NEWS_LINK_BUILDER, NewsLinkBuilder, NewsLinkBuilderImpl } from "./services/link/news.builder";
-import { RESOURCE_LINK_BUILDER, ResourceLinkBuilder, ResourceLinkBuilderImpl } from "./services/link/resource.builder";
-import { TIMELINE_LINK_BUILDER, TimelineLinkBuilder, TimelineLinkBuilderImpl } from "./services/link/timeline.builder";
-import { DB_MIGRATION, MIGRATION_SUPPLIER } from "./services/migration/migration.api";
-import { SimpleMigrationSupplier, TypeOrmDbMigration } from "./services/migration/migration.service";
+import {
+    LOADING_LINK_BUILDER,
+    LoadingLinkBuilder,
+    LoadingLinkBuilderImpl,
+} from "./services/link/loading.builder";
+import {
+    LOGIN_LINK_BUILDER,
+    LoginLinkBuilder,
+    LoginLinkBuilderImpl,
+} from "./services/link/login.builder";
+import {
+    NEWS_LINK_BUILDER,
+    NewsLinkBuilder,
+    NewsLinkBuilderImpl,
+} from "./services/link/news.builder";
+import {
+    RESOURCE_LINK_BUILDER,
+    ResourceLinkBuilder,
+    ResourceLinkBuilderImpl,
+} from "./services/link/resource.builder";
+import {
+    TIMELINE_LINK_BUILDER,
+    TimelineLinkBuilder,
+    TimelineLinkBuilderImpl,
+} from "./services/link/timeline.builder";
+import {
+    DB_MIGRATION,
+    MIGRATION_SUPPLIER,
+} from "./services/migration/migration.api";
+import {
+    SimpleMigrationSupplier,
+    TypeOrmDbMigration,
+} from "./services/migration/migration.service";
 import { NEWS_FEED, NewsFeedImpl } from "./services/news/news.feed";
-import { NEWS_SYNCHRONIZATION, NewsSynchronizationImpl } from "./services/news/news.synchronization";
+import {
+    NEWS_SYNCHRONIZATION,
+    NewsSynchronizationImpl,
+} from "./services/news/news.synchronization";
 import { SynchronizationService } from "./services/synchronization.service";
 import { CssStyleService } from "./services/theme/css-style.service";
 
@@ -158,7 +283,7 @@ import { CssStyleService } from "./services/theme/css-style.service";
         LocationFallbackScreen,
         RoamingFallbackScreen,
 
-        HardwareFeaturePage
+        HardwareFeaturePage,
     ],
     imports: [
         HttpClientModule,
@@ -173,13 +298,14 @@ import { CssStyleService } from "./services/theme/css-style.service";
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, "./assets/i18n/", ".json"),
-                deps: [HttpClient]
-            }
+                useFactory: (http: HttpClient): TranslateHttpLoader =>
+                    new TranslateHttpLoader(http, "./assets/i18n/", ".json"),
+                deps: [HttpClient],
+            },
         }),
     ],
     providers: [
-        {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
 
         // Application initializer
         INIT_APP,
@@ -187,51 +313,51 @@ import { CssStyleService } from "./services/theme/css-style.service";
         // from src/config/ilias-config
         {
             provide: CONFIG_PROVIDER,
-            useClass: ILIASConfigProvider
+            useClass: ILIASConfigProvider,
         },
 
         // from src/providers/ilias/lias.rest
         {
             provide: TOKEN_MANAGER,
-            useClass: ILIASTokenManager
+            useClass: ILIASTokenManager,
         },
         {
             provide: ILIAS_REST,
-            useClass: ILIASRestImpl
+            useClass: ILIASRestImpl,
         },
 
         // from src/providers/ilias/news.rest
         {
             provide: NEWS_REST,
-            useClass: NewsRestImpl
+            useClass: NewsRestImpl,
         },
 
         // from src/config/ilias.rest-config
         {
             provide: OAUTH2_DATA_SUPPLIER,
-            useClass: Oauth2DataSupplierImpl
+            useClass: Oauth2DataSupplierImpl,
         },
         {
             provide: TOKEN_RESPONSE_CONSUMER,
-            useClass: TokenResponseConsumerImpl
+            useClass: TokenResponseConsumerImpl,
         },
 
         // from src/services/migration/migration.service
         // from src/services/migration/migration.api
         {
             provide: DB_MIGRATION,
-            useClass: TypeOrmDbMigration
+            useClass: TypeOrmDbMigration,
         },
 
         {
             provide: MIGRATION_SUPPLIER,
-            useClass: SimpleMigrationSupplier
+            useClass: SimpleMigrationSupplier,
         },
 
         // from src/services/database.service
         {
             provide: DATABASE_CONFIGURATION_ADAPTER,
-            useClass: TypeORMConfigurationAdapter
+            useClass: TypeORMConfigurationAdapter,
         },
         DatabaseConnectionRegistry,
         Database,
@@ -239,49 +365,49 @@ import { CssStyleService } from "./services/theme/css-style.service";
         // from src/services/news/news.synchronization
         {
             provide: NEWS_SYNCHRONIZATION,
-            useClass: NewsSynchronizationImpl
+            useClass: NewsSynchronizationImpl,
         },
 
         // from src/providers/ilias/news.feed
         {
             provide: NEWS_FEED,
-            useClass: NewsFeedImpl
+            useClass: NewsFeedImpl,
         },
 
         // from  src/providers/repository/repository.user
         {
             provide: USER_REPOSITORY,
-            useClass: UserTypeORMRepository
+            useClass: UserTypeORMRepository,
         },
 
         // from src/learnplace
         {
             provide: LEARNPLACE_REPOSITORY,
-            useClass: TypeORMLearnplaceRepository
+            useClass: TypeORMLearnplaceRepository,
         },
         {
             provide: MAP_REPOSITORY,
-            useClass: TypeORMMapRepository
+            useClass: TypeORMMapRepository,
         },
         {
             provide: VISIT_JOURNAL_REPOSITORY,
-            useClass: TypeORMVisitJournalRepository
+            useClass: TypeORMVisitJournalRepository,
         },
         {
             provide: VISIT_JOURNAL_SYNCHRONIZATION,
-            useClass: VisitJournalSynchronizationImpl
+            useClass: VisitJournalSynchronizationImpl,
         },
         {
             provide: LEARNPLACE_LOADER,
-            useClass: RestLearnplaceLoader
+            useClass: RestLearnplaceLoader,
         },
         {
             provide: LEARNPLACE_API,
-            useClass: ILIASLearnplaceAPI
+            useClass: ILIASLearnplaceAPI,
         },
         {
             provide: MAP_SERVICE,
-            useClass: VisibilityManagedMapService
+            useClass: VisibilityManagedMapService,
         },
         //{
         //    provide: BLOCK_SERVICE,
@@ -289,97 +415,140 @@ import { CssStyleService } from "./services/theme/css-style.service";
         //},
         {
             provide: VISIT_JOURNAL_WATCH,
-            useClass: SynchronizedVisitJournalWatch
+            useClass: SynchronizedVisitJournalWatch,
         },
 
         {
             provide: LEARNING_MODULE_LOADER,
-            useClass: RestLearningModuleLoader
+            useClass: RestLearningModuleLoader,
         },
 
         // Link service
         {
             provide: INSTALLATION_LINK_PROVIDER,
-            useClass: InstallationLinkSupplierImpl
+            useClass: InstallationLinkSupplierImpl,
         },
         {
             provide: TOKEN_SUPPLIER,
-            useClass: AuthTokenSupplier
+            useClass: AuthTokenSupplier,
         },
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: DEFAULT_LINK_BUILDER,
             useFactory: (
                 installationLink: InstallationLinkSupplier,
                 tokenSupplier: TokenSupplier,
                 userRepository: UserRepository
-            ): () => DefaultLinkBuilder => {
-                return (): DefaultLinkBuilder => new DefaultLinkBuilderImpl(installationLink, tokenSupplier, userRepository);
+            ): (() => DefaultLinkBuilder) => {
+                return (): DefaultLinkBuilder =>
+                    new DefaultLinkBuilderImpl(
+                        installationLink,
+                        tokenSupplier,
+                        userRepository
+                    );
             },
-            deps: [INSTALLATION_LINK_PROVIDER, TOKEN_SUPPLIER, USER_REPOSITORY]
+            deps: [INSTALLATION_LINK_PROVIDER, TOKEN_SUPPLIER, USER_REPOSITORY],
         },
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: NEWS_LINK_BUILDER,
             useFactory: (
                 installationLink: InstallationLinkSupplier,
                 tokenSupplier: TokenSupplier,
                 userRepository: UserRepository
-            ): () => NewsLinkBuilder => {
-                return (): NewsLinkBuilder => new NewsLinkBuilderImpl(installationLink, tokenSupplier, userRepository);
+            ): (() => NewsLinkBuilder) => {
+                return (): NewsLinkBuilder =>
+                    new NewsLinkBuilderImpl(
+                        installationLink,
+                        tokenSupplier,
+                        userRepository
+                    );
             },
-            deps: [INSTALLATION_LINK_PROVIDER, TOKEN_SUPPLIER, USER_REPOSITORY]
+            deps: [INSTALLATION_LINK_PROVIDER, TOKEN_SUPPLIER, USER_REPOSITORY],
         },
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: LOADING_LINK_BUILDER,
-            useFactory: (installationLink: InstallationLinkSupplier): () => LoadingLinkBuilder => {
-                return (): LoadingLinkBuilder => new LoadingLinkBuilderImpl(installationLink);
+            useFactory: (
+                installationLink: InstallationLinkSupplier
+            ): (() => LoadingLinkBuilder) => {
+                return (): LoadingLinkBuilder =>
+                    new LoadingLinkBuilderImpl(installationLink);
             },
-            deps: [INSTALLATION_LINK_PROVIDER]
+            deps: [INSTALLATION_LINK_PROVIDER],
         },
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: LOGIN_LINK_BUILDER,
-            useFactory: (): () => LoginLinkBuilder => {
+            useFactory: (): (() => LoginLinkBuilder) => {
                 return (): LoginLinkBuilder => new LoginLinkBuilderImpl();
             },
-            deps: []
+            deps: [],
         },
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: RESOURCE_LINK_BUILDER,
             useFactory: (
                 installationLink: InstallationLinkSupplier,
                 tokenSupplier: TokenSupplier,
                 userRepository: UserRepository
-            ): () => ResourceLinkBuilder => {
-                return (): ResourceLinkBuilder => new ResourceLinkBuilderImpl(installationLink, tokenSupplier, userRepository);
+            ): (() => ResourceLinkBuilder) => {
+                return (): ResourceLinkBuilder =>
+                    new ResourceLinkBuilderImpl(
+                        installationLink,
+                        tokenSupplier,
+                        userRepository
+                    );
             },
-            deps: [INSTALLATION_LINK_PROVIDER, TOKEN_SUPPLIER, USER_REPOSITORY]
+            deps: [INSTALLATION_LINK_PROVIDER, TOKEN_SUPPLIER, USER_REPOSITORY],
         },
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: TIMELINE_LINK_BUILDER,
             useFactory: (
                 installationLink: InstallationLinkSupplier,
                 tokenSupplier: TokenSupplier,
                 userRepository: UserRepository
-            ): () => TimelineLinkBuilder => {
-                return (): TimelineLinkBuilder => new TimelineLinkBuilderImpl(installationLink, tokenSupplier, userRepository);
+            ): (() => TimelineLinkBuilder) => {
+                return (): TimelineLinkBuilder =>
+                    new TimelineLinkBuilderImpl(
+                        installationLink,
+                        tokenSupplier,
+                        userRepository
+                    );
             },
-            deps: [INSTALLATION_LINK_PROVIDER, TOKEN_SUPPLIER, USER_REPOSITORY]
+            deps: [INSTALLATION_LINK_PROVIDER, TOKEN_SUPPLIER, USER_REPOSITORY],
         },
         {
             provide: LINK_BUILDER,
-            useClass: LinkBuilderImpl
+            useClass: LinkBuilderImpl,
         },
 
         // Actions
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY,
-            useFactory: (browser: InAppBrowser, platform: Platform, modal: ModalController, safariViewController: SafariViewController):
-                (title: string, urlBuilder: Builder<Promise<string>>) => OpenObjectInILIASAction => {
+            useFactory: (
+                browser: InAppBrowser,
+                platform: Platform,
+                modal: ModalController,
+                safariViewController: SafariViewController
+            ): ((
+                title: string,
+                urlBuilder: Builder<Promise<string>>
+            ) => OpenObjectInILIASAction) => {
                 return (
                     title: string,
                     urlBuilder: Builder<Promise<string>>
-                ): OpenObjectInILIASAction => new OpenObjectInILIASAction(title, urlBuilder, browser, platform, modal, safariViewController);
+                ): OpenObjectInILIASAction =>
+                    new OpenObjectInILIASAction(
+                        title,
+                        urlBuilder,
+                        browser,
+                        platform,
+                        modal,
+                        safariViewController
+                    );
             },
-            deps: [InAppBrowser, Platform, ModalController, SafariViewController]
+            deps: [
+                InAppBrowser,
+                Platform,
+                ModalController,
+                SafariViewController,
+            ],
         },
         AlwaysStrategy,
         NeverStrategy,
@@ -397,97 +566,135 @@ import { CssStyleService } from "./services/theme/css-style.service";
 
         {
             provide: RESOURCE_TRANSFER,
-            useClass: HttpResourceTransfer
+            useClass: HttpResourceTransfer,
         },
         {
             provide: LEARNPLACE_PATH_BUILDER,
-            useClass: LearnplacePathBuilderImpl
+            useClass: LearnplacePathBuilderImpl,
         },
         {
             provide: LEARNPLACE_MANAGER,
-            useClass: LearnplaceManagerImpl
+            useClass: LearnplaceManagerImpl,
         },
 
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: OPEN_LEARNPLACE_ACTION_FACTORY,
-            useFactory: (manager: LearnplaceManager, userRepository: UserRepository): OpenLearnplaceActionFunction =>
-                (nav: NavController, learnplaceObjectId: number, learnplaceName: string, modalController: ModalController): OpenLearnplaceAction =>
-                    new OpenLearnplaceAction(manager, nav, learnplaceObjectId, learnplaceName, modalController, userRepository)
-            ,
-            deps: [LEARNPLACE_MANAGER, USER_REPOSITORY]
+            useFactory:
+                (
+                    manager: LearnplaceManager,
+                    userRepository: UserRepository
+                ): OpenLearnplaceActionFunction =>
+                (
+                    nav: NavController,
+                    learnplaceObjectId: number,
+                    learnplaceName: string,
+                    modalController: ModalController
+                ): OpenLearnplaceAction =>
+                    new OpenLearnplaceAction(
+                        manager,
+                        nav,
+                        learnplaceObjectId,
+                        learnplaceName,
+                        modalController,
+                        userRepository
+                    ),
+            deps: [LEARNPLACE_MANAGER, USER_REPOSITORY],
         },
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: OPEN_HTML_LEARNING_MODULE_ACTION_FACTORY,
-            useFactory: (
-                browser: InAppBrowser,
-                modalController: ModalController,
-                manager: LearningModuleManager,
-                leaveAppService: LeaveAppDialogService
-            ): OpenHtmlLearningModuleActionFunction =>
+            useFactory:
+                (
+                    browser: InAppBrowser,
+                    modalController: ModalController,
+                    manager: LearningModuleManager,
+                    leaveAppService: LeaveAppDialogService
+                ): OpenHtmlLearningModuleActionFunction =>
                 (
                     nav: NavController,
                     learningModuleObjectId: number,
                     pathBuilder: LearningModulePathBuilder,
                     translate: TranslateService
-                ):
-                    OpenHtmlLearningModuleAction => new OpenHtmlLearningModuleAction(
-                    nav,
-                    learningModuleObjectId,
-                    modalController,
-                    browser,
-                    translate,
-                    pathBuilder,
-                    manager,
-                    leaveAppService
-                )
-            ,
-            deps: [InAppBrowser, ModalController, LEARNING_MODULE_MANAGER, LeaveAppDialogService]
+                ): OpenHtmlLearningModuleAction =>
+                    new OpenHtmlLearningModuleAction(
+                        nav,
+                        learningModuleObjectId,
+                        modalController,
+                        browser,
+                        translate,
+                        pathBuilder,
+                        manager,
+                        leaveAppService
+                    ),
+            deps: [
+                InAppBrowser,
+                ModalController,
+                LEARNING_MODULE_MANAGER,
+                LeaveAppDialogService,
+            ],
         },
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: OPEN_SCORM_LEARNING_MODULE_ACTION_FACTORY,
-            useFactory: (
-                manager: LearningModuleManager,
-                modalController: ModalController,
-                leaveAppDialogService: LeaveAppDialogService
-            ): OpenScormLearningModuleActionFunction =>
+            useFactory:
+                (
+                    manager: LearningModuleManager,
+                    modalController: ModalController,
+                    leaveAppDialogService: LeaveAppDialogService
+                ): OpenScormLearningModuleActionFunction =>
                 (
                     learningModuleObjectId: number,
                     navCtrl: NavController
-                ):
-                    OpenScormLearningModuleAction => new OpenScormLearningModuleAction(
-                    learningModuleObjectId,
-                    modalController,
-                    navCtrl,
-                    manager,
-                    leaveAppDialogService
-                )
-            ,
-            deps: [LEARNING_MODULE_MANAGER, ModalController, LeaveAppDialogService]
+                ): OpenScormLearningModuleAction =>
+                    new OpenScormLearningModuleAction(
+                        learningModuleObjectId,
+                        modalController,
+                        navCtrl,
+                        manager,
+                        leaveAppDialogService
+                    ),
+            deps: [
+                LEARNING_MODULE_MANAGER,
+                ModalController,
+                LeaveAppDialogService,
+            ],
         },
         {
             provide: LEARNING_MODULE_PATH_BUILDER,
-            useClass: LearningModulePathBuilderImpl
+            useClass: LearningModulePathBuilderImpl,
         },
         {
             provide: LEARNING_MODULE_MANAGER,
-            useClass: LearningModuleManagerImpl
+            useClass: LearningModuleManagerImpl,
         },
-        <FactoryProvider> {
+        <FactoryProvider>{
             provide: REMOVE_LOCAL_LEARNPLACE_ACTION_FUNCTION,
-            useFactory: (learnplaceManager: LearnplaceManager, translate: TranslateService): RemoveLocalLearnplaceActionFunction =>
-                (title: string, objectId: number, userId: number): RemoveLocalLearnplaceAction =>
-                    new RemoveLocalLearnplaceAction(learnplaceManager, translate, title, objectId, userId),
-            deps: [LEARNPLACE_MANAGER, TranslateService]
+            useFactory:
+                (
+                    learnplaceManager: LearnplaceManager,
+                    translate: TranslateService
+                ): RemoveLocalLearnplaceActionFunction =>
+                (
+                    title: string,
+                    objectId: number,
+                    userId: number
+                ): RemoveLocalLearnplaceAction =>
+                    new RemoveLocalLearnplaceAction(
+                        learnplaceManager,
+                        translate,
+                        title,
+                        objectId,
+                        userId
+                    ),
+            deps: [LEARNPLACE_MANAGER, TranslateService],
         },
 
         // file transfer provider
-        <ClassProvider> {
+        <ClassProvider>{
             provide: FILE_DOWNLOADER,
-            useClass: FileDownloaderImpl
+            useClass: FileDownloaderImpl,
         },
-        <ClassProvider> {
+        <ClassProvider>{
             provide: FILE_UPLOADER,
-            useClass: FileUploaderImpl
+            useClass: FileUploaderImpl,
         },
 
         ILIASRestProvider,
@@ -512,9 +719,17 @@ import { CssStyleService } from "./services/theme/css-style.service";
         DiagnosticUtil,
         Hardware,
 
-        {provide: ErrorHandler, useClass: PegasusErrorHandler},
-        <ClassProvider>{provide: XhrFactory, useClass: PegasusXhrFactory, multi: false},
-        <ClassProvider>{provide: MissingTranslationHandler, useClass: PegasusMissingTranslationHandler, multi: false},
+        { provide: ErrorHandler, useClass: PegasusErrorHandler },
+        <ClassProvider>{
+            provide: XhrFactory,
+            useClass: PegasusXhrFactory,
+            multi: false,
+        },
+        <ClassProvider>{
+            provide: MissingTranslationHandler,
+            useClass: PegasusMissingTranslationHandler,
+            multi: false,
+        },
         AuthenticationProvider,
         IconProvider,
         AppVersion,
@@ -523,9 +738,7 @@ import { CssStyleService } from "./services/theme/css-style.service";
         FileOpener,
         SafariViewController,
     ],
-    exports: [
-        TranslateModule
-    ],
-    bootstrap: [AppComponent]
+    exports: [TranslateModule],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}

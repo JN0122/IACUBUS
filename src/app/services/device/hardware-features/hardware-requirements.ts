@@ -1,14 +1,21 @@
 /** angular */
-import {ModalController} from "@ionic/angular";
+import { ModalController } from "@ionic/angular";
 /** screens */
-import {LocationFallbackScreen} from "../../../fallback/location/location-fallback.component";
-import {WifiFallbackScreen} from "../../../fallback/wifi/wifi-fallback.component";
-import {RoamingFallbackScreen} from "../../../fallback/roaming/roaming-fallback.component";
+import { LocationFallbackScreen } from "../../../fallback/location/location-fallback.component";
+import { WifiFallbackScreen } from "../../../fallback/wifi/wifi-fallback.component";
+import { RoamingFallbackScreen } from "../../../fallback/roaming/roaming-fallback.component";
 /** misc */
-import {Optional} from "../../../util/util.optional";
-import {HardwareFeature, HardwareRequirement} from "./hardware-feature.service";
-import {DiagnosticUtil} from "./diagnostics.util";
-import {LocationAccessError, RoamingAccessError, WifiAccessError} from "./hardware-access.errors";
+import { Optional } from "../../../util/util.optional";
+import {
+    HardwareFeature,
+    HardwareRequirement,
+} from "./hardware-feature.service";
+import { DiagnosticUtil } from "./diagnostics.util";
+import {
+    LocationAccessError,
+    RoamingAccessError,
+    WifiAccessError,
+} from "./hardware-access.errors";
 
 /**
  * Implements parts of a {@link HardwareRequirement} that are exactly the same across all specific requirements.
@@ -17,12 +24,9 @@ import {LocationAccessError, RoamingAccessError, WifiAccessError} from "./hardwa
  * @version 1.0.0
  */
 export abstract class AbstractRequirement implements HardwareRequirement {
-
     private onFailureAction: Optional<Function> = Optional.empty();
 
-    constructor(
-        private readonly modalCtrl: ModalController
-    ) {}
+    constructor(private readonly modalCtrl: ModalController) {}
 
     /**
      * Sets the given {@code action} as an on failure callback to this requirement.
@@ -36,7 +40,7 @@ export abstract class AbstractRequirement implements HardwareRequirement {
         return this;
     }
 
-    abstract check(): Promise<void>
+    abstract check(): Promise<void>;
 
     /**
      * Creates a modal with the given {@code page}.
@@ -49,7 +53,7 @@ export abstract class AbstractRequirement implements HardwareRequirement {
     protected async createFallbackScreen(page: Function): Promise<void> {
         const modal: HTMLIonModalElement = await this.modalCtrl.create({
             component: page,
-            cssClass: "modal-fullscreen"
+            cssClass: "modal-fullscreen",
         });
         await modal.present();
     }
@@ -62,19 +66,20 @@ export abstract class AbstractRequirement implements HardwareRequirement {
  * @version 1.0.0
  */
 export class LocationRequirement extends AbstractRequirement {
-
     constructor(
         modalCtl: ModalController,
         private readonly diagnosticUtil: DiagnosticUtil
-    ) {super(modalCtl)}
+    ) {
+        super(modalCtl);
+    }
 
     async check(): Promise<void> {
-
-        if(!(await this.diagnosticUtil.isLocationEnabled())) {
-
+        if (!(await this.diagnosticUtil.isLocationEnabled())) {
             await this.createFallbackScreen(LocationFallbackScreen);
 
-            throw new LocationAccessError("Can not use location: Permission Denied");
+            throw new LocationAccessError(
+                "Can not use location: Permission Denied"
+            );
         }
     }
 }
@@ -86,16 +91,15 @@ export class LocationRequirement extends AbstractRequirement {
  * @version 1.0.0
  */
 export class WifiRequirement extends AbstractRequirement {
-
     constructor(
         modalCtl: ModalController,
         private readonly diagnosticUtil: DiagnosticUtil
-    ) {super(modalCtl)}
+    ) {
+        super(modalCtl);
+    }
 
     async check(): Promise<void> {
-
-        if(!(await this.diagnosticUtil.isWifiEnabled())) {
-
+        if (!(await this.diagnosticUtil.isWifiEnabled())) {
             await this.createFallbackScreen(WifiFallbackScreen);
 
             throw new WifiAccessError("Can not use wifi: Disabled");
@@ -112,19 +116,20 @@ export class WifiRequirement extends AbstractRequirement {
  * @version 1.0.0
  */
 export class RoamingRequirement extends AbstractRequirement {
-
     constructor(
         modalCtl: ModalController,
         private readonly diagnosticUtil: DiagnosticUtil
-    ) {super(modalCtl)}
+    ) {
+        super(modalCtl);
+    }
 
     async check(): Promise<void> {
-
-        if(!(await this.diagnosticUtil.isRoamingEnabled())) {
-
+        if (!(await this.diagnosticUtil.isRoamingEnabled())) {
             await this.createFallbackScreen(RoamingFallbackScreen);
 
-            throw new RoamingAccessError("Can not use roaming service: Disabled");
+            throw new RoamingAccessError(
+                "Can not use roaming service: Disabled"
+            );
         }
     }
 }
@@ -136,12 +141,13 @@ export class RoamingRequirement extends AbstractRequirement {
  * @version 0.0.1
  */
 export class AnyRequirement extends AbstractRequirement {
-
     constructor(
         modalCtl: ModalController,
         private readonly diagnosticUtil: DiagnosticUtil,
         private readonly features: Array<HardwareFeature>
-    ) {super(modalCtl)}
+    ) {
+        super(modalCtl);
+    }
 
     async check(): Promise<void> {
         throw new Error("This method is not implemented yet");
@@ -155,12 +161,13 @@ export class AnyRequirement extends AbstractRequirement {
  * @version 0.0.1
  */
 export class AllRequirement extends AbstractRequirement {
-
     constructor(
         modalCtl: ModalController,
         private readonly diagnosticUtil: DiagnosticUtil,
         private readonly features: Array<HardwareFeature>
-    ) {super(modalCtl)}
+    ) {
+        super(modalCtl);
+    }
 
     async check(): Promise<void> {
         throw new Error("This method is not implemented yet");

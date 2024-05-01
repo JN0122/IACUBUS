@@ -5,11 +5,10 @@
  * @version 1.0.0
  */
 export class NoSuchElementError extends Error {
-
-  constructor(message: string) {
-    super(message);
-    Object.setPrototypeOf(this, NoSuchElementError.prototype);
-  }
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, NoSuchElementError.prototype);
+    }
 }
 
 /**
@@ -19,11 +18,10 @@ export class NoSuchElementError extends Error {
  * @version 1.0.0
  */
 export class IllegalArgumentError extends Error {
-
-  constructor(message: string) {
-    super(message);
-    Object.setPrototypeOf(this, IllegalArgumentError.prototype);
-  }
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, IllegalArgumentError.prototype);
+    }
 }
 
 /*
@@ -38,11 +36,10 @@ export class IllegalArgumentError extends Error {
  * @author Nicolas Schäfli <ns@studer-raimann.ch>
  */
 export class IllegalStateError extends Error {
-
-  constructor(message: string) {
-    super(message);
-    Object.setPrototypeOf(this, IllegalStateError.prototype);
-  }
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, IllegalStateError.prototype);
+    }
 }
 
 /**

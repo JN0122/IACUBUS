@@ -1,5 +1,3 @@
-
-
 ion-content {
     max-height: 100vh;
     display: flex;
@@ -19,8 +17,8 @@ ion-content {
     height: var(--size-small);
     z-index: 2;
     transform: 0.2s ease-out;
-    box-shadow: 0px 9px 8px -1px rgba(0,0,0,0.15);
-    -webkit-box-shadow: 0px 9px 8px -1px rgba(0,0,0,0.15);
+    box-shadow: 0px 9px 8px -1px rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0px 9px 8px -1px rgba(0, 0, 0, 0.15);
 }
 
 .content {
@@ -67,7 +65,6 @@ ion-content {
 .margin-up {
     transition: all 0.4s ease-out;
     margin-top: calc(var(--size-small) + 1em) !important;
-
 }
 
 .margin-down {
@@ -76,35 +73,37 @@ ion-content {
 }
 
 .slide-in {
-	-webkit-animation: slide-in 0.2s ease-out both;
-	        animation: slide-in 0.2s ease-out both;
+    -webkit-animation: slide-in 0.2s ease-out both;
+    animation: slide-in 0.2s ease-out both;
 }
 
 .slide-out {
-	-webkit-animation: slide-out 0.4s ease-in both;
-	        animation: slide-out 0.4s ease-in both;
+    -webkit-animation: slide-out 0.4s ease-in both;
+    animation: slide-out 0.4s ease-in both;
 }
 
 @keyframes slide-out {
     0% {
         -webkit-transform: translateX(0);
-                transform: translateX(0);
+        transform: translateX(0);
     }
     100% {
         -webkit-transform: translateX(-100%);
-                transform: translateX(-100%);
+        transform: translateX(-100%);
     }
 }
 
 @keyframes slide-in {
     0% {
         -webkit-transform: translateX(100%);
-                transform: translateX(100%);
+        transform: translateX(100%);
     }
     100% {
         -webkit-transform: translateX(0);
-                transform: translateX(0);
+        transform: translateX(0);
     }
 }
 
-[hidden] { display: none !important;}
+[hidden] {
+    display: none !important;
+}

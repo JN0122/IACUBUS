@@ -50,4 +50,5 @@ export interface Filesystem {
     save(path: string, data: ArrayBuffer): Promise<FileEntry>;
 }
 
-export const FILESYSTEM_TOKEN: InjectionToken<Filesystem> = new InjectionToken<Filesystem>("Filesystem service injection token.");
+export const FILESYSTEM_TOKEN: InjectionToken<Filesystem> =
+    new InjectionToken<Filesystem>("Filesystem service injection token.");

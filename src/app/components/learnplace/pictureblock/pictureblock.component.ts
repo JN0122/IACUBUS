@@ -1,20 +1,19 @@
-import {Component, Inject, Input, OnInit} from "@angular/core";
-import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
-import {File} from "@ionic-native/file/ngx";
-import {Platform} from "@ionic/angular";
-import {Filesystem, FILESYSTEM_TOKEN} from "../../../services/filesystem";
-import {Logger} from "../../../services/logging/logging.api";
-import {Logging} from "../../../services/logging/logging.service";
-import {PictureBlockModel} from "../../../services/learnplace/block.model";
-import {WebView} from "@ionic-native/ionic-webview/ngx";
+import { Component, Inject, Input, OnInit } from "@angular/core";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { File } from "@ionic-native/file/ngx";
+import { Platform } from "@ionic/angular";
+import { Filesystem, FILESYSTEM_TOKEN } from "../../../services/filesystem";
+import { Logger } from "../../../services/logging/logging.api";
+import { Logging } from "../../../services/logging/logging.service";
+import { PictureBlockModel } from "../../../services/learnplace/block.model";
+import { WebView } from "@ionic-native/ionic-webview/ngx";
 
 @Component({
     selector: "picture-block",
     templateUrl: "picture-block.html",
-    styleUrls: ["../block.scss"]
+    styleUrls: ["../block.scss"],
 })
 export class PictureBlock implements OnInit {
-
     @Input("value")
     pictureBlock: PictureBlockModel;
 
@@ -28,20 +27,32 @@ export class PictureBlock implements OnInit {
         @Inject(FILESYSTEM_TOKEN) private readonly filesystem: Filesystem,
         private readonly sanitizer: DomSanitizer,
         private readonly webview: WebView
-    ) {
-    }
+    ) {}
 
     async ngOnInit(): Promise<void> {
-
         try {
-            const fileName: string = this.pictureBlock.thumbnail.split("/").pop();
-            const path: string = this.pictureBlock.thumbnail.replace(fileName, "");
-            let url: string = (await this.file.resolveLocalFilesystemUrl(`${this.getStorageLocation()}${path}/${fileName}`)).toURL();
+            const fileName: string = this.pictureBlock.thumbnail
+                .split("/")
+                .pop();
+            const path: string = this.pictureBlock.thumbnail.replace(
+                fileName,
+                ""
+            );
+            let url: string = (
+                await this.file.resolveLocalFilesystemUrl(
+                    `${this.getStorageLocation()}${path}/${fileName}`
+                )
+            ).toURL();
             url = this.webview.convertFileSrc(url);
             this.embeddedSrc = this.sanitizer.bypassSecurityTrustUrl(url);
         } catch (error) {
-            this.log.warn(() => `Could not load thumbnail: url: ${this.pictureBlock.thumbnail}`);
-            this.log.debug(() => `Thumbnail load error: ${JSON.stringify(error)}`);
+            this.log.warn(
+                () =>
+                    `Could not load thumbnail: url: ${this.pictureBlock.thumbnail}`
+            );
+            this.log.debug(
+                () => `Thumbnail load error: ${JSON.stringify(error)}`
+            );
         }
     }
 
@@ -57,6 +68,8 @@ export class PictureBlock implements OnInit {
             return this.file.dataDirectory;
         }
 
-        throw new Error("Unsupported platform. Can not return a storage location.");
+        throw new Error(
+            "Unsupported platform. Can not return a storage location."
+        );
     }
 }

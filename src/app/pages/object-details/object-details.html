@@ -14,7 +14,13 @@
             <span *ngIf="! last"> » </span>
         </span>
     </div>
-    <ion-button *ngFor="let action of actions" class="ion-text-wrap" expand="block" (click)="executeAction(action)">{{ action.title }}</ion-button>
+    <ion-button
+        *ngFor="let action of actions"
+        class="ion-text-wrap"
+        expand="block"
+        (click)="executeAction(action)"
+        >{{ action.title }}</ion-button
+    >
     <ion-list>
         <ion-item class="ion-text-wrap" *ngFor="let detail of details">
             <ion-label>{{ detail.label | translate }}</ion-label>

@@ -1,8 +1,8 @@
-import {Injectable} from "@angular/core";
+import { Injectable } from "@angular/core";
 import { SafeUrl } from "@angular/platform-browser";
-import {IconProvider} from "./icon.provider";
-import {ThemeSynchronizationService} from "../../services/theme/theme-synchronization.service";
-import {CssStyleService} from "../../services/theme/css-style.service";
+import { IconProvider } from "./icon.provider";
+import { ThemeSynchronizationService } from "../../services/theme/theme-synchronization.service";
+import { CssStyleService } from "../../services/theme/css-style.service";
 
 /**
  * this provider bundles together the functionality of the IconProvider,
@@ -10,13 +10,13 @@ import {CssStyleService} from "../../services/theme/css-style.service";
  */
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class ThemeProvider {
     constructor(
         private readonly iconProvider: IconProvider,
         private readonly themeSynch: ThemeSynchronizationService,
-        private readonly cssStyle: CssStyleService,
+        private readonly cssStyle: CssStyleService
     ) {}
 
     async getIconSrc(key: string): Promise<string | SafeUrl> {
@@ -24,7 +24,10 @@ export class ThemeProvider {
     }
 
     async setCustomColor(): Promise<void> {
-        if(this.cssStyle.dynamicThemeEnabled() && await ThemeSynchronizationService.dynamicThemeAvailable()) {
+        if (
+            this.cssStyle.dynamicThemeEnabled() &&
+            (await ThemeSynchronizationService.dynamicThemeAvailable())
+        ) {
             await this.cssStyle.setCustomColor();
         }
     }
@@ -38,9 +41,9 @@ export class ThemeProvider {
     }
 
     async synchronizeAndSetCustomTheme(): Promise<void> {
-        if(!window.navigator.onLine) return;
+        if (!window.navigator.onLine) return;
 
-        if(this.cssStyle.dynamicThemeEnabled()) {
+        if (this.cssStyle.dynamicThemeEnabled()) {
             await this.themeSynch.synchronize();
             await this.setCustomColor();
         }

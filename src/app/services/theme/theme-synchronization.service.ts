@@ -1,16 +1,23 @@
-import {Inject, Injectable} from "@angular/core";
-import {LINK_BUILDER, LinkBuilder} from "../link/link-builder.service";
-import {User} from "../../models/user";
-import {AuthenticationProvider} from "../../providers/authentication.provider";
-import {ILIASRestProvider, ThemeData} from "../../providers/ilias-rest.provider";
-import {Settings} from "../../models/settings";
-import {DownloadRequestOptions, FILE_DOWNLOADER, FileDownloader} from "../../providers/file-transfer/file-download";
-import {File} from "@ionic-native/file/ngx";
-import {FileStorageService} from "../filesystem/file-storage.service";
+import { Inject, Injectable } from "@angular/core";
+import { LINK_BUILDER, LinkBuilder } from "../link/link-builder.service";
+import { User } from "../../models/user";
+import { AuthenticationProvider } from "../../providers/authentication.provider";
+import {
+    ILIASRestProvider,
+    ThemeData,
+} from "../../providers/ilias-rest.provider";
+import { Settings } from "../../models/settings";
+import {
+    DownloadRequestOptions,
+    FILE_DOWNLOADER,
+    FileDownloader,
+} from "../../providers/file-transfer/file-download";
+import { File } from "@ionic-native/file/ngx";
+import { FileStorageService } from "../filesystem/file-storage.service";
 import { HttpResponse } from "../../providers/http";
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class ThemeSynchronizationService {
     constructor(
@@ -44,10 +51,21 @@ export class ThemeSynchronizationService {
             const memThemeTimestamp: number = settings.themeTimestamp;
 
             // update icons
-            for (let i: number = 0; i < themeData.themeIconResources.length; i++) {
-                const res: { "key": string, "path": string } = themeData.themeIconResources[i];
-                const url: string = await this.linkBuilder.resource().resource(res.path).build();
-                const path: string = await this.userStorage.dirForUser("icons", true);
+            for (
+                let i: number = 0;
+                i < themeData.themeIconResources.length;
+                i++
+            ) {
+                const res: { key: string; path: string } =
+                    themeData.themeIconResources[i];
+                const url: string = await this.linkBuilder
+                    .resource()
+                    .resource(res.path)
+                    .build();
+                const path: string = await this.userStorage.dirForUser(
+                    "icons",
+                    true
+                );
                 const file: string = `${themeData.themeTimestamp}_${res.key}.svg`;
 
                 // remove old icon
@@ -55,13 +73,15 @@ export class ThemeSynchronizationService {
                 await this.userStorage.removeFileIfExists(path, oldFile);
 
                 // load new icon
-                const downloadOptions: DownloadRequestOptions = <DownloadRequestOptions> {
+                const downloadOptions: DownloadRequestOptions = <
+                    DownloadRequestOptions
+                >{
                     url: url,
                     filePath: `${path}${file}`,
                     body: "",
                     followRedirects: true,
                     headers: {},
-                    timeout: 0
+                    timeout: 0,
                 };
                 await this.downloadAndCheckSvg(downloadOptions, path, file);
             }
@@ -71,10 +91,11 @@ export class ThemeSynchronizationService {
             settings.themeTimestamp = themeData.themeTimestamp;
 
             await settings.save();
-
         } catch (e) {
             // if the sync failed, make sure that a new attempt will be made later on
-            console.warn(`unable to sync the theme data, resulted in error: ${e.message}`);
+            console.warn(
+                `unable to sync the theme data, resulted in error: ${e.message}`
+            );
         }
     }
 
@@ -84,13 +105,17 @@ export class ThemeSynchronizationService {
      * @param path
      * @param file
      */
-    private async downloadAndCheckSvg(download: DownloadRequestOptions, path: string, file: string): Promise<void> {
-        for(let i: number = 0; i < 4; i++) {
+    private async downloadAndCheckSvg(
+        download: DownloadRequestOptions,
+        path: string,
+        file: string
+    ): Promise<void> {
+        for (let i: number = 0; i < 4; i++) {
             const res: HttpResponse = await this.downloader.download(download);
             if (res.status === 404) continue;
             try {
                 const svg: string = await this.file.readAsText(path, file);
-                if(svg.includes("svg")) return;
+                if (svg.includes("svg")) return;
             } catch (e) {
                 console.error(`problem when loading '${file}' to '${path}'`);
             }

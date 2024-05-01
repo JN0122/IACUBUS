@@ -1,15 +1,21 @@
-import {MapPlaceModel} from "./block.model";
-import {Inject, Injectable, InjectionToken, ɵConsole} from "@angular/core";
-import {VisibilityStrategyApplier} from "./visibility/visibility.context";
-import {VisibilityStrategyType} from "./visibility/visibility.strategy";
-import {LEARNPLACE_REPOSITORY, LearnplaceRepository} from "../../providers/learnplace/repository/learnplace.repository";
-import {LearnplaceEntity} from "../../entity/learnplace/learnplace.entity";
-import {Observable,  from } from "rxjs";
-import {USER_REPOSITORY, UserRepository} from "../../providers/repository/repository.user";
+import { MapPlaceModel } from "./block.model";
+import { Inject, Injectable, InjectionToken, ɵConsole } from "@angular/core";
+import { VisibilityStrategyApplier } from "./visibility/visibility.context";
+import { VisibilityStrategyType } from "./visibility/visibility.strategy";
+import {
+    LEARNPLACE_REPOSITORY,
+    LearnplaceRepository,
+} from "../../providers/learnplace/repository/learnplace.repository";
+import { LearnplaceEntity } from "../../entity/learnplace/learnplace.entity";
+import { Observable, from } from "rxjs";
+import {
+    USER_REPOSITORY,
+    UserRepository,
+} from "../../providers/repository/repository.user";
 import { AuthenticationProvider } from "src/app/providers/authentication.provider";
-import mapboxgl from "mapbox-gl"
-import {environment} from "../../../environments/environment";
-import {isDefined, isNullOrUndefined} from "../../util/util.function";
+import mapboxgl from "mapbox-gl";
+import { environment } from "../../../environments/environment";
+import { isDefined, isNullOrUndefined } from "../../util/util.function";
 
 /**
  * Describes a service to operate with Maps.
@@ -25,7 +31,7 @@ export interface MapService {
      *
      * @returns {Observable<MapPlaceModel>} an observable of the map
      */
-    getMapPlace(learnplaceObjectId: number): Observable<MapPlaceModel>
+    getMapPlace(learnplaceObjectId: number): Observable<MapPlaceModel>;
 
     /**
      * Creates observables of maps by the given {@code learnplaceObjectIds}.
@@ -34,9 +40,11 @@ export interface MapService {
      *
      * @returns {Array<Observable<MapPlaceModel>>} an observable of the map
      */
-    getMapPlaces(lpObjIds: Array<number>): Array<Observable<MapPlaceModel>>
+    getMapPlaces(lpObjIds: Array<number>): Array<Observable<MapPlaceModel>>;
 }
-export const MAP_SERVICE: InjectionToken<MapService> = new InjectionToken("token for map service");
+export const MAP_SERVICE: InjectionToken<MapService> = new InjectionToken(
+    "token for map service"
+);
 
 /**
  * Manages the visibility of a map by using the {@link VisibilityStrategy}.
@@ -46,12 +54,15 @@ export const MAP_SERVICE: InjectionToken<MapService> = new InjectionToken("token
  */
 @Injectable()
 export class VisibilityManagedMapService implements MapService {
-
     constructor(
         private readonly visibilityStrategyApplier: VisibilityStrategyApplier,
-        @Inject(LEARNPLACE_REPOSITORY) private readonly learnplaceRepository: LearnplaceRepository,
+        @Inject(LEARNPLACE_REPOSITORY)
+        private readonly learnplaceRepository: LearnplaceRepository
     ) {
-        if (typeof mapboxgl.accessToken !== "string" || mapboxgl.accessToken.length === 0) {
+        if (
+            typeof mapboxgl.accessToken !== "string" ||
+            mapboxgl.accessToken.length === 0
+        ) {
             mapboxgl.accessToken = environment.mapboxApiKey;
         }
     }
@@ -66,27 +77,37 @@ export class VisibilityManagedMapService implements MapService {
      * @returns {Observable<MapPlaceModel>} an observable of the map
      */
     getMapPlace(lpObjId: number): Observable<MapPlaceModel> {
-
         return new Observable((observer) => {
             // tslint:disable-next-line: no-floating-promises
-            this.learnplaceRepository.findByObjectIdAndUserId(lpObjId, AuthenticationProvider.getUser().id).then(it => {
-                const learnplace: LearnplaceEntity = it.get();
-
-                const place: MapPlaceModel = new MapPlaceModel(
+            this.learnplaceRepository
+                .findByObjectIdAndUserId(
                     lpObjId,
-                    learnplace.location.latitude,
-                    learnplace.location.longitude,
-                    learnplace.map.zoom,
-                    VisibilityStrategyType[learnplace.map.visibility.value]
-                );
+                    AuthenticationProvider.getUser().id
+                )
+                .then((it) => {
+                    const learnplace: LearnplaceEntity = it.get();
 
-                this.visibilityStrategyApplier.setLearnplace(learnplace.id);
-                this.visibilityStrategyApplier.apply(place, VisibilityStrategyType[learnplace.map.visibility.value])
-                    .subscribe(place => {
-                        observer.next(place)
-                        observer.complete();
-                    });
-            });
+                    const place: MapPlaceModel = new MapPlaceModel(
+                        lpObjId,
+                        learnplace.location.latitude,
+                        learnplace.location.longitude,
+                        learnplace.map.zoom,
+                        VisibilityStrategyType[learnplace.map.visibility.value]
+                    );
+
+                    this.visibilityStrategyApplier.setLearnplace(learnplace.id);
+                    this.visibilityStrategyApplier
+                        .apply(
+                            place,
+                            VisibilityStrategyType[
+                                learnplace.map.visibility.value
+                            ]
+                        )
+                        .subscribe((place) => {
+                            observer.next(place);
+                            observer.complete();
+                        });
+                });
         });
     }
 
@@ -95,6 +116,6 @@ export class VisibilityManagedMapService implements MapService {
             return;
         }
 
-        return lpObjIds.map(id => this.getMapPlace(id));
+        return lpObjIds.map((id) => this.getMapPlace(id));
     }
 }

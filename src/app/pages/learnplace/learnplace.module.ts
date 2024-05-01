@@ -6,8 +6,18 @@ import { GeolocationModule } from "../../services/device/geolocation/geolocation
 import { IonicModule } from "@ionic/angular";
 
 import { LearnplacePage } from "./learnplace.page";
-import { AccordionMapper, LinkBlockMapper, PictureBlockMapper, TextBlockMapper, VideoBlockMapper, VisitJournalMapper } from "src/app/services/learnplace/loader/mappers";
-import {BLOCK_SERVICE, VisibilityManagedBlockService} from "../../services/learnplace/block.service";
+import {
+    AccordionMapper,
+    LinkBlockMapper,
+    PictureBlockMapper,
+    TextBlockMapper,
+    VideoBlockMapper,
+    VisitJournalMapper,
+} from "src/app/services/learnplace/loader/mappers";
+import {
+    BLOCK_SERVICE,
+    VisibilityManagedBlockService,
+} from "../../services/learnplace/block.service";
 import { TranslateModule } from "@ngx-translate/core";
 import { RouterModule, Routes } from "@angular/router";
 import { BlockModule } from "../../components/learnplace/block.module";
@@ -16,13 +26,11 @@ import { MapModule } from "../../components/map/map.module";
 const routes: Routes = [
     {
         path: ":refId",
-        component: LearnplacePage
-    }
+        component: LearnplacePage,
+    },
 ];
 @NgModule({
-    declarations: [
-        LearnplacePage,
-    ],
+    declarations: [LearnplacePage],
     providers: [
         TextBlockMapper,
         PictureBlockMapper,
@@ -32,8 +40,8 @@ const routes: Routes = [
         VisitJournalMapper,
         {
             provide: BLOCK_SERVICE,
-            useClass: VisibilityManagedBlockService
-        }
+            useClass: VisibilityManagedBlockService,
+        },
     ],
     imports: [
         CommonModule,
@@ -44,8 +52,8 @@ const routes: Routes = [
         ReactiveFormsModule,
         BlockModule,
         MapModule,
-        RouterModule.forChild(routes)
+        RouterModule.forChild(routes),
     ],
-    exports: [RouterModule]
+    exports: [RouterModule],
 })
 export class LearnplacePageModule {}

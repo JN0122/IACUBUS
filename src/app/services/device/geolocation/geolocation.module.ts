@@ -1,7 +1,7 @@
-import {NgModule} from "@angular/core";
-import {Geolocation} from "./geolocation.service";
+import { NgModule } from "@angular/core";
+import { Geolocation } from "./geolocation.service";
 
 @NgModule({
-    providers: [Geolocation]
+    providers: [Geolocation],
 })
 export class GeolocationModule {}

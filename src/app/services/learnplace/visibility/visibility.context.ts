@@ -1,12 +1,15 @@
 import {
-  AfterVisitPlaceStrategy,
-  AlwaysStrategy, NeverStrategy, OnlyAtPlaceStrategy, VisibilityStrategy,
-  VisibilityStrategyType
+    AfterVisitPlaceStrategy,
+    AlwaysStrategy,
+    NeverStrategy,
+    OnlyAtPlaceStrategy,
+    VisibilityStrategy,
+    VisibilityStrategyType,
 } from "./visibility.strategy";
-import {Injectable} from "@angular/core";
-import {isDefined} from "../../../util/util.function";
-import {IllegalStateError} from "../../../error/errors";
-import {Observable} from "rxjs";
+import { Injectable } from "@angular/core";
+import { isDefined } from "../../../util/util.function";
+import { IllegalStateError } from "../../../error/errors";
+import { Observable } from "rxjs";
 
 /**
  * Describes an object that can be visible or not.
@@ -15,7 +18,7 @@ import {Observable} from "rxjs";
  * @version 1.0.0
  */
 export interface VisibilityAware {
-  visible: boolean;
+    visible: boolean;
 }
 
 /**
@@ -26,25 +29,24 @@ export interface VisibilityAware {
  */
 @Injectable()
 export class VisibilityStrategyApplier {
+    private learnplaceId: string | undefined;
 
-  private learnplaceId: string | undefined;
+    constructor(
+        private readonly alwaysStrategy: AlwaysStrategy,
+        private readonly neverStrategy: NeverStrategy,
+        private readonly onlyAtPlaceStrategy: OnlyAtPlaceStrategy,
+        private readonly afterVisitPlace: AfterVisitPlaceStrategy
+    ) {}
 
- constructor(
-   private readonly alwaysStrategy: AlwaysStrategy,
-   private readonly neverStrategy: NeverStrategy,
-   private readonly onlyAtPlaceStrategy: OnlyAtPlaceStrategy,
-   private readonly afterVisitPlace: AfterVisitPlaceStrategy
- ) {}
-
-  /**
-   * Setter for the learnplace that is used for the membership of models
-   * used in the {@link VisibilityStrategyApplier#apply} method.
-   *
-   * @param {string} id - the id of the learnplace
-   */
-  setLearnplace(id: string): void {
-     this.learnplaceId = id;
-  }
+    /**
+     * Setter for the learnplace that is used for the membership of models
+     * used in the {@link VisibilityStrategyApplier#apply} method.
+     *
+     * @param {string} id - the id of the learnplace
+     */
+    setLearnplace(id: string): void {
+        this.learnplaceId = id;
+    }
 
     /**
      * Applies the strategy matching the given {@code strategy} to the given {@code model}.
@@ -57,7 +59,10 @@ export class VisibilityStrategyApplier {
      *
      * @throws {IllegalStateError} if the setter for the learnplace was not called
      */
-    apply<T extends VisibilityAware>(model: T, strategy: VisibilityStrategyType): Observable<T> {
+    apply<T extends VisibilityAware>(
+        model: T,
+        strategy: VisibilityStrategyType
+    ): Observable<T> {
         switch (strategy) {
             case VisibilityStrategyType.ALWAYS:
                 return this.alwaysStrategy.on(model);
@@ -65,10 +70,14 @@ export class VisibilityStrategyApplier {
                 return this.neverStrategy.on(model);
             case VisibilityStrategyType.ONLY_AT_PLACE:
                 this.requireLearnplace();
-                return this.onlyAtPlaceStrategy.membership(this.learnplaceId).on(model);
+                return this.onlyAtPlaceStrategy
+                    .membership(this.learnplaceId)
+                    .on(model);
             case VisibilityStrategyType.AFTER_VISIT_PLACE:
                 this.requireLearnplace();
-                return this.afterVisitPlace.membership(this.learnplaceId).on(model);
+                return this.afterVisitPlace
+                    .membership(this.learnplaceId)
+                    .on(model);
             default:
                 console.error("no visiblitiy strategy");
         }
@@ -82,9 +91,11 @@ export class VisibilityStrategyApplier {
         this.afterVisitPlace.shutdown();
     }
 
-   private requireLearnplace(): void {
-     if (!isDefined(this.learnplaceId)) {
-       throw new IllegalStateError(`Can not apply strategy without learnplace id: Call ${VisibilityStrategyApplier.name}#setLearnplace first`);
-     }
-   }
+    private requireLearnplace(): void {
+        if (!isDefined(this.learnplaceId)) {
+            throw new IllegalStateError(
+                `Can not apply strategy without learnplace id: Call ${VisibilityStrategyApplier.name}#setLearnplace first`
+            );
+        }
+    }
 }

@@ -28,7 +28,9 @@
         display: var(--page-reporting-card-zwh, none);
     }
 
-    .stura-card, .freiburg-card, .marburg-card {
+    .stura-card,
+    .freiburg-card,
+    .marburg-card {
         display: var(--page-info-card-community, block);
     }
 

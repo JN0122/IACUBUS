@@ -1,4 +1,4 @@
-import {Exception} from "./Exception";
+import { Exception } from "./Exception";
 /**
  * There is no running sync.
  */

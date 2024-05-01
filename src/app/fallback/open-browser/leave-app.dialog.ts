@@ -1,24 +1,22 @@
 /** angular */
-import {Component} from "@angular/core";
+import { Component } from "@angular/core";
 import { AppVersion } from "@ionic-native/app-version/ngx";
-import {ModalController, NavParams} from "@ionic/angular";
+import { ModalController, NavParams } from "@ionic/angular";
 /** ionic-native */
-import {InAppBrowserOptions} from "@ionic-native/in-app-browser";
+import { InAppBrowserOptions } from "@ionic-native/in-app-browser";
 /** logging */
-import {Logger} from "../../services/logging/logging.api";
-import {Logging} from "../../services/logging/logging.service";
+import { Logger } from "../../services/logging/logging.api";
+import { Logging } from "../../services/logging/logging.service";
 /** misc */
-import {TranslateService} from "@ngx-translate/core";
-import {CssStyleService} from "../../services/theme/css-style.service";
+import { TranslateService } from "@ngx-translate/core";
+import { CssStyleService } from "../../services/theme/css-style.service";
 import { ViewController } from "@ionic/core";
-
 
 @Component({
     templateUrl: "leave-app.dialog.html",
-    styleUrls: ["leave-app.scss"]
+    styleUrls: ["leave-app.scss"],
 })
 export class LeaveAppDialog {
-
     private readonly log: Logger = Logging.getLogger("LeaveAppDialog");
     private readonly params: LeaveAppDialogNavParams;
     readonly appName: Promise<string>;
@@ -28,7 +26,7 @@ export class LeaveAppDialog {
         private readonly nav: NavParams,
         private readonly modalCtrl: ModalController,
         private readonly appVersion: AppVersion,
-        private readonly cssStyle: CssStyleService,
+        private readonly cssStyle: CssStyleService
     ) {
         this.params = <LeaveAppDialogNavParams>nav.data;
         this.appName = this.appVersion.getAppName();
@@ -36,8 +34,10 @@ export class LeaveAppDialog {
 
     ionViewWillEnter(): void {
         this.themeIonicContrastColor = "light";
-        if(this.cssStyle.customIsSet) {
-            this.themeIonicContrastColor = this.cssStyle.customColorContrast ? "light" : "dark";
+        if (this.cssStyle.customIsSet) {
+            this.themeIonicContrastColor = this.cssStyle.customColorContrast
+                ? "light"
+                : "dark";
         }
     }
 
@@ -55,7 +55,7 @@ export class LeaveAppDialog {
 }
 
 export interface LeaveAppAction {
-    (): void
+    (): void;
 }
 
 export interface LeaveAppDialogNavParams {

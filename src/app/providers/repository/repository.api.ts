@@ -1,11 +1,11 @@
 /** services */
-import {DEFAULT_CONNECTION_NAME} from "../../services/database/database.api";
-import {Database} from "../../services/database/database";
-import {Logger} from "../../services/logging/logging.api";
-import {Logging} from "../../services/logging/logging.service";
+import { DEFAULT_CONNECTION_NAME } from "../../services/database/database.api";
+import { Database } from "../../services/database/database";
+import { Logger } from "../../services/logging/logging.api";
+import { Logging } from "../../services/logging/logging.service";
 /** misc */
-import {Connection, getConnection} from "typeorm/browser";
-import {Optional} from "../../util/util.optional";
+import { Connection, getConnection } from "typeorm/browser";
+import { Optional } from "../../util/util.optional";
 
 /**
  * Describes a repository with basic CRUD operations.
@@ -14,7 +14,6 @@ import {Optional} from "../../util/util.optional";
  * @version 2.1.0
  */
 export interface CRUDRepository<T, K> {
-
     /**
      * Saves the given {@code entity} and returns the stored entity.
      * Property changes during the save process are updated in the returned entity. e.g. primary key generation
@@ -24,7 +23,7 @@ export interface CRUDRepository<T, K> {
      * @returns {Promise<T>} - the resulting entity
      * @throws {RepositoryError} if an error occurs during this operation
      */
-    save(entity: T): Promise<T>
+    save(entity: T): Promise<T>;
 
     /**
      * Searches an entity matching the given {@code primaryKey}.
@@ -34,7 +33,7 @@ export interface CRUDRepository<T, K> {
      * @returns {Promise<Optional<T>>} - an Optional of the resulting entity
      * @throws {RepositoryError} if an error occurs during this operation
      */
-    find(primaryKey: K): Promise<Optional<T>>
+    find(primaryKey: K): Promise<Optional<T>>;
 
     /**
      * Deletes the given {@code entity}.
@@ -43,7 +42,7 @@ export interface CRUDRepository<T, K> {
      *
      * @throws {RepositoryError} if an error occurs during this operation
      */
-    delete(entity: T): Promise<void>
+    delete(entity: T): Promise<void>;
 
     /**
      * Returns true if an entity matching the given {@code primaryKey} exists,
@@ -53,7 +52,7 @@ export interface CRUDRepository<T, K> {
      *
      * @returns {Promise<boolean>} true if it exists, otherwise false
      */
-    exists(primaryKey: K): Promise<boolean>
+    exists(primaryKey: K): Promise<boolean>;
 }
 
 /**
@@ -64,14 +63,17 @@ export interface CRUDRepository<T, K> {
  * @author nmaerchy <nm@studer-raimann.ch>
  * @version 2.1.0
  */
-export abstract class AbstractCRUDRepository<T, K> implements CRUDRepository<T, K> {
-
+export abstract class AbstractCRUDRepository<T, K>
+    implements CRUDRepository<T, K>
+{
     protected _connection: Connection;
     get connection(): Connection {
         return getConnection(this.connectionName);
     }
 
-    private readonly log: Logger = Logging.getLogger(AbstractCRUDRepository.name);
+    private readonly log: Logger = Logging.getLogger(
+        AbstractCRUDRepository.name
+    );
 
     constructor(
         protected readonly database: Database,
@@ -91,7 +93,6 @@ export abstract class AbstractCRUDRepository<T, K> implements CRUDRepository<T, 
      */
     async save(entity: T): Promise<T> {
         try {
-
             await this.database.ready(this.connectionName);
 
             this.log.trace(() => `Save entity "${this.getEntityName()}"`);
@@ -99,10 +100,19 @@ export abstract class AbstractCRUDRepository<T, K> implements CRUDRepository<T, 
             return this.connection
                 .getRepository(this.getEntityName())
                 .save(entity);
-
         } catch (error) {
-            this.log.debug(() => `Could not save entity ${this.getEntityName()}: error=${JSON.stringify(error)}`);
-            throw new RepositoryError(Logging.getMessage(error, `Could not save entity "${this.getEntityName()}"`));
+            this.log.debug(
+                () =>
+                    `Could not save entity ${this.getEntityName()}: error=${JSON.stringify(
+                        error
+                    )}`
+            );
+            throw new RepositoryError(
+                Logging.getMessage(
+                    error,
+                    `Could not save entity "${this.getEntityName()}"`
+                )
+            );
         }
     }
 
@@ -117,22 +127,32 @@ export abstract class AbstractCRUDRepository<T, K> implements CRUDRepository<T, 
      * @throws {RepositoryError} if an error occurs during this operation
      */
     async find(primaryKey: K): Promise<Optional<T>> {
-
         try {
-
             await this.database.ready(this.connectionName);
 
-            this.log.trace(() => `Find entity "${this.getEntityName()}" by id "${primaryKey}"`);
+            this.log.trace(
+                () =>
+                    `Find entity "${this.getEntityName()}" by id "${primaryKey}"`
+            );
 
-            const result: T = await this.connection
+            const result: T = (await this.connection
                 .getRepository(this.getEntityName())
-                .findOne(primaryKey) as T;
+                .findOne(primaryKey)) as T;
 
             return Optional.ofNullable(result);
-
         } catch (error) {
-            this.log.debug(() => `Could not find entity "${this.getEntityName()}" by id ${primaryKey}: error=${JSON.stringify(error)}`);
-            throw new RepositoryError(Logging.getMessage(error, `Could not find entity "${this.getEntityName()}" by id "${primaryKey}"`));
+            this.log.debug(
+                () =>
+                    `Could not find entity "${this.getEntityName()}" by id ${primaryKey}: error=${JSON.stringify(
+                        error
+                    )}`
+            );
+            throw new RepositoryError(
+                Logging.getMessage(
+                    error,
+                    `Could not find entity "${this.getEntityName()}" by id "${primaryKey}"`
+                )
+            );
         }
     }
 
@@ -146,9 +166,7 @@ export abstract class AbstractCRUDRepository<T, K> implements CRUDRepository<T, 
      * @throws {RepositoryError} if an error occurs during this operation
      */
     async delete(entity: T): Promise<void> {
-
         try {
-
             await this.database.ready(this.connectionName);
 
             this.log.trace(() => `Delete entity "${this.getEntityName()}"`);
@@ -157,8 +175,18 @@ export abstract class AbstractCRUDRepository<T, K> implements CRUDRepository<T, 
                 .getRepository(this.getEntityName())
                 .delete(entity[this.getIdName()]);
         } catch (error) {
-            this.log.debug(() => `Could not delete entity "${this.getEntityName()}": error=${JSON.stringify(error)}`);
-            throw new RepositoryError(Logging.getMessage(error, `Could not delete entity "${this.getEntityName()}"`));
+            this.log.debug(
+                () =>
+                    `Could not delete entity "${this.getEntityName()}": error=${JSON.stringify(
+                        error
+                    )}`
+            );
+            throw new RepositoryError(
+                Logging.getMessage(
+                    error,
+                    `Could not delete entity "${this.getEntityName()}"`
+                )
+            );
         }
     }
 
@@ -179,12 +207,12 @@ export abstract class AbstractCRUDRepository<T, K> implements CRUDRepository<T, 
     /**
      * @returns {string} the name of the entity used
      */
-    protected abstract getEntityName(): string
+    protected abstract getEntityName(): string;
 
     /**
      * @returns {string} the name of the id property of the entity used
      */
-    protected abstract getIdName(): string
+    protected abstract getIdName(): string;
 }
 
 /**
@@ -194,7 +222,6 @@ export abstract class AbstractCRUDRepository<T, K> implements CRUDRepository<T, 
  * @version 1.0.0
  */
 export class RepositoryError extends Error {
-
     constructor(message: string) {
         super(message);
         Object.setPrototypeOf(this, RepositoryError.prototype);

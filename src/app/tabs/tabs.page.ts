@@ -1,5 +1,5 @@
-import {Component} from "@angular/core";
-import {NavController} from "@ionic/angular";
+import { Component } from "@angular/core";
+import { NavController } from "@ionic/angular";
 
 @Component({
     selector: "app-tabs",
@@ -7,9 +7,7 @@ import {NavController} from "@ionic/angular";
     styleUrls: ["./tabs.page.scss"],
 })
 export class TabsPage {
-    constructor(
-        private readonly navCtrl: NavController
-    ) {}
+    constructor(private readonly navCtrl: NavController) {}
 
     // navigate to a tab
     async navigateTo(url: string): Promise<void> {

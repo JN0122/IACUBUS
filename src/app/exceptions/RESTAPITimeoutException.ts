@@ -1,4 +1,4 @@
-import {RESTAPIException} from "./RESTAPIException";
+import { RESTAPIException } from "./RESTAPIException";
 
 export class RESTAPITimeoutException extends RESTAPIException {
     constructor(message: string) {

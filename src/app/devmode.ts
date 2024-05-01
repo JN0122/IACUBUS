@@ -1,4 +1,4 @@
-import {environment} from "../environments/environment";
+import { environment } from "../environments/environment";
 
 /**
  * Returns true if the dev mode is enabled, otherwise returns false.

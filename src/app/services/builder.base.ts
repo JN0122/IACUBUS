@@ -4,5 +4,5 @@
  * @author Nicolas Schäfli <ns@studer-raimann.ch>
  */
 export interface Builder<T> {
-  build(): T;
+    build(): T;
 }

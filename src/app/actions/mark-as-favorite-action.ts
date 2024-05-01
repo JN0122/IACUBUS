@@ -1,14 +1,13 @@
-import {ILIASObject} from "../models/ilias-object";
+import { ILIASObject } from "../models/ilias-object";
 import {
     ILIASObjectAction,
     ILIASObjectActionAlert,
     ILIASObjectActionNoMessage,
-    ILIASObjectActionResult
+    ILIASObjectActionResult,
 } from "./object-action";
-import {SynchronizationService} from "../services/synchronization.service";
+import { SynchronizationService } from "../services/synchronization.service";
 
 export class MarkAsFavoriteAction extends ILIASObjectAction {
-
     constructor(
         public title: string,
         public object: ILIASObject,
@@ -30,5 +29,4 @@ export class MarkAsFavoriteAction extends ILIASObjectAction {
     alert(): ILIASObjectActionAlert | undefined {
         return undefined;
     }
-
 }

@@ -2,7 +2,6 @@
  * The basic request options which  are present for upload and download of data.
  */
 export interface RequestOptions {
-
     /*
      * The request url which is used as transfer source or destination.
      */

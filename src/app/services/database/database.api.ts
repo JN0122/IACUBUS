@@ -1,7 +1,10 @@
-import {Injectable, InjectionToken} from "@angular/core";
-import {ConnectionOptions, QueryRunner} from "typeorm/browser";
-import {CordovaDatabaseConnection, CordovaDatabaseConnectionImpl} from "./cordova.database";
-import {NoSuchElementError} from "../../error/errors";
+import { Injectable, InjectionToken } from "@angular/core";
+import { ConnectionOptions, QueryRunner } from "typeorm/browser";
+import {
+    CordovaDatabaseConnection,
+    CordovaDatabaseConnectionImpl,
+} from "./cordova.database";
+import { NoSuchElementError } from "../../error/errors";
 
 export const DEFAULT_CONNECTION_NAME: string = "default";
 
@@ -16,15 +19,15 @@ export const DEFAULT_CONNECTION_NAME: string = "default";
  * @version 1.0.0
  */
 export interface DatabaseConfigurationAdapter {
-
-  /**
-   * Adds connections to the given {@code registry}.
-   *
-   * @param {DatabaseConnectionRegistry} registry - registry to add database connections
-   */
-  addConnections(registry: DatabaseConnectionRegistry): void
+    /**
+     * Adds connections to the given {@code registry}.
+     *
+     * @param {DatabaseConnectionRegistry} registry - registry to add database connections
+     */
+    addConnections(registry: DatabaseConnectionRegistry): void;
 }
-export const DATABASE_CONFIGURATION_ADAPTER: InjectionToken<DatabaseConfigurationAdapter> = new InjectionToken("token for database configurer");
+export const DATABASE_CONFIGURATION_ADAPTER: InjectionToken<DatabaseConfigurationAdapter> =
+    new InjectionToken("token for database configurer");
 
 /**
  * Registry to add different types of database connections.
@@ -33,24 +36,28 @@ export const DATABASE_CONFIGURATION_ADAPTER: InjectionToken<DatabaseConfiguratio
  * @version 1.0.0
  */
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class DatabaseConnectionRegistry {
+    private readonly connections: Map<string, DatabaseOptions> = new Map();
 
-  private readonly connections: Map<string, DatabaseOptions> = new Map();
-
-  addConnection(name: string = DEFAULT_CONNECTION_NAME, options: (it: DatabaseConnection) => DatabaseOptions): void {
-    const connection: DatabaseConnection = new DatabaseConnection(name);
-    this.connections.set(name, options(connection));
-  }
-
-  getConnection(name: string = DEFAULT_CONNECTION_NAME): DatabaseOptions {
-    try {
-      return this.connections.get(name);
-    } catch (error) {
-      throw new NoSuchElementError(`Could not find a connection with name: ${name}`);
+    addConnection(
+        name: string = DEFAULT_CONNECTION_NAME,
+        options: (it: DatabaseConnection) => DatabaseOptions
+    ): void {
+        const connection: DatabaseConnection = new DatabaseConnection(name);
+        this.connections.set(name, options(connection));
     }
-  }
+
+    getConnection(name: string = DEFAULT_CONNECTION_NAME): DatabaseOptions {
+        try {
+            return this.connections.get(name);
+        } catch (error) {
+            throw new NoSuchElementError(
+                `Could not find a connection with name: ${name}`
+            );
+        }
+    }
 }
 
 /**
@@ -60,14 +67,11 @@ export class DatabaseConnectionRegistry {
  * @version 1.0.0
  */
 export class DatabaseConnection {
+    constructor(private readonly name: string) {}
 
-  constructor(
-    private readonly name: string
-  ) {}
-
-  cordova(): CordovaDatabaseConnection {
-    return new CordovaDatabaseConnectionImpl(this.name);
-  }
+    cordova(): CordovaDatabaseConnection {
+        return new CordovaDatabaseConnectionImpl(this.name);
+    }
 }
 
 /**
@@ -77,11 +81,10 @@ export class DatabaseConnection {
  * @version 1.0.0
  */
 export interface DatabaseOptions {
-
-  /**
-   * @returns {ConnectionOptions} the connection options of this database connection
-   */
-  getOptions(): ConnectionOptions
+    /**
+     * @returns {ConnectionOptions} the connection options of this database connection
+     */
+    getOptions(): ConnectionOptions;
 }
 
 /**
@@ -91,25 +94,24 @@ export interface DatabaseOptions {
  * @version 1.0.0
  */
 export interface CommonDatabaseOptions<T> extends DatabaseOptions {
+    /**
+     * Registers all given entities in this connection.
+     *
+     * @param {Function} first - entity to add
+     * @param {Array<Function>} more - additional entities to add
+     *
+     * @returns {T} the specific database connection
+     */
+    addEntity(first: Function, ...more: Array<Function>): T;
 
-  /**
-   * Registers all given entities in this connection.
-   *
-   * @param {Function} first - entity to add
-   * @param {Array<Function>} more - additional entities to add
-   *
-   * @returns {T} the specific database connection
-   */
-  addEntity(first: Function, ...more: Array<Function>): T
-
-  /**
-   * Enables or disable the sql logging of this connection.
-   *
-   * @param {boolean} enable - true if logging should be enabled, otherwise false
-   *
-   * @returns {T} the specific database connection
-   */
-  enableLogging(enable: boolean): T
+    /**
+     * Enables or disable the sql logging of this connection.
+     *
+     * @param {boolean} enable - true if logging should be enabled, otherwise false
+     *
+     * @returns {T} the specific database connection
+     */
+    enableLogging(enable: boolean): T;
 }
 
 /**
@@ -119,7 +121,6 @@ export interface CommonDatabaseOptions<T> extends DatabaseOptions {
  * @version 1.0.0
  */
 export interface DatabaseBootstraper {
-
     /**
      * Bootstraps connection after connection is established.
      *

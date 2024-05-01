@@ -1,17 +1,13 @@
 <ion-header>
-  <ion-toolbar color="primary">
-      <ion-row>
+    <ion-toolbar color="primary">
+        <ion-row>
+            <ion-buttons>
+                <ion-back-button text="" icon="arrow-back"></ion-back-button>
+            </ion-buttons>
 
-          <ion-buttons>
-              <ion-back-button text="" icon="arrow-back"></ion-back-button>
-          </ion-buttons>
-
-          <ion-title>
-              {{'info.title' | translate}}
-          </ion-title>
-
-      </ion-row>
-  </ion-toolbar>
+            <ion-title> {{'info.title' | translate}} </ion-title>
+        </ion-row>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content class="page_info">
@@ -21,33 +17,50 @@
         </ion-card-header>
         <ion-card-content>
             <p>{{'info.version-card.title' | translate}}</p>
-            <p>{{'info.version-card.content' | translate}} {{this.version | async}}&nbsp;({{this.versionCode | async}})</p>
+            <p>
+                {{'info.version-card.content' | translate}} {{this.version |
+                async}}&nbsp;({{this.versionCode | async}})
+            </p>
         </ion-card-content>
     </ion-card>
 
     <ion-card class="reporting-card">
         <ion-card-header>
-            <ion-card-title>{{'info.reporting-card.title' | translate}}</ion-card-title>
+            <ion-card-title
+                >{{'info.reporting-card.title' | translate}}</ion-card-title
+            >
         </ion-card-header>
         <ion-card-content>
             <p>{{'info.reporting-card.content' | translate}}:</p>
-            <a (click)="browse('mailto:support@ilias-pegasus.de')">support@ilias-pegasus.de</a>
+            <a (click)="browse('mailto:support@ilias-pegasus.de')"
+                >support@ilias-pegasus.de</a
+            >
         </ion-card-content>
     </ion-card>
 
     <ion-card class="reporting-card-zwh">
         <ion-card-header>
-            <ion-card-title>Zentralstelle für die Weiterbildung im Handwerk e. V.</ion-card-title>
-            <ion-card-subtitle>{{'info.reporting-card-zwh.subtitle' | translate}}</ion-card-subtitle>
+            <ion-card-title
+                >Zentralstelle für die Weiterbildung im Handwerk e.
+                V.</ion-card-title
+            >
+            <ion-card-subtitle
+                >{{'info.reporting-card-zwh.subtitle' |
+                translate}}</ion-card-subtitle
+            >
         </ion-card-header>
         <ion-card-content>
-            {{'info.reporting-card-zwh.content' | translate}}: <br>
-            Anna Wunderle (UX & UI Design) <br>
-            Tel: 0211/302009-56 <br>
+            {{'info.reporting-card-zwh.content' | translate}}: <br />
+            Anna Wunderle (UX & UI Design) <br />
+            Tel: 0211/302009-56 <br />
             <a (click)="browse('mailto:awunderle@zwh.de')">awunderle@zwh.de</a>
         </ion-card-content>
         <div>
-            <ion-button color="primary" fill="clear" (click)="browse('https://zwh.de')">
+            <ion-button
+                color="primary"
+                fill="clear"
+                (click)="browse('https://zwh.de')"
+            >
                 <ion-icon name="globe"></ion-icon>
                 <ion-label>&nbsp;https://zwh.de</ion-label>
             </ion-button>
@@ -56,17 +69,27 @@
 
     <ion-card class="reporting-card-iq">
         <ion-card-header>
-            <ion-card-title>Zentralstelle für die Weiterbildung im Handwerk e. V.</ion-card-title>
-            <ion-card-subtitle>{{'info.reporting-card-zwh.subtitle' | translate}}</ion-card-subtitle>
+            <ion-card-title
+                >Zentralstelle für die Weiterbildung im Handwerk e.
+                V.</ion-card-title
+            >
+            <ion-card-subtitle
+                >{{'info.reporting-card-zwh.subtitle' |
+                translate}}</ion-card-subtitle
+            >
         </ion-card-header>
         <ion-card-content>
-            {{'info.reporting-card-zwh.content' | translate}}: <br>
-            Anna Wunderle (UX & UI Design) <br>
-            Tel: 0211/302009-23 <br>
+            {{'info.reporting-card-zwh.content' | translate}}: <br />
+            Anna Wunderle (UX & UI Design) <br />
+            Tel: 0211/302009-23 <br />
             <a (click)="browse('mailto:mutiq@zwh.de')">mutiq@zwh.de</a>
         </ion-card-content>
         <div>
-            <ion-button color="primary" fill="clear" (click)="browse('https://iq-lernen.de')">
+            <ion-button
+                color="primary"
+                fill="clear"
+                (click)="browse('https://iq-lernen.de')"
+            >
                 <ion-icon name="globe"></ion-icon>
                 <ion-label>&nbsp;https://iq-lernen.de</ion-label>
             </ion-button>
@@ -74,13 +97,18 @@
     </ion-card>
 
     <ion-card class="reporting-card-iq">
-        <img src="assets/img/login_bottom.svg" alt="Image contains a set of government and company icons which contributed to the app financially." />
+        <img
+            src="assets/img/login_bottom.svg"
+            alt="Image contains a set of government and company icons which contributed to the app financially."
+        />
     </ion-card>
 
     <!--KARTE INHALT-->
     <ion-card>
         <ion-card-header>
-            <ion-card-title>{{'info.content-card.title' | translate}}</ion-card-title>
+            <ion-card-title
+                >{{'info.content-card.title' | translate}}</ion-card-title
+            >
         </ion-card-header>
         <ion-card-content>
             <p>{{'info.content-card.content' | translate}}</p>
@@ -89,16 +117,25 @@
 
     <!--KARTE STURA-->
     <ion-card class="stura-card">
-        <img src="assets/img/stura.jpg">
+        <img src="assets/img/stura.jpg" />
         <ion-card-header>
-            <ion-card-title>{{'info.stura-card.title' | translate}} Universität Freiburg</ion-card-title>
-            <ion-card-subtitle>{{'info.stura-card.subtitle' | translate}}</ion-card-subtitle>
+            <ion-card-title
+                >{{'info.stura-card.title' | translate}} Universität
+                Freiburg</ion-card-title
+            >
+            <ion-card-subtitle
+                >{{'info.stura-card.subtitle' | translate}}</ion-card-subtitle
+            >
         </ion-card-header>
         <ion-card-content>
             <p>{{'info.stura-card.content' | translate}}</p>
         </ion-card-content>
         <div>
-            <ion-button color="primary" fill="clear" (click)="browse('https://www.stura.uni-freiburg.de')">
+            <ion-button
+                color="primary"
+                fill="clear"
+                (click)="browse('https://www.stura.uni-freiburg.de')"
+            >
                 <ion-icon name="globe"></ion-icon>
                 <ion-label>&nbsp;https://www.stura.uni-freiburg.de</ion-label>
             </ion-button>
@@ -107,17 +144,27 @@
 
     <!-- KARTE UNIFR -->
     <ion-card class="freiburg-card">
-        <img src="assets/img/unifrei.jpg">
+        <img src="assets/img/unifrei.jpg" />
         <ion-card-header>
-            <ion-card-title>{{'info.freiburg-card.title' | translate}} Albert-Ludwigs-Universität Freiburg</ion-card-title>
-            <ion-card-subtitle>{{'info.freiburg-card.subtitle' | translate}}</ion-card-subtitle>
+            <ion-card-title
+                >{{'info.freiburg-card.title' | translate}}
+                Albert-Ludwigs-Universität Freiburg</ion-card-title
+            >
+            <ion-card-subtitle
+                >{{'info.freiburg-card.subtitle' |
+                translate}}</ion-card-subtitle
+            >
         </ion-card-header>
         <ion-card-content>
             <p>{{'info.freiburg-card.content' | translate}}</p>
         </ion-card-content>
         <div>
-            <ion-button color="primary" fill="clear" (click)="browse('https://www.rz.uni-freiburg.de')">
-                <ion-icon name="globe" ></ion-icon>
+            <ion-button
+                color="primary"
+                fill="clear"
+                (click)="browse('https://www.rz.uni-freiburg.de')"
+            >
+                <ion-icon name="globe"></ion-icon>
                 <ion-label>&nbsp;https://www.rz.uni-freiburg.de</ion-label>
             </ion-button>
         </div>
@@ -125,16 +172,25 @@
 
     <!-- KARTE UNIMAR -->
     <ion-card class="marburg-card">
-        <img src="assets/img/unimar.png">
+        <img src="assets/img/unimar.png" />
         <ion-card-header>
-            <ion-card-title>{{'info.marburg-card.title' | translate}} Philipps-Universität Marburg</ion-card-title>
-            <ion-card-subtitle>{{'info.marburg-card.subtitle' | translate}}</ion-card-subtitle>
+            <ion-card-title
+                >{{'info.marburg-card.title' | translate}} Philipps-Universität
+                Marburg</ion-card-title
+            >
+            <ion-card-subtitle
+                >{{'info.marburg-card.subtitle' | translate}}</ion-card-subtitle
+            >
         </ion-card-header>
         <ion-card-content>
             <p>{{'info.marburg-card.content' | translate}}</p>
         </ion-card-content>
         <div>
-            <ion-button color="primary" fill="clear" (click)="browse('https://www.uni-marburg.de/hrz')">
+            <ion-button
+                color="primary"
+                fill="clear"
+                (click)="browse('https://www.uni-marburg.de/hrz')"
+            >
                 <ion-icon name="globe"></ion-icon>
                 <ion-label>&nbsp;https://www.uni-marburg.de/hrz</ion-label>
             </ion-button>
@@ -145,13 +201,19 @@
     <ion-card class="sig-card">
         <ion-card-header>
             <ion-card-title>ILIAS SIG Mobile</ion-card-title>
-            <ion-card-subtitle>{{'info.sig-card.subtitle' | translate}}</ion-card-subtitle>
+            <ion-card-subtitle
+                >{{'info.sig-card.subtitle' | translate}}</ion-card-subtitle
+            >
         </ion-card-header>
         <ion-card-content>
             <p>{{'info.sig-card.content' | translate}}</p>
         </ion-card-content>
         <div>
-            <ion-button color="primary" fill="clear" (click)="browse('https://www.ilias.de/docu/goto_docu_grp_5182.html')">
+            <ion-button
+                color="primary"
+                fill="clear"
+                (click)="browse('https://www.ilias.de/docu/goto_docu_grp_5182.html')"
+            >
                 <ion-icon name="globe"></ion-icon>
                 <ion-label>&nbsp;https://www.ilias.de/SIG-Mobile</ion-label>
             </ion-button>
@@ -160,16 +222,22 @@
 
     <!--KARTE studer raimann ag-->
     <ion-card class="sturai-card">
-        <img src="assets/img/fluxlabs.svg">
+        <img src="assets/img/fluxlabs.svg" />
         <ion-card-header>
             <ion-card-title>fluxlabs AG</ion-card-title>
-            <ion-card-subtitle>{{'info.sturai-card.subtitle' | translate}}</ion-card-subtitle>
+            <ion-card-subtitle
+                >{{'info.sturai-card.subtitle' | translate}}</ion-card-subtitle
+            >
         </ion-card-header>
         <ion-card-content>
             <p>{{'info.sturai-card.content' | translate}}</p>
         </ion-card-content>
         <div>
-            <ion-button color="primary" fill="clear" (click)="browse('https://fluxlabs.ch')">
+            <ion-button
+                color="primary"
+                fill="clear"
+                (click)="browse('https://fluxlabs.ch')"
+            >
                 <ion-icon name="globe"></ion-icon>
                 <ion-label>&nbsp;https://fluxlabs.ch</ion-label>
             </ion-button>

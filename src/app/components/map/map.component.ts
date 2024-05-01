@@ -8,12 +8,13 @@ import {
     Output,
     Renderer2,
     ViewChild,
-    EventEmitter } from "@angular/core";
+    EventEmitter,
+} from "@angular/core";
 import { Hardware } from "src/app/services/device/hardware-features/hardware-feature.service";
 import { MapPlaceModel } from "src/app/services/learnplace/block.model";
 import { Logger } from "src/app/services/logging/logging.api";
 import { Logging } from "src/app/services/logging/logging.service";
-import mapboxgl, { LngLatBoundsLike } from "mapbox-gl"
+import mapboxgl, { LngLatBoundsLike } from "mapbox-gl";
 import { Geolocation } from "src/app/services/device/geolocation/geolocation.service";
 import { NavParams } from "@ionic/angular";
 
@@ -24,8 +25,8 @@ import { NavParams } from "@ionic/angular";
  * @version 1.0.0
  */
 export interface GeoCoordinate {
-    readonly longitude: number,
-    readonly latitude: number
+    readonly longitude: number;
+    readonly latitude: number;
 }
 
 /**
@@ -35,8 +36,8 @@ export interface GeoCoordinate {
  * @version 1.0.0
  */
 export interface CameraOptions {
-    readonly zoom?: number
-    readonly position: GeoCoordinate
+    readonly zoom?: number;
+    readonly position: GeoCoordinate;
 }
 
 /**
@@ -47,7 +48,6 @@ export interface CameraOptions {
  * @version 1.0.0
  */
 export class MapEvaluationError extends Error {
-
     constructor(message: string) {
         super(message);
         Object.setPrototypeOf(this, MapEvaluationError.prototype);
@@ -57,31 +57,32 @@ export class MapEvaluationError extends Error {
 enum ERRORS {
     NONE = 0,
     CONNECTION,
-    GPS
+    GPS,
 }
 
 @Component({
-  selector: "app-map",
-  templateUrl: "./map.component.html",
-  styleUrls: ["./map.component.scss"],
+    selector: "app-map",
+    templateUrl: "./map.component.html",
+    styleUrls: ["./map.component.scss"],
 })
 export class MapComponent implements OnInit, OnChanges, OnDestroy {
     @Input("places") places: Array<MapPlaceModel> = [];
     @Input("selected") selected: number = 0;
     @Input("showFullscreen") showFullscreen: boolean = false;
 
-
     @Output("clickedPlace") clickedPlace = new EventEmitter<MapPlaceModel>();
     @Output("fullscreen") clickedFullscreen = new EventEmitter<boolean>();
 
     @ViewChild("map") elMap: HTMLElement;
 
-
     private readonly DEFAULT_ZOOM: number = 13;
     private readonly log: Logger = Logging.getLogger(MapComponent.name);
 
     private _selectedPlace: MapPlaceModel;
-    private objIdMarker: Map<number, HTMLElement> = new Map<number, HTMLElement>();
+    private objIdMarker: Map<number, HTMLElement> = new Map<
+        number,
+        HTMLElement
+    >();
     private mapboxMap: mapboxgl.Map;
     private buildFlag: boolean = false;
 
@@ -94,19 +95,20 @@ export class MapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     set selectedPlace(place: MapPlaceModel) {
-        if (!this.mapboxMap)
-            return;
+        if (!this.mapboxMap) return;
 
         if (this._selectedPlace)
-            this.renderer.removeClass(this.objIdMarker.get(this._selectedPlace.id), "selected");
+            this.renderer.removeClass(
+                this.objIdMarker.get(this._selectedPlace.id),
+                "selected"
+            );
 
-        if (!place.visible)
-            return;
+        if (!place.visible) return;
 
         this.renderer.addClass(this.objIdMarker.get(place.id), "selected");
         this.mapboxMap.flyTo({
             center: [place.longitude, place.latitude],
-            zoom: place.zoom
+            zoom: place.zoom,
         });
 
         this._selectedPlace = place;
@@ -120,8 +122,7 @@ export class MapComponent implements OnInit, OnChanges, OnDestroy {
         navParams: NavParams
     ) {
         // ion modal support
-        if (navParams.get("places"))
-            this.places = navParams.get("places");
+        if (navParams.get("places")) this.places = navParams.get("places");
 
         if (navParams.get("selected"))
             this.selected = navParams.get("selected");
@@ -131,8 +132,9 @@ export class MapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     async ngOnInit(): Promise<void> {
-        await this.hardware.requireLocation()
-            .onFailure(() => this.hasError = ERRORS.GPS)
+        await this.hardware
+            .requireLocation()
+            .onFailure(() => (this.hasError = ERRORS.GPS))
             .check();
 
         this.clickedFullscreen.subscribe(async (res) => {
@@ -148,11 +150,8 @@ export class MapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     async ngOnChanges(): Promise<void> {
-        if (this.buildFlag)
-            return;
-
-        else if (!this.places)
-            return;
+        if (this.buildFlag) return;
+        else if (!this.places) return;
 
         if (!this.showFullscreen) {
             this.clickedFullscreen.unsubscribe();
@@ -176,8 +175,8 @@ export class MapComponent implements OnInit, OnChanges, OnDestroy {
     private async initMap(): Promise<void> {
         this.detectorRef.detectChanges();
 
-        const selectedPlace: MapPlaceModel = this.places?.find(place => {
-            return place.id == this.selected
+        const selectedPlace: MapPlaceModel = this.places?.find((place) => {
+            return place.id == this.selected;
         });
 
         let camera: CameraOptions;
@@ -187,24 +186,24 @@ export class MapComponent implements OnInit, OnChanges, OnDestroy {
                 zoom: selectedPlace.zoom,
                 position: <GeoCoordinate>{
                     latitude: selectedPlace.latitude,
-                    longitude: selectedPlace.longitude
-                }
+                    longitude: selectedPlace.longitude,
+                },
             };
         } else if (this.places?.length === 1) {
             camera = <CameraOptions>{
                 zoom: 16,
                 position: <GeoCoordinate>{
                     latitude: this.places[0].latitude,
-                    longitude: this.places[0].longitude
-                }
+                    longitude: this.places[0].longitude,
+                },
             };
         } else {
             camera = <CameraOptions>{
                 zoom: 16,
                 position: <GeoCoordinate>{
                     latitude: 0,
-                    longitude: 0
-                }
+                    longitude: 0,
+                },
             };
         }
 
@@ -213,65 +212,69 @@ export class MapComponent implements OnInit, OnChanges, OnDestroy {
             center: [camera.position.longitude, camera.position.latitude],
             style: "mapbox://styles/mapbox/streets-v9",
             zoom: camera.zoom,
-            interactive: true
+            interactive: true,
         });
 
         // controls
-        this.mapboxMap.addControl(new mapboxgl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: true
-            },
-            trackUserLocation: true
-        }));
+        this.mapboxMap.addControl(
+            new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true,
+                },
+                trackUserLocation: true,
+            })
+        );
 
-        this.mapboxMap.addControl(new mapboxgl.NavigationControl({
-            showCompass: true,
-            showZoom: true
-        }));
+        this.mapboxMap.addControl(
+            new mapboxgl.NavigationControl({
+                showCompass: true,
+                showZoom: true,
+            })
+        );
 
         this.mapboxMap.addControl(new mapboxgl.ScaleControl(), "bottom-right");
 
         // markers
         const markers: Array<mapboxgl.Marker> = this.places
-            .filter(place => place.visible)
-            .map(place => {
-                const el: HTMLElement = this.renderer.createElement("div") as HTMLElement;
+            .filter((place) => place.visible)
+            .map((place) => {
+                const el: HTMLElement = this.renderer.createElement(
+                    "div"
+                ) as HTMLElement;
                 this.renderer.addClass(el, "marker");
                 this.objIdMarker.set(place.id, el);
 
-                el.addEventListener("click", e => {
+                el.addEventListener("click", (e) => {
                     this.clickedPlace.emit(place);
                 });
 
                 return new mapboxgl.Marker(el)
-                    .setLngLat(new mapboxgl.LngLat(place.longitude, place.latitude))
+                    .setLngLat(
+                        new mapboxgl.LngLat(place.longitude, place.latitude)
+                    )
                     .addTo(this.mapboxMap);
             });
 
-
         // select a marker
-        if (selectedPlace)
-            this.selectedPlace = selectedPlace;
+        if (selectedPlace) this.selectedPlace = selectedPlace;
 
-        if (!selectedPlace?.visible)
-            await this.mapOverview();
-
+        if (!selectedPlace?.visible) await this.mapOverview();
     }
 
     async mapOverview(): Promise<void> {
-        if (this.places?.filter(lp => lp.visible).length <= 0) {
-            const coords = (await this.geolocation.getCurrentPosition()).coords
+        if (this.places?.filter((lp) => lp.visible).length <= 0) {
+            const coords = (await this.geolocation.getCurrentPosition()).coords;
 
             this.mapboxMap.flyTo({
                 center: [coords.longitude, coords.latitude],
-                zoom: 16
+                zoom: 16,
             });
 
             return;
-        } else if (this.places?.filter(lp => lp.visible).length <= 1) {
+        } else if (this.places?.filter((lp) => lp.visible).length <= 1) {
             this.mapboxMap.flyTo({
                 center: [this.places[0].longitude, this.places[0].latitude],
-                zoom: 16
+                zoom: 16,
             });
 
             return;
@@ -281,36 +284,36 @@ export class MapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     getOverviewBound(): Array<[number, number]> {
-        if (this.places?.filter(lp => lp.visible).length <= 1)
-            return;
+        if (this.places?.filter((lp) => lp.visible).length <= 1) return;
 
         const sortedByLong: Array<MapPlaceModel> = this.places
-            .filter(place => place.visible)
+            .filter((place) => place.visible)
             .sort((a, b) => b.longitude - a.longitude);
         const sortedByLat: Array<MapPlaceModel> = this.places
-            .filter(place => place.visible)
+            .filter((place) => place.visible)
             .sort((a, b) => b.latitude - a.latitude);
 
         const bound: Array<[number, number]> = [
-            this.places
-                .map(place => {
-                    return [
-                        sortedByLong[0].longitude,
-                        sortedByLat[0].latitude
-                    ]})[0] as [number, number],
-            this.places
-                .map(place => {
-                    return [
-                        sortedByLong.reverse()[0].longitude,
-                        sortedByLat.reverse()[0].latitude
-                    ]})[0] as [number, number]
+            this.places.map((place) => {
+                return [sortedByLong[0].longitude, sortedByLat[0].latitude];
+            })[0] as [number, number],
+            this.places.map((place) => {
+                return [
+                    sortedByLong.reverse()[0].longitude,
+                    sortedByLat.reverse()[0].latitude,
+                ];
+            })[0] as [number, number],
         ];
 
         // 10% of the distance between two points
-        const margin: number = Math.sqrt(Math.pow(bound[0][0] - bound[1][0], 2) + Math.pow(bound[0][1] - bound[1][1], 2)) / 10;
+        const margin: number =
+            Math.sqrt(
+                Math.pow(bound[0][0] - bound[1][0], 2) +
+                    Math.pow(bound[0][1] - bound[1][1], 2)
+            ) / 10;
 
-        bound[0] = bound[0].map(val => val + margin) as [number, number];
-        bound[1] = bound[1].map(val => val - margin) as [number, number];
+        bound[0] = bound[0].map((val) => val + margin) as [number, number];
+        bound[1] = bound[1].map((val) => val - margin) as [number, number];
 
         return bound;
     }
@@ -321,6 +324,6 @@ export class MapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     async delay(ms: number): Promise<void> {
-        return new Promise( resolve => setTimeout(resolve, ms) );
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }

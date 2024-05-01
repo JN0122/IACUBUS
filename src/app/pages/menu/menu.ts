@@ -1,12 +1,20 @@
 /* angular */
-import {Component, Inject, OnInit} from "@angular/core";
-import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from "@ionic-native/in-app-browser/ngx";
-import {NavController} from "@ionic/angular";
+import { Component, Inject, OnInit } from "@angular/core";
+import {
+    InAppBrowser,
+    InAppBrowserObject,
+    InAppBrowserOptions,
+} from "@ionic-native/in-app-browser/ngx";
+import { NavController } from "@ionic/angular";
 import { ViewWillEnter } from "ionic-lifecycle-interface";
-import { ConfigProvider, CONFIG_PROVIDER, ILIASInstallation } from "src/app/config/ilias-config";
+import {
+    ConfigProvider,
+    CONFIG_PROVIDER,
+    ILIASInstallation,
+} from "src/app/config/ilias-config";
 import { User } from "src/app/models/user";
 /* misc */
-import {AuthenticationProvider} from "../../providers/authentication.provider";
+import { AuthenticationProvider } from "../../providers/authentication.provider";
 import { Optional } from "../../util/util.optional";
 
 /**
@@ -18,33 +26,38 @@ import { Optional } from "../../util/util.optional";
 @Component({
     selector: "page-menu",
     templateUrl: "menu.html",
-    styleUrls: ["menu.scss"]
+    styleUrls: ["menu.scss"],
 })
 export class MenuPage implements ViewWillEnter {
-
     privacyPolicy: string = "datenschutz";
     private readonly BROWSER_OPTIONS: InAppBrowserOptions = {
         location: "no",
         clearsessioncache: "yes",
-        clearcache: "yes"
+        clearcache: "yes",
     };
 
     constructor(
         private readonly navCtrl: NavController,
         private readonly auth: AuthenticationProvider,
         private readonly browser: InAppBrowser,
-        @Inject(CONFIG_PROVIDER) private readonly config: ConfigProvider,
+        @Inject(CONFIG_PROVIDER) private readonly config: ConfigProvider
     ) {}
 
     async ionViewWillEnter(): Promise<void> {
-        const $installation: Optional<Readonly<ILIASInstallation>> | Readonly<ILIASInstallation>= await this.config.getInstallation();
+        const $installation:
+            | Optional<Readonly<ILIASInstallation>>
+            | Readonly<ILIASInstallation> = await this.config.getInstallation();
         const currentUser: User = AuthenticationProvider.getUser();
 
-        const installation: Readonly<ILIASInstallation> = await $installation.orElseGet(async () => {
-            const install: Optional<Readonly<ILIASInstallation>> = await this.config.loadInstallation(currentUser.installationId);
+        const installation: Readonly<ILIASInstallation> =
+            await $installation.orElseGet(async () => {
+                const install: Optional<Readonly<ILIASInstallation>> =
+                    await this.config.loadInstallation(
+                        currentUser.installationId
+                    );
 
-            return install.get();
-        });
+                return install.get();
+            });
 
         this.privacyPolicy = installation.privacyPolicy;
     }
@@ -58,7 +71,11 @@ export class MenuPage implements ViewWillEnter {
     }
 
     async openPrivacyPolicy(url: string): Promise<void> {
-        const browserSession: InAppBrowserObject = this.browser.create(url, "_blank", this.BROWSER_OPTIONS);
+        const browserSession: InAppBrowserObject = this.browser.create(
+            url,
+            "_blank",
+            this.BROWSER_OPTIONS
+        );
         browserSession.show();
     }
 }

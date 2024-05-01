@@ -6,8 +6,8 @@ import { IonSlides, NavController } from "@ionic/angular";
     templateUrl: "onboarding.html",
     styleUrls: ["./onboarding.scss"],
     host: {
-        "(window:resize)": "onResize()"
-    }
+        "(window:resize)": "onResize()",
+    },
 })
 export class OnboardingPage {
     readonly appName: Promise<string>;
@@ -16,15 +16,15 @@ export class OnboardingPage {
 
     constructor(
         private readonly navCtrl: NavController,
-        appVersion: AppVersion,
+        appVersion: AppVersion
     ) {
         this.appName = appVersion.getAppName();
     }
 
     onResize(): void {
         this.slides.options = {
-            width: window.outerWidth
-        }
+            width: window.outerWidth,
+        };
     }
 
     async nextSlide(): Promise<void> {

@@ -4,10 +4,10 @@
 import "zone.js/dist/zone-testing";
 import { getTestBed } from "@angular/core/testing";
 import {
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting
+    BrowserDynamicTestingModule,
+    platformBrowserDynamicTesting,
 } from "@angular/platform-browser-dynamic/testing";
-import {useStandard} from "./standard";
+import { useStandard } from "./standard";
 
 // tslint:disable-next-line:no-any
 declare const require: any;
@@ -19,8 +19,8 @@ Error.stackTraceLimit = Infinity;
 
 // First, initialize the Angular testing environment.
 getTestBed().initTestEnvironment(
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting()
+    BrowserDynamicTestingModule,
+    platformBrowserDynamicTesting()
 );
 
 // Then we find all the tests.

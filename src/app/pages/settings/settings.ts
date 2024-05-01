@@ -1,6 +1,11 @@
 /** angular */
 import { Component, Inject, NgZone, OnDestroy, OnInit } from "@angular/core";
-import { AlertController, LoadingController, NavController, ToastController } from "@ionic/angular";
+import {
+    AlertController,
+    LoadingController,
+    NavController,
+    ToastController,
+} from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { load } from "dotenv";
 import { Observable, ReplaySubject } from "rxjs";
@@ -16,26 +21,29 @@ import { AuthenticationProvider } from "../../providers/authentication.provider"
 import { UserStorageMamager } from "../../services/filesystem/user-storage.mamager";
 import { UserStorageService } from "../../services/filesystem/user-storage.service";
 /** services */
-import { FooterToolbarService, Job } from "../../services/footer-toolbar.service";
+import {
+    FooterToolbarService,
+    Job,
+} from "../../services/footer-toolbar.service";
 import { Logger } from "../../services/logging/logging.api";
 import { Logging } from "../../services/logging/logging.service";
 
 @Component({
     selector: "page-settings",
     templateUrl: "settings.html",
-    styleUrls: ["settings.scss"]
+    styleUrls: ["settings.scss"],
 })
 export class SettingsPage implements OnInit, OnDestroy {
-
-    private readonly totalStorageSize: ReplaySubject<number> = new ReplaySubject<number>(1);
+    private readonly totalStorageSize: ReplaySubject<number> =
+        new ReplaySubject<number>(1);
     private readonly log: Logger = Logging.getLogger(SettingsPage.name);
 
     settings: Settings;
 
     totalSize: Observable<number> = this.totalStorageSize.asObservable();
     quotaColor: Observable<string | null> = this.totalSize.pipe(
-        map((it) => it > this.settings.quotaSize * 1000**2),
-        map((it) => it ? 'danger' : null)
+        map((it) => it > this.settings.quotaSize * 1000 ** 2),
+        map((it) => (it ? "danger" : null))
     );
 
     constructor(
@@ -43,14 +51,14 @@ export class SettingsPage implements OnInit, OnDestroy {
         private readonly toast: ToastController,
         private readonly footerToolbar: FooterToolbarService,
         private readonly translate: TranslateService,
-        @Inject(CONFIG_PROVIDER) private readonly configProvider: ConfigProvider,
+        @Inject(CONFIG_PROVIDER)
+        private readonly configProvider: ConfigProvider,
         private readonly alertCtr: AlertController,
         private readonly userStorageManager: UserStorageMamager,
         private readonly userStorage: UserStorageService,
         private readonly loadingCtrl: LoadingController,
-        private readonly ngZone: NgZone,
-    ) {
-    }
+        private readonly ngZone: NgZone
+    ) {}
 
     ngOnInit(): void {
         this.ngZone.run(() => this.init());
@@ -85,7 +93,10 @@ export class SettingsPage implements OnInit, OnDestroy {
     }
 
     async saveSettings(): Promise<void> {
-        this.settings.downloadSize = Math.min(this.settings.downloadSize, 10000);
+        this.settings.downloadSize = Math.min(
+            this.settings.downloadSize,
+            10000
+        );
         this.settings.quotaSize = Math.min(this.settings.quotaSize, 100000);
 
         if (!!this.settings.userId) {
@@ -93,7 +104,10 @@ export class SettingsPage implements OnInit, OnDestroy {
             try {
                 await this.settings.save();
             } catch (e) {
-                this.log.error(() => `Unable to save settings, encountered error with message: "${e.message}"`);
+                this.log.error(
+                    () =>
+                        `Unable to save settings, encountered error with message: "${e.message}"`
+                );
             }
 
             this.log.info(() => "Settings saved successfully.");
@@ -103,7 +117,7 @@ export class SettingsPage implements OnInit, OnDestroy {
 
             const toast: HTMLIonToastElement = await this.toast.create({
                 message: this.translate.instant("settings.settings_saved"),
-                duration: 3000
+                duration: 3000,
             });
 
             await toast.present();
@@ -112,8 +126,10 @@ export class SettingsPage implements OnInit, OnDestroy {
 
     private async showFilesDeletedToast(): Promise<void> {
         const toast: HTMLIonToastElement = await this.toast.create({
-            message: await this.translate.get("settings.files_deleted").toPromise(),
-            duration: 3000
+            message: await this.translate
+                .get("settings.files_deleted")
+                .toPromise(),
+            duration: 3000,
         });
         await toast.present();
     }
@@ -121,7 +137,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     private async showFilesDeletingToast(): Promise<void> {
         const toast: HTMLIonToastElement = await this.toast.create({
             message: await this.translate.get("Deleting files").toPromise(),
-            duration: 2000
+            duration: 2000,
         });
 
         await toast.present();
@@ -146,28 +162,40 @@ export class SettingsPage implements OnInit, OnDestroy {
                 },
                 {
                     text: this.translate.instant("ok"),
-                    handler: async(): Promise<void> => {
+                    handler: async (): Promise<void> => {
                         // Lock the user to the settings page,
                         // the user may navigate to the course view which would throws random errors if the delete task is still running
-                        const loading: HTMLIonLoadingElement = await this.loadingCtrl.create({backdropDismiss: false});
+                        const loading: HTMLIonLoadingElement =
+                            await this.loadingCtrl.create({
+                                backdropDismiss: false,
+                            });
                         try {
                             await loading.present();
                             this.showFilesDeletingToast();
-                            this.footerToolbar.addJob(Job.DeleteFilesSettings, this.translate.instant("settings.deleting_files"));
+                            this.footerToolbar.addJob(
+                                Job.DeleteFilesSettings,
+                                this.translate.instant(
+                                    "settings.deleting_files"
+                                )
+                            );
                             await this.doDeleteAllFiles();
-                            await this.loadUsersAndDiskspace()
-                            this.footerToolbar.removeJob(Job.DeleteFilesSettings);
+                            await this.loadUsersAndDiskspace();
+                            this.footerToolbar.removeJob(
+                                Job.DeleteFilesSettings
+                            );
                             await loading.dismiss();
                             this.showFilesDeletedToast();
                         } catch (error) {
                             this.log.error(() => "Unable to delete all files.");
                             await loading.dismiss();
-                            this.footerToolbar.removeJob(Job.DeleteFilesSettings);
+                            this.footerToolbar.removeJob(
+                                Job.DeleteFilesSettings
+                            );
                             this.showUnknownErrorOccurredAlert();
                         }
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         });
 
         await alert.present();
@@ -178,7 +206,9 @@ export class SettingsPage implements OnInit, OnDestroy {
     }
 
     private async deleteFiles(user: User): Promise<void> {
-        const iliasObjects: Array<ILIASObject> = await DesktopItem.findByUserId(user.id);
+        const iliasObjects: Array<ILIASObject> = await DesktopItem.findByUserId(
+            user.id
+        );
         for (const iliasObject of iliasObjects)
             await this.userStorage.removeRecursive(iliasObject);
     }
@@ -190,9 +220,9 @@ export class SettingsPage implements OnInit, OnDestroy {
                 {
                     text: this.translate.instant("close"),
                     cssClass: "alertButton",
-                    role: "cancel"
-                }
-            ]
+                    role: "cancel",
+                },
+            ],
         });
 
         await alert.present();

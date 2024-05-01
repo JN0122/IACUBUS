@@ -1,11 +1,17 @@
 /** angular */
 import { Component, Inject } from "@angular/core";
 /** misc */
-import { OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY, OpenObjectInILIASAction } from "../../actions/open-object-in-ilias-action";
+import {
+    OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY,
+    OpenObjectInILIASAction,
+} from "../../actions/open-object-in-ilias-action";
 import { ThemeProvider } from "../../providers/theme/theme.provider";
 /** services */
 import { Builder } from "../../services/builder.base";
-import { LINK_BUILDER, LinkBuilder } from "../../services/link/link-builder.service";
+import {
+    LINK_BUILDER,
+    LinkBuilder,
+} from "../../services/link/link-builder.service";
 
 /**
  * Generated class for the DesktopPage page.
@@ -17,15 +23,17 @@ import { LINK_BUILDER, LinkBuilder } from "../../services/link/link-builder.serv
 @Component({
     selector: "page-desktop",
     templateUrl: "desktop.html",
-    styleUrls: ["desktop.scss"]
+    styleUrls: ["desktop.scss"],
 })
 export class DesktopPage {
-
     private readonly REF_ID_REPOSITORY: number = 1;
 
     constructor(
         @Inject(OPEN_OBJECT_IN_ILIAS_ACTION_FACTORY)
-        private readonly openInIliasActionFactory: (title: string, urlBuilder: Builder<Promise<string>>) => OpenObjectInILIASAction,
+        private readonly openInIliasActionFactory: (
+            title: string,
+            urlBuilder: Builder<Promise<string>>
+        ) => OpenObjectInILIASAction,
         @Inject(LINK_BUILDER)
         private readonly linkBuilder: LinkBuilder,
         private themeProvider: ThemeProvider
@@ -38,7 +46,9 @@ export class DesktopPage {
 
     // open repo in Browser inApp for iOS, external for Android
     async openILIASRepository(): Promise<void> {
-        await this.openInIliasActionFactory(undefined, this.linkBuilder.default().target(this.REF_ID_REPOSITORY)).execute();
+        await this.openInIliasActionFactory(
+            undefined,
+            this.linkBuilder.default().target(this.REF_ID_REPOSITORY)
+        ).execute();
     }
-
 }

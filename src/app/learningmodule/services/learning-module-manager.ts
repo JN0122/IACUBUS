@@ -13,12 +13,17 @@ import { UserStorageMamager } from "../../services/filesystem/user-storage.mamag
 import { Logger } from "../../services/logging/logging.api";
 import { Logging } from "../../services/logging/logging.service";
 import { LearningModule } from "../models/learning-module";
-import { LEARNING_MODULE_LOADER, LearningModuleLoader } from "./learning-module-loader";
-import { LEARNING_MODULE_PATH_BUILDER, LearningModulePathBuilder } from "./learning-module-path-builder";
+import {
+    LEARNING_MODULE_LOADER,
+    LearningModuleLoader,
+} from "./learning-module-loader";
+import {
+    LEARNING_MODULE_PATH_BUILDER,
+    LearningModulePathBuilder,
+} from "./learning-module-path-builder";
 import { LearningModuleStorageUtilisation } from "./learning-module-storage-utilisation";
 
 export interface LearningModuleManager {
-
     /**
      * Loads all relevant data of the learning module
      * the given {@code objectId} and stores them.
@@ -40,7 +45,8 @@ export interface LearningModuleManager {
     remove(objectId: number, userId: number): Promise<void>;
 }
 
-export const LEARNING_MODULE_MANAGER: InjectionToken<LearningModuleManager> = new InjectionToken("token for learning module manager.");
+export const LEARNING_MODULE_MANAGER: InjectionToken<LearningModuleManager> =
+    new InjectionToken("token for learning module manager.");
 
 /**
  * Implementation of the learning module manager interface.
@@ -50,21 +56,32 @@ export const LEARNING_MODULE_MANAGER: InjectionToken<LearningModuleManager> = ne
  */
 @Injectable()
 export class LearningModuleManagerImpl implements LearningModuleManager {
-
-    private readonly log: Logger = Logging.getLogger("LearningModuleManagerImpl");
+    private readonly log: Logger = Logging.getLogger(
+        "LearningModuleManagerImpl"
+    );
 
     constructor(
         private readonly storageUtilisation: LearningModuleStorageUtilisation,
         private readonly fileStorage: FileStorageService,
         private readonly userStorageManager: UserStorageMamager,
-        @Inject(LEARNING_MODULE_LOADER) private readonly loader: LearningModuleLoader,
-        @Inject(LEARNING_MODULE_PATH_BUILDER) private readonly pathBuilder: LearningModulePathBuilder,
+        @Inject(LEARNING_MODULE_LOADER)
+        private readonly loader: LearningModuleLoader,
+        @Inject(LEARNING_MODULE_PATH_BUILDER)
+        private readonly pathBuilder: LearningModulePathBuilder
     ) {}
 
     async checkAndDownload(objectId: number, userId: number): Promise<void> {
-        const obj: ILIASObject = await ILIASObject.findByObjIdAndUserId(objectId, userId);
+        const obj: ILIASObject = await ILIASObject.findByObjIdAndUserId(
+            objectId,
+            userId
+        );
 
-        this.log.debug(() => `Learning module needs download: ${obj.needsDownload} -> ${!!obj.needsDownload}`);
+        this.log.debug(
+            () =>
+                `Learning module needs download: ${
+                    obj.needsDownload
+                } -> ${!!obj.needsDownload}`
+        );
         if (obj.needsDownload !== false) {
             await this.load(objectId);
             obj.needsDownload = false;
@@ -75,21 +92,40 @@ export class LearningModuleManagerImpl implements LearningModuleManager {
     async load(objectId: number): Promise<void> {
         await this.loader.load(objectId);
         const user: User = AuthenticationProvider.getUser();
-        await this.userStorageManager.addObjectToUserStorage(user.id, objectId, this.storageUtilisation);
+        await this.userStorageManager.addObjectToUserStorage(
+            user.id,
+            objectId,
+            this.storageUtilisation
+        );
     }
 
     async remove(objId: number, userId: number): Promise<void> {
-        this.log.debug(() => `Remove learning module object: "${objId}", user: "${userId}"`);
-        await this.userStorageManager.removeObjectFromUserStorage(userId, objId, this.storageUtilisation);
+        this.log.debug(
+            () => `Remove learning module object: "${objId}", user: "${userId}"`
+        );
+        await this.userStorageManager.removeObjectFromUserStorage(
+            userId,
+            objId,
+            this.storageUtilisation
+        );
 
         // remove from database
-        const lm: LearningModule = await LearningModule.findByObjIdAndUserId(objId, userId);
+        const lm: LearningModule = await LearningModule.findByObjIdAndUserId(
+            objId,
+            userId
+        );
         await lm.destroy();
 
         // remove from file system
-        const localLmDir: string = await this.pathBuilder.dirInLocalLmDir("", false);
+        const localLmDir: string = await this.pathBuilder.dirInLocalLmDir(
+            "",
+            false
+        );
         const lmDirName: string = this.pathBuilder.lmDirName(objId);
-        this.log.debug(() => `Remove learning module dir: "${lmDirName}", Path: "${localLmDir}"`);
+        this.log.debug(
+            () =>
+                `Remove learning module dir: "${lmDirName}", Path: "${localLmDir}"`
+        );
         await this.fileStorage.removeDir(localLmDir, lmDirName);
     }
 }

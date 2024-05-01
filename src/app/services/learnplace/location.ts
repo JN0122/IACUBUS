@@ -1,4 +1,3 @@
-
 /**
  * Describes an object, that watches the location of the device
  * and performs a specific task when the location changes.
@@ -7,15 +6,14 @@
  * @version 1.0.0
  */
 export interface LocationWatch {
+    /**
+     * Stars watching the device's location
+     * and performs a specific task.
+     */
+    start(): void;
 
-  /**
-   * Stars watching the device's location
-   * and performs a specific task.
-   */
-  start(): void;
-
-  /**
-   * Stops watching the device's location.
-   */
-  stop(): void;
+    /**
+     * Stops watching the device's location.
+     */
+    stop(): void;
 }

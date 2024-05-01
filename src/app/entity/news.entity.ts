@@ -1,26 +1,25 @@
-import {Column, Entity, PrimaryColumn} from "typeorm/browser";
+import { Column, Entity, PrimaryColumn } from "typeorm/browser";
 
 @Entity("News")
 export class NewsEntity {
+    @PrimaryColumn()
+    newsId: number;
 
-  @PrimaryColumn()
-  newsId: number;
+    @Column()
+    newsContext: number;
 
-  @Column()
-  newsContext: number;
+    @Column()
+    title: string;
 
-  @Column()
-  title: string;
+    @Column()
+    subtitle: string;
 
-  @Column()
-  subtitle: string;
+    @Column()
+    content: string;
 
-  @Column()
-  content: string;
+    @Column()
+    createDate: number;
 
-  @Column()
-  createDate: number;
-
-  @Column()
-  updateDate: number;
+    @Column()
+    updateDate: number;
 }

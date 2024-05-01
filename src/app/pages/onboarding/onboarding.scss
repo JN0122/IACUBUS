@@ -17,7 +17,7 @@ ion-slide {
         margin-right: 1em;
     }
 
-    @media screen and (orientation:landscape) {
+    @media screen and (orientation: landscape) {
         h1 {
             margin-top: 0;
         }
@@ -25,7 +25,6 @@ ion-slide {
 }
 
 img {
-
     &.logo {
         height: 40vw;
         padding-bottom: 5%;
@@ -34,15 +33,15 @@ img {
     &.icon {
         height: 40vw;
     }
-    &.decentral{
+    &.decentral {
         height: 40vw;
         margin-bottom: 1em;
     }
-    &.lock{
+    &.lock {
         height: 40vw;
     }
 
-    @media screen and (orientation:landscape) {
+    @media screen and (orientation: landscape) {
         &.logo {
             height: 40vh;
         }
@@ -50,21 +49,19 @@ img {
         &.icon {
             height: 40vh;
         }
-        &.decentral{
+        &.decentral {
             height: 40vh;
             padding-top: 10px;
         }
-        &.lock{
+        &.lock {
             height: 38vh;
         }
     }
 }
 
-
 .step-one {
     background: var(--custom-background, var(--ion-color-primary));
     color: var(--ion-color-primary-contrast);
-
 
     ion-list {
         ion-item {
@@ -72,18 +69,18 @@ img {
             --background: transparent;
             font-size: 2vh;
 
-            @media screen and (orientation:landscape) {
+            @media screen and (orientation: landscape) {
                 font-size: 2vw;
             }
         }
-        background: rgba(255,255,255,0);
+        background: rgba(255, 255, 255, 0);
         color: var(--ion-color-primary-contrast);
 
         @media screen and (max-width: 576px) {
             width: 100%;
         }
 
-        @media screen and (orientation:landscape) and (max-height: 576px) {
+        @media screen and (orientation: landscape) and (max-height: 576px) {
             margin-bottom: 0;
         }
     }
@@ -101,7 +98,7 @@ img {
     background: var(--custom-background, var(--ion-color-primary));
     color: var(--ion-color-primary-contrast);
     font-size: 2vh;
-    @media screen and (orientation:landscape) {
+    @media screen and (orientation: landscape) {
         font-size: 2vw;
     }
     .concept2 {
@@ -113,7 +110,7 @@ img {
     background: var(--custom-background, var(--ion-color-primary));
     color: var(--ion-color-primary-contrast);
     font-size: 2vh;
-    @media screen and (orientation:landscape) {
+    @media screen and (orientation: landscape) {
         font-size: 2vw;
     }
 }

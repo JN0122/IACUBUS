@@ -1,29 +1,28 @@
 /** angular */
-import {Component} from "@angular/core";
-import {NavController} from "@ionic/angular";
+import { Component } from "@angular/core";
+import { NavController } from "@ionic/angular";
 /** misc */
-import {Hardware} from "../../services/device/hardware-features/hardware-feature.service";
+import { Hardware } from "../../services/device/hardware-features/hardware-feature.service";
 
 @Component({
-  templateUrl: "test-hardware-feature.html"
+    templateUrl: "test-hardware-feature.html",
 })
 export class HardwareFeaturePage {
+    constructor(
+        private readonly nav: NavController,
+        private readonly hardware: Hardware
+    ) {}
 
-  constructor(
-    private readonly nav: NavController,
-    private readonly hardware: Hardware
-  ) {}
+    locationWithCallback(): Promise<void> {
+        this.hardware
+            .requireLocation()
+            .onFailure(() => this.nav.pop())
+            .check();
+        return Promise.resolve();
+    }
 
-  locationWithCallback(): Promise<void> {
-    this.hardware.requireLocation()
-      .onFailure(() => this.nav.pop())
-      .check();
-    return Promise.resolve();
-  }
-
-  location(): Promise<void> {
-    this.hardware.requireLocation()
-      .check();
-    return Promise.resolve();
-  }
+    location(): Promise<void> {
+        this.hardware.requireLocation().check();
+        return Promise.resolve();
+    }
 }
