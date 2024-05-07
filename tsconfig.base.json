@@ -11,10 +11,7 @@
         "downlevelIteration": true,
         "allowSyntheticDefaultImports": true,
         "target": "es2015",
-        "lib": [
-            "es2018",
-            "dom"
-        ],
+        "lib": ["es2018", "es2020", "dom"],
         "types": ["node"]
     },
     "angularCompilerOptions": {
