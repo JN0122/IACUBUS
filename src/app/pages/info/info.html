@@ -24,6 +24,30 @@
         </ion-card-content>
     </ion-card>
 
+    <!--KARTE about ag-->
+    <ion-card class="about-card">
+        <ion-card-header>
+            <ion-card-title
+                >{{'info.about-card.title' | translate}}</ion-card-title
+            >
+            <ion-card-subtitle
+                >{{'info.about-card.subtitle' | translate}}</ion-card-subtitle
+            >
+        </ion-card-header>
+        <ion-card-content>
+            <p>{{'info.about-card.content' | translate}}</p>
+        </ion-card-content>
+        <div>
+            <ion-button
+                color="primary"
+                fill="clear"
+                (click)="browse('https://github.com/JN0122/IACUBUS')"
+            >
+                <ion-icon name="globe"></ion-icon>
+                <ion-label>&nbsp;https://github.com/JN0122/IACUBUS</ion-label>
+            </ion-button>
+        </div>
+    </ion-card>
     <ion-card class="reporting-card">
         <ion-card-header>
             <ion-card-title
@@ -32,8 +56,8 @@
         </ion-card-header>
         <ion-card-content>
             <p>{{'info.reporting-card.content' | translate}}:</p>
-            <a (click)="browse('mailto:support@ilias-pegasus.de')"
-                >support@ilias-pegasus.de</a
+            <a (click)="browse('mailto:jakub@deepeacademy.com')"
+                >jakub@deepeacademy.com</a
             >
         </ion-card-content>
     </ion-card>

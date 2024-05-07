@@ -28,7 +28,7 @@
     "map": "Map",
     "content": "Content",
     "Version": "Version",
-    "privacy": "privacy",
+    "privacy": "iacobus-privacy-policy",
     "datasecurity": { "title": "Privacy policy" },
     "object-list": {
         "title": "My Courses & Groups",
@@ -323,8 +323,13 @@
             "content": "The Special Interest Group (SIG) ILIAS Mobile is responsible for the coordination of the further development of the app and offers a space for discussions around the app."
         },
         "sturai-card": {
+            "subtitle": "Creators",
+            "content": "The app was implemented by fluxlabs AG."
+        },
+        "about-card": {
+            "title": "About",
             "subtitle": "App Development & Maintenance",
-            "content": "The app was implemented and is maintained by fluxlabs AG."
+            "content": "The application is built upon the open-source ILIAS-PEGASUS solution and is currently maintained and developed by Jakub Niewelt."
         }
     }
 }
