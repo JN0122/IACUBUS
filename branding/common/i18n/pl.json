@@ -1,0 +1,337 @@
+{
+    "test": "test",
+    "back": "Powrót",
+    "Synchronize": "Synchronizacja",
+    "synchronize": "Synchronizacja",
+    "save": "zapisz",
+    "Save": "Zapisz",
+    "User": "Użytkownik",
+    "user": "u\u017cytkownik",
+    "cancel": "Anuluj",
+    "general": "Og\u00f3lne",
+    "new": "Nowo\u015b\u0107",
+    "updated": "Aktualizacja",
+    "synchronisation_in_progress": "Synchronizacja w toku",
+    "deleting_files": "Usuwanie plik\u00f3w",
+    "something_went_wrong": "Co\u015b posz\u0142o nie tak, spr\u00f3buj ponownie p\u00f3\u017aniej.",
+    "menu": "Menu",
+    "remove": "Usun\u0105\u0107",
+    "no_items": "Obecnie nie ma \u017cadnych elementów.",
+    "yes": "Tak",
+    "no": "Nie",
+    "no_title": "Brak tytu\u0142u",
+    "close": "Zamknij",
+    "today": "Dzisiaj",
+    "yesterday": "Wczoraj",
+    "repository": "Repozytorium",
+    "courses": "Kursy",
+    "map": "Mapa",
+    "content": "Tre\u015b\u0107",
+    "Version": "Wersja",
+    "privacy": "iacobus-privacy-policy",
+    "datasecurity": {
+        "title": "Polityka prywatno\u015bci"
+    },
+    "object-list": {
+        "title": "Moje kursy i grupy",
+        "content": "Tre\u015b\u0107",
+        "offline": "Urz\u0105dzenie jest w trybie offline. Mo\u017cesz poci\u0105gn\u0105\u0107, aby od\u015bwie\u017cy\u0107 lub przej\u015b\u0107 do ulubionych.",
+        "downloading": "\u0141adowanie",
+        "no_items": "Ulubione pojawiaj\u0105 si\u0119 tutaj i s\u0105 pobierane. Ulubione s\u0105 dost\u0119pne w trybie offline, nawet bez po\u0142\u0105czenia z Internetem"
+    },
+    "page-layout": {
+        "group": "Dodatkowe informacje dost\u0119pne dla tej grupy.",
+        "course": "Dodatkowe informacje dost\u0119pne dla tego kursu.",
+        "folder": "Dodatkowe informacje dost\u0119pne dla tego folderu.",
+        "default": "Dodatkowe informacje dost\u0119pne dla tego obiektu."
+    },
+    "timeline": {
+        "course": "O\u015b czasu dost\u0119pna dla tego kursu.",
+        "group": "O\u015b czasu dost\u0119pna dla tej grupy.",
+        "default": "O\u015b czasu dost\u0119pna dla tego obiektu."
+    },
+    "favorites": {
+        "title": "Ulubione"
+    },
+    "news": {
+        "title": "Aktualno\u015bci"
+    },
+    "home": {
+        "title": "Strona g\u0142\u00f3wna"
+    },
+    "new-objects": {
+        "title": "Nowa zawarto\u015b\u0107",
+        "no_new_items": "Nie ma nowej zawarto\u015bci.",
+        "mark_as_seen": "Oznaczenie jak wida\u0107"
+    },
+    "settings": {
+        "title": "Ustawienia",
+        "language": "J\u0119zyk",
+        "downloadSize": "Maksymalny rozmiar plik\u00f3w do pobrania (MB)",
+        "downloadWLAN": "Pobieranie tylko w sieci WLAN",
+        "quotaSize": "Maks. rozmiar limitu (MB)",
+        "settings_saved": "Zapisane ustawienia",
+        "files_deleted": "Pliki usuni\u0119to pomy\u015blnie",
+        "delete_user_local_data_title": "Usuni\u0119cie plik\u00f3w lokalnych u\u017cytkownika {{username}}",
+        "delete_user_local_data_text": "Czy na pewno chcesz usun\u0105\u0107 wszystkie pliki lokalne na urz\u0105dzeniu dla tego u\u017cytkownika?",
+        "delete_all_files": "Usuni\u0119cie wszystkich plik\u00f3w lokalnych na urz\u0105dzeniu",
+        "delete_all_files_text": "Czy na pewno chcesz usun\u0105\u0107 wszystkich u\u017cytkownik\u00f3w lokalnych na tym urz\u0105dzeniu?",
+        "summary": "Podsumowanie",
+        "total": "\u0141\u0105cznie",
+        "users": "U\u017cytkownik",
+        "deleting_files": "Usuwanie plik\u00f3w",
+        "downloadOnStart": "Pobieranie ulubionych podczas uruchamiania"
+    },
+    "logout": {
+        "title": "Wylogowanie",
+        "logged_out": "Wylogowanie powiod\u0142o si\u0119"
+    },
+    "common": {
+        "synchronize": "synchronizacja"
+    },
+    "download": {
+        "title": "Pobierz",
+        "something_went_wrong": "Co\u015b posz\u0142o nie tak! Spr\u00f3buj ponownie wkr\u00f3tce."
+    },
+    "actions": {
+        "view_in_ilias": "Zobacz w ILIAS",
+        "mark_as_favorite": "Oznacz jako ulubione",
+        "download": "Pobieranie / Aktualizacja",
+        "mark_as_offline_available": "Oznacz jako dost\u0119pne offline",
+        "unmark_as_offline_available": "Odznacz jako dost\u0119pne offline",
+        "synchronize": "Synchronizacja",
+        "remove_local_files": "Usuwanie plik\u00f3w lokalnych",
+        "removed_local_files": "Usuni\u0119te pliki lokalne",
+        "remove_local_file": "Usu\u0144 plik lokalny",
+        "removed_local_file": "Usuni\u0119to plik lokalny",
+        "remove_local_learnplace": "Usuni\u0119cie lokalnego learnplace",
+        "remove_local_learnplace_failed": "Usuni\u0119cie Learnplace nie powiod\u0142o si\u0119.",
+        "removed_local_learnplace": "Usuni\u0119to lokalne miejsce nauki",
+        "download_and_open_in_external_app": "Pobierz i otw\u00f3rz za pomoc\u0105 zewn\u0119trznej aplikacji",
+        "unmark_as_favorite": "Usu\u0144 z ulubionych",
+        "open_in_external_app": "Otw\u00f3rz za pomoc\u0105 aplikacji zewn\u0119trznej",
+        "show_details": "Poka\u017c szczeg\u00f3\u0142y",
+        "sync_incomplete": "Co\u015b posz\u0142o nie tak: synchronizacja jest niekompletna.",
+        "offline_and_no_local_file": "Jeste\u015b offline i \u017caden plik lokalny nie jest dost\u0119pny.",
+        "unhandled_add_to_favorite_exception_workaround": "Dane s\u0105 gromadzone.",
+        "download_without_wlan": "Pobieranie bez sieci WLAN",
+        "download_without_wlan_continue": "Nie masz obecnie po\u0142\u0105czenia z sieci\u0105 WLAN. Czy mimo to chcesz pobra\u0107 plik?",
+        "download_without_disk_quota": "Brak miejsca na dysku",
+        "download_without_disk_quota_text": "Pobranie tego pliku spowoduje przekroczenie przestrzeni dyskowej okre\u015blonej w ustawieniach. Czy mimo to chcesz pobra\u0107 plik?",
+        "remove_local_files_in": "Usu\u0144 pliki w {{title}}",
+        "remove_local_files_in_text": "Czy na pewno chcesz usun\u0105\u0107 wszystkie pobrane pliki?",
+        "download_successful": "Pobieranie zako\u0144czone sukcesem",
+        "cant_open_file": "Nie ma aplikacji, kt\u00f3ra mog\u0142aby otworzy\u0107 ten typ pliku.",
+        "file_error": "Wyst\u0105pi\u0142 problem z obs\u0142ug\u0105 pliku.",
+        "server_not_reachable": "Nie mo\u017cemy po\u0142\u0105czy\u0107 si\u0119 z serwerem, spr\u00f3buj ponownie p\u00f3\u017aniej lub zaloguj si\u0119 ponownie.",
+        "server_response_validation_error": "Problem z komunikacj\u0105 z serwerem, upewnij si\u0119, \u017ce uruchomi\u0142e\u015b najnowsz\u0105 aplikacj\u0119 i spr\u00f3buj ponownie. Spr\u00f3buj si\u0119 wylogowa\u0107 i zalogowa\u0107 ponownie-"
+    },
+    "details": {
+        "last_update": "Ostatnia aktualizacja",
+        "availability": "Dost\u0119pno\u015b\u0107",
+        "size": "Rozmiar",
+        "version": "Wersja",
+        "local_version_date": "Data pliku na urz\u0105dzeniu",
+        "remote_version_date": "Data pliku w systemie ILIAS",
+        "used_disk_space": "Wykorzystane miejsce na dysku",
+        "potentially_used_disk_space": "Szacowane wykorzystanie miejsca na dysku po synchronizacji",
+        "offline_available": "Dost\u0119pne w trybie offline",
+        "availabilities": {
+            "needs_download": "Wymaga pobrania",
+            "up-to-date": "Aktualny",
+            "needs_update": "Wymaga aktualizacji"
+        }
+    },
+    "sync": {
+        "sync_already_running": "Synchronizacja jest ju\u017c w toku.",
+        "last_sync": "Ostatnia synchronizacja",
+        "fetching_metadata": "Pobieranie metadanych",
+        "fetching_news": "Przyci\u0105gaj\u0105ce wiadomo\u015bci",
+        "title": "Synchronizacja",
+        "sync_incomplete": "Co\u015b posz\u0142o nie tak: synchronizacja mo\u017ce by\u0107 niekompletna.",
+        "stopped_no_wlan": "Nowe lub zaktualizowane pliki nie mog\u0105 zosta\u0107 zsynchronizowane. Po\u0142\u0105cz si\u0119 z sieci\u0105 WLAN",
+        "files_too_big": "Nowe lub zaktualizowane pliki nie mog\u0105 zosta\u0107 zsynchronizowane, poniewa\u017c przekraczaj\u0105 maksymalny limit. Quota. Zwi\u0119ksz limit w ustawieniach lub usu\u0144 niekt\u00f3re pliki.",
+        "object_synced": "{{title}} zosta\u0142 pomy\u015blnie zsynchronizowany.",
+        "success": "Synchronizacja zako\u0144czona.",
+        "download": "Pobierz",
+        "sync_finished_text": "Synchronizacja zosta\u0142a zako\u0144czona. \u0141\u0105cznie zaznaczono {{totalItems}} plik\u00f3w. Pliki {{aktualne}} zosta\u0142y pobrane do najnowszej wersji. Pliki {{uptodate}} s\u0105 nadal aktualne i nie musz\u0105 by\u0107 pobierane.",
+        "some_files_were_too_big": "Niekt\u00f3re pliki by\u0142y zbyt du\u017ce. Zwi\u0119ksz maksymalny rozmiar pliku w ustawieniach lub pobierz pliki r\u0119cznie.",
+        "no_more_space": "Przekroczono limit miejsca na dysku i nie mo\u017cna pobra\u0107 niekt\u00f3rych plik\u00f3w. Usu\u0144 niekt\u00f3re pliki lub zwi\u0119ksz przestrze\u0144 dyskow\u0105 dost\u0119pn\u0105 dla synchronizacji w ustawieniach.",
+        "pull_to_sync": "Poci\u0105gnij, aby od\u015bwie\u017cy\u0107",
+        "remove_from_favorites": "Usu\u0144 z ulubionych",
+        "load_now": "Pobierz teraz",
+        "ok": "OK",
+        "open_downloads_title": "Otwarte pliki do pobrania",
+        "open_downloads_text_sng": "Pobieranie tej ulubionej aplikacji nie powiod\u0142o si\u0119, poniewa\u017c aplikacja zosta\u0142a zamkni\u0119ta:",
+        "open_downloads_text_plr": "Pobieranie tych ulubionych NUM nie powiod\u0142o si\u0119, poniewa\u017c aplikacja zosta\u0142a zamkni\u0119ta:"
+    },
+    "login": {
+        "title": "Logowanie",
+        "hello": "Witamy w {{app_name}}!",
+        "instructions": "Wybierz swoj\u0105 instytucj\u0119",
+        "instructions2": "Wybierz swoj\u0105 instytucj\u0119",
+        "login": "Logowanie",
+        "offline_title": "Brak po\u0142\u0105czenia z Internetem",
+        "offline_content": "Aby si\u0119 zalogowa\u0107, urz\u0105dzenie musi by\u0107 po\u0142\u0105czone z Internetem.",
+        "ok": "Wybierz",
+        "dismiss": "Anuluj"
+    },
+    "object_type": {
+        "crs": "Kurs",
+        "crsr": "Odniesienie do kursu",
+        "grp": "Grupa",
+        "grpr": "Odniesienie do grupy",
+        "frm": "Forum",
+        "fold": "Teczka",
+        "sess": "Sesja",
+        "catr": "Kategoria Odniesienie",
+        "cat": "Kategoria",
+        "book": "Rezerwacja basenu",
+        "chatr": "Pok\u00f3j rozm\u00f3w",
+        "file": "Plik",
+        "webr": "\u0141\u0105cze internetowe",
+        "feed": "Kana\u0142 internetowy",
+        "wiki": "Wiki",
+        "blog": "Bloga",
+        "lm": "Modu\u0142 edukacyjny",
+        "htlm": "Modu\u0142 edukacyjny",
+        "sahs": "Modu\u0142 edukacyjny",
+        "iass": "Ocena indywidualna",
+        "glo": "S\u0142owniczek",
+        "dcl": "Gromadzenie danych",
+        "bibl": "Bibliografia",
+        "mcst": "Transmisja medialna",
+        "mep": "Pula multimedi\u00f3w",
+        "exc": "\u0106wiczenie",
+        "tst": "Test",
+        "qpl": "Test puli pyta\u0144",
+        "mass": "Ocena indywidualna",
+        "poll": "Sonda\u017c",
+        "svy": "Ankieta",
+        "spl": "Ankieta dotycz\u0105ca puli pyta\u0144",
+        "prtt": "Szablon portfolio",
+        "xlel": "Poznaj lokalizacj\u0119",
+        "xlvo": "G\u0142osowanie na \u017cywo",
+        "xoct": "Otw\u00f3rzCast",
+        "xtst": "Obiekt repozytorium testowego",
+        "xvid": "Interaktywne wideo",
+        "xpdl": "Eterpad",
+        "xavc": "Spotkanie Adobe Connect",
+        "xflc": "Fiszki",
+        "chtr": "Pok\u00f3j rozm\u00f3w",
+        "xxco": "Zdalna zawarto\u015b\u0107",
+        "xsrl": "Miejsce nauki"
+    },
+    "message": {
+        "back_to_exit": "Naci\u015bnij ponownie przycisk Wstecz, aby wyj\u015b\u0107."
+    },
+    "learnplace": {
+        "map": {
+            "no_map": "To miejsce nauki nie ma mapy",
+            "too_far_away": "Jeste\u015b zbyt daleko od miejsca nauki, aby wy\u015bwietli\u0107 map\u0119"
+        },
+        "block": {
+            "no_content": "To miejsce nauki nie zawiera tre\u015bci",
+            "text": {
+                "too_far_away": "Jeste\u015b zbyt daleko od learnplace, by przeczyta\u0107 ten tekst"
+            },
+            "picture": {
+                "too_far_away": "Jeste\u015b zbyt daleko od miejsca nauki, aby zobaczy\u0107 to zdj\u0119cie"
+            },
+            "link": {
+                "too_far_away": "Jeste\u015b zbyt daleko od learnplace, by klikn\u0105\u0107 w ten link",
+                "no_access": "Nie masz praw dost\u0119pu do tego linku"
+            },
+            "video": {
+                "too_far_away": "Jeste\u015b zbyt daleko od learnplace, aby odtworzy\u0107 ten film"
+            },
+            "accordion": {
+                "too_far_away": "Jeste\u015b zbyt daleko od learnplace, aby zobaczy\u0107 ten akordeon"
+            }
+        }
+    },
+    "fallback": {
+        "browser": "Opuszczasz aplikację {{app_name}}",
+        "browser_ok": "OK, opuszczam!",
+        "browser_no": "Nie. Wracam!",
+        "synchronization": "Witamy!",
+        "synchronization_subtitle": "Poczekaj kilka sekund, a\u017c zsynchronizujemy Twoje konto ILIAS.",
+        "generic": {
+            "loading": "\u0141adowanie",
+            "loading_subtitle": "Poczekaj chwil\u0119. Pobranie zawarto\u015bci mo\u017ce zaj\u0105\u0107 troch\u0119 czasu."
+        },
+        "learnplace": {
+            "loading": "Miejsce nauki",
+            "loading_subtitle": "Poczekaj chwil\u0119. Je\u015bli witryna learnplace zawiera du\u017co tre\u015bci, jej pobranie mo\u017ce zaj\u0105\u0107 troch\u0119 czasu."
+        },
+        "learningmodule": {
+            "loading": "Modu\u0142 edukacyjny",
+            "loading_subtitle": "Poczekaj chwil\u0119. Je\u015bli modu\u0142 edukacyjny zawiera du\u017co tre\u015bci, jego pobranie mo\u017ce zaj\u0105\u0107 troch\u0119 czasu."
+        }
+    },
+    "onboarding": {
+        "title1": "Za pomoc\u0105 tej aplikacji mo\u017cna:",
+        "function1": "dost\u0119p do kurs\u00f3w ILIAS na smartfonie.",
+        "function2": "udost\u0119pnianie kurs\u00f3w i plik\u00f3w w trybie offline.",
+        "function3": "zaloguj si\u0119 raz i pozosta\u0144 zalogowany.",
+        "title2": "Zdecentralizowana aplikacja",
+        "concept1": "Aplikacja {{app_name}} \u0142\u0105czy ci\u0119 z instalacj\u0105 ILIAS twojej instytucji, uniwersytetu lub szko\u0142y.",
+        "concept2": "Je\u015bli Twoja instytucja jeszcze nie do\u0142\u0105czy\u0142a, skontaktuj si\u0119 z nami",
+        "title3": "Twoje dane s\u0105 bezpieczne!",
+        "datasecurity1": "Dane u\u017cytkownika b\u0119d\u0105 przechowywane wy\u0142\u0105cznie na jego urz\u0105dzeniu. Aplikacja nie gromadzi \u017cadnych danych osobowych. Je\u015bli chcesz sprawdzi\u0107 szczeg\u00f3\u0142y, tutaj znajdziesz nast\u0119puj\u0105ce informacje",
+        "datasecurity2": "polityka prywatno\u015bci",
+        "datasecurity3": "{{app_name}} jest projektem open source. Je\u015bli chcesz zobaczy\u0107 na w\u0142asne oczy, co robi aplikacja, mo\u017cesz zobaczy\u0107 kod tutaj:",
+        "next": "nast\u0119pny",
+        "start": "Chod\u017amy"
+    },
+    "info": {
+        "title": "Informacje",
+        "guide": "Przewodnik",
+        "instructions1": "Je\u015bli jeste\u015b na stronie g\u0142\u00f3wnej \"Moje kursy i grupy\", mo\u017cesz oznaczy\u0107 kursy i grupy jako \"dost\u0119pne offline\". S\u0105 one oznaczone szar\u0105 chmurk\u0105. Po zsynchronizowaniu plik\u00f3w chmurka zmieni kolor na niebieski.",
+        "instructions2": "Synchronizacja rozpocznie si\u0119 automatycznie przy ka\u017cdym uruchomieniu aplikacji lub je\u015bli kurs zosta\u0142 oznaczony jako dost\u0119pny offline. R\u0119czn\u0105 synchronizacj\u0119 mo\u017cna r\u00f3wnie\u017c rozpocz\u0105\u0107, przeci\u0105gaj\u0105c (Pull to Refresh) stron\u0119 \"Moje kursy i grupy\".",
+        "version-card": {
+            "title": "Na podstawie ILIAS-Pegasus",
+            "content": "Wersja"
+        },
+        "reporting-card": {
+            "title": "Błędy aplikacji",
+            "content": "Znalaz\u0142e\u015b b\u0142\u0105d? Pom\u00f3\u017c nam ulepszy\u0107 aplikacj\u0119. Skontaktuj si\u0119 z"
+        },
+        "reporting-card-zwh": {
+            "subtitle": "Udost\u0119pnianie i projektowanie",
+            "content": "Kontakt"
+        },
+        "content-card": {
+            "title": "Uwaga dotycz\u0105ca tre\u015bci",
+            "content": "Pomimo starannej kontroli tre\u015bci, nie ponosimy \u017cadnej odpowiedzialno\u015bci za tre\u015b\u0107 link\u00f3w zewn\u0119trznych. Operatorzy stron, do kt\u00f3rych prowadz\u0105 linki, ponosz\u0105 wy\u0142\u0105czn\u0105 odpowiedzialno\u015b\u0107 za tre\u015b\u0107 swoich stron. W celu optymalizacji aplikacji dane dotycz\u0105ce u\u017cytkowania s\u0105 rejestrowane i oceniane anonimowo."
+        },
+        "stura-card": {
+            "title": "Samorz\u0105d studencki",
+            "subtitle": "Finansowanie",
+            "content": "Specyfikacja i rozw\u00f3j pierwszej wersji aplikacji zosta\u0142y sfinansowane z bud\u017cetu studenckiego samorz\u0105du studenckiego Uniwersytetu we Freiburgu."
+        },
+        "freiburg-card": {
+            "title": "Centrum danych",
+            "subtitle": "Kierownik projektu",
+            "content": "Centrum danych Uniwersytetu we Fryburgu prowadzi\u0142o faz\u0119 specyfikacji i wdra\u017cania aplikacji."
+        },
+        "marburg-card": {
+            "title": "Uniwersyteckie Centrum Danych",
+            "subtitle": "Odpowiedzialny za wtyczk\u0119 ILIAS RESTPlugin",
+            "content": "Uniwersyteckie centrum komputerowe Philipps-University Marburg zapewnia interfejs do ILIAS za pomoc\u0105 ILIAS RESTPlugin."
+        },
+        "sig-card": {
+            "subtitle": "Spo\u0142eczno\u015b\u0107 i koordynacja dalszego rozwoju",
+            "content": "Specjalna grupa zainteresowa\u0144 (SIG) ILIAS Mobile jest odpowiedzialna za koordynacj\u0119 dalszego rozwoju aplikacji i oferuje przestrze\u0144 do dyskusji na jej temat."
+        },
+        "sturai-card": {
+            "subtitle": "Tw\u00f3rcy",
+            "content": "Aplikacja zosta\u0142a wdro\u017cona przez fluxlabs AG."
+        },
+        "about-card": {
+            "title": "O aplikacji",
+            "subtitle": "Rozw\u00f3j i utrzymanie aplikacji",
+            "content": "Aplikacja jest oparta na rozwi\u0105zaniu open-source ILIAS-PEGASUS i jest obecnie utrzymywana oraz rozwijana przez Jakuba Niewelta."
+        }
+    }
+}
