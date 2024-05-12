@@ -116,6 +116,8 @@
         "download_without_wlan_continue": "You are currently not connected to a WLAN. Do you want to download anyway?",
         "download_without_disk_quota": "No Disk Space",
         "download_without_disk_quota_text": "If you download this file, you will exceed the disk space specified in the settings. Do you want to download anyway?",
+        "download_with_file_too_big": "File too large",
+        "download_with_file_too_big_text": "This file is larger than the maximum file size specified in the settings. Do you still want to continue?",
         "remove_local_files_in": "Delete files in {{title}}",
         "remove_local_files_in_text": "Are you sure you want to delete all downloaded files?",
         "download_successful": "Download successful",

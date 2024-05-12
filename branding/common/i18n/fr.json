@@ -195,6 +195,8 @@
         "download_without_wlan_continue": "Vous n'\u00eates pas actuellement connect\u00e9 \u00e0 un r\u00e9seau local sans fil. Voulez-vous t\u00e9l\u00e9charger quand m\u00eame ?",
         "download_without_disk_quota": "Pas d'espace disque",
         "download_without_disk_quota_text": "Si vous t\u00e9l\u00e9chargez ce fichier, vous d\u00e9passerez l'espace disque sp\u00e9cifi\u00e9 dans les param\u00e8tres. Voulez-vous quand m\u00eame le t\u00e9l\u00e9charger ?",
+        "download_with_file_too_big": "Fichier trop grand",
+        "download_with_file_too_big_text": "Ce fichier est plus grand que la taille de fichier maximale indiquée dans les paramètres. Voulez-vous quand même continuer ?",
         "remove_local_files_in": "Supprimer les fichiers dans {{title}}",
         "remove_local_files_in_text": "Voulez-vous vraiment supprimer tous les fichiers t\u00e9l\u00e9charg\u00e9s ?",
         "download_successful": "T\u00e9l\u00e9chargement r\u00e9ussi",

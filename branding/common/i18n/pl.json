@@ -118,6 +118,8 @@
         "download_without_wlan_continue": "Nie masz obecnie po\u0142\u0105czenia z sieci\u0105 WLAN. Czy mimo to chcesz pobra\u0107 plik?",
         "download_without_disk_quota": "Brak miejsca na dysku",
         "download_without_disk_quota_text": "Pobranie tego pliku spowoduje przekroczenie przestrzeni dyskowej okre\u015blonej w ustawieniach. Czy mimo to chcesz pobra\u0107 plik?",
+        "download_with_file_too_big": "Zbyt duży plik",
+        "download_with_file_too_big_text": "Ten plik jest większy niż maksymalny rozmiar określony w ustawieniach. Czy nadal chcesz kontynuować?",
         "remove_local_files_in": "Usu\u0144 pliki w {{title}}",
         "remove_local_files_in_text": "Czy na pewno chcesz usun\u0105\u0107 wszystkie pobrane pliki?",
         "download_successful": "Pobieranie zako\u0144czone sukcesem",

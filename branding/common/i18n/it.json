@@ -112,6 +112,8 @@
         "download_without_wlan_continue": "Al momento non sei connesso al WiFi. Vuoi scaricare comunque?",
         "download_without_disk_quota": "Spazio insufficiente",
         "download_without_disk_quota_text": "Se scarichi questo file, supererai il limite impostato in Impostazioni. Vuoi continuare comunque?",
+        "download_with_file_too_big": "File troppo grande",
+        "download_with_file_too_big_text": "Questo file è più grande della dimensione massima specificata nelle impostazioni. Volete comunque continuare?",
         "remove_local_files_in": "Elimina file in {{title}}",
         "remove_local_files_in_text": "Sei sicuro/a di voler eliminare tutti i file scaricati?",
         "download_successful": "Scarica completato",
