@@ -2,7 +2,7 @@
 <widget android-packageName="com.jakubniewelt.iacubus" android-versionCode="2024051201" id="com.jakubniewelt.iacubus" ios-CFBundleVersion="20240512.1" version="4.6.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>IACUBUS</name>
     <description>Download, sync and store ILIAS-files on your device</description>
-    <author email="support@fluxlabs.ch" href="https://fluxlabs.ch/">fluxlabs AG</author>
+    <author email="jakub@deepeacademy.com">Jakub Niewelt</author>
     <content src="index.html"/>
     <access origin="*"/>
     <allow-intent href="http://*/*"/>
