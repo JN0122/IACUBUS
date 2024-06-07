@@ -241,3 +241,18 @@ Please check the [package.json](package.json) or run the command bellow to see a
 ```bash
 npm la --depth 0
 ```
+
+## Known errors
+
+Patch _Zip traversal security error_ in file `platforms/android/app/src/main/java/org/apache/cordova/Zip.java:124`:
+
+```java
+File f = new File(outputDirectory, compressedName);
+String canonicalPath = f.getCanonicalPath();
+if (!canonicalPath.startsWith(outputDirectory)) {
+    String errorMessage = "Zip traversal security error";
+    callbackContext.error(errorMessage);
+    Log.e(LOG_TAG, errorMessage);
+    return;
+}
+```
