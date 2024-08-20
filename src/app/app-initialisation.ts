@@ -24,6 +24,7 @@ import { DB_MIGRATION, DBMigration } from "./services/migration/migration.api";
 export class AppInitialisation {
     private readonly FALLBACK_LANGUAGE: string = "de";
     private readonly SUPPORTED_LANGUAGES: Set<string> = new Set([
+        "uk",
         "pl",
         "de",
         "fr",
