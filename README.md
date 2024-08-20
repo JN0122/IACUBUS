@@ -182,7 +182,7 @@ The iOS app can be build with the following command.
 npx ionic cordova build ios  --prod
 ```
 
-Open your Xcode Workspace (the YourAppName.xcworkspace in ILIAS-Pegasus/Platforms/ios) and set **_Certifacates_**, your **_Team ID_**, set the Minimum system version to `13.0` (in `IACUBUS->Resources->IACUBUS-Info.plist`) and Release it to the AppStore.
+Open your Xcode Workspace (the YourAppName.xcworkspace in ILIAS-Pegasus/Platforms/ios) and set **_Certifacates_**, your **_Team ID_**, set the `iOS Deployment Target` to `13.0` (in `CordovaLib->Build Settings`) and Release it to the AppStore.
 
 Check here for information about Certificates: https://developer.apple.com/support/certificates/
 
